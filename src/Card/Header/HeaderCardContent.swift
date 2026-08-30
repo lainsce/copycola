@@ -23,9 +23,9 @@ struct HeaderCardContent: View {
                     .foregroundStyle(.primary)
             }
         }
-        .font(CopycoaTypography.display)
+        .font(CopycoaTypography.viewTitle)
         .lineLimit(1)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .onChange(of: isEditing) { _, editing in
             focused = editing
         }

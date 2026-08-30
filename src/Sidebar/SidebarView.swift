@@ -12,6 +12,8 @@ struct SidebarView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: CopycoaColors.controlGap) {
+            Text("Canvases").font(CopycoaTypography.viewTitle)
+
             ForEach(boards) { board in
                 SidebarBoardButton(
                     board: board,
@@ -30,7 +32,7 @@ struct SidebarView: View {
             }
         }
         .padding(8)
-        .padding(.top, CopycoaColors.gridUnit * 13)
+        .padding(.top, max(0, CanvasMetrics.headerTopInset - 8))
         .frame(width: 300)
         .frame(maxHeight: .infinity, alignment: .top)
         .background(NULSidebarSurface())
