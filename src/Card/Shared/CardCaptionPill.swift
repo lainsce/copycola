@@ -1,21 +1,22 @@
 import SwiftUI
 
-/// Shared caption treatment used by image and map cards.
+/// Shared geometric caption treatment used by image and map cards.
 struct CardCaptionPill: View {
     let text: String
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         Text(verbatim: text)
-            .font(.caption.bold())
+            .font(CopycoaTypography.caption)
             .foregroundStyle(.primary)
             .lineLimit(3)
             .padding(.horizontal, 8)
-            .padding(.vertical, 6)
+            .padding(.vertical, CopycoaColors.gridUnit * 2)
             .background {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .strokeBorder(.black.opacity(0.06), lineWidth: 1)
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color(nsColor: .textBackgroundColor).opacity(0.88))
+                RoundedRectangle(cornerRadius: CopycoaColors.controlRadius, style: .continuous)
+                    .strokeBorder(CopycoaColors.itemRule(for: colorScheme).opacity(0.5), lineWidth: 1)
+                RoundedRectangle(cornerRadius: CopycoaColors.controlRadius)
+                    .fill(CopycoaColors.itemSurface.opacity(0.92))
                     .padding(1)
             }
     }

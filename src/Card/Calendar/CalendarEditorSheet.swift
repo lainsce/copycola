@@ -10,7 +10,6 @@ struct CalendarEditorSheet: View {
     @State private var startDate: Date
     @State private var endDate: Date
     @State private var eventTitle: String
-    @State private var emoji: String
     @State private var recurrenceLabel: String
 
     init(card: Card, onSave: @escaping () -> Void = {}) {
@@ -20,15 +19,14 @@ struct CalendarEditorSheet: View {
         _startDate = State(initialValue: card.calendarStartDateValue)
         _endDate = State(initialValue: card.calendarEndDateValue)
         _eventTitle = State(initialValue: card.calendarEventTitleValue)
-        _emoji = State(initialValue: card.calendarEmojiValue)
         _recurrenceLabel = State(initialValue: card.calendarRecurrenceLabelValue)
     }
 
     var body: some View {
         Form {
             Section {
-                GLWNFormRow("Date type") {
-                    GLWNSegmentedPicker(
+                NULFormRow("Date type") {
+                    NULSegmentedPicker(
                         selection: $dateKind,
                         options: CalendarDateKind.allCases
                     ) { kind in
@@ -40,17 +38,21 @@ struct CalendarEditorSheet: View {
             }
 
             Section("When") {
-                GLWNFormRow(dateKind == .dateRange ? "Starts" : "Date and time") {
+                NULFormRow(dateKind == .dateRange ? "Starts" : "Date and time") {
                     DatePicker(
                         "",
                         selection: $startDate,
                         displayedComponents: [.date, .hourAndMinute]
                     )
                     .labelsHidden()
+                    .padding(.horizontal, 8)
+                    .frame(minWidth: 210, minHeight: 36, alignment: .leading)
+                    .modifier(NULFieldModifier())
+                    .accessibilityLabel(dateKind == .dateRange ? "Starts" : "Date and time")
                 }
 
                 if dateKind == .dateRange {
-                    GLWNFormRow("Ends") {
+                    NULFormRow("Ends") {
                         DatePicker(
                             "",
                             selection: $endDate,
@@ -58,44 +60,49 @@ struct CalendarEditorSheet: View {
                             displayedComponents: [.date, .hourAndMinute]
                         )
                         .labelsHidden()
+                        .padding(.horizontal, 8)
+                        .frame(minWidth: 210, minHeight: 36, alignment: .leading)
+                        .modifier(NULFieldModifier())
+                        .accessibilityLabel("Ends")
                     }
                 }
             }
 
             Section("Details") {
-                GLWNFormRow("Event title") {
+                NULFormRow("Event title") {
                     TextField("", text: $eventTitle, prompt: Text("Event"))
-                        .textFieldStyle(GLWNTextFieldStyle())
+                        .textFieldStyle(.plain)
+                        .textFieldStyle(NULTextFieldStyle())
                         .accessibilityLabel("Event title")
-                }
-                GLWNFormRow("Emoji stickers (in order)") {
-                    TextField("", text: $emoji, prompt: Text("Up to 3"))
-                        .textFieldStyle(GLWNTextFieldStyle())
-                        .accessibilityLabel("Emoji stickers (in order)")
                 }
 
                 if dateKind == .recurring {
-                    GLWNFormRow("Repeat label") {
+                    NULFormRow("Repeat label") {
                         TextField("", text: $recurrenceLabel, prompt: Text("Weekly"))
-                            .textFieldStyle(GLWNTextFieldStyle())
+                            .textFieldStyle(.plain)
+                            .textFieldStyle(NULTextFieldStyle())
                             .accessibilityLabel("Repeat label")
                     }
                 }
             }
         }
         .formStyle(.grouped)
+        .scrollContentBackground(.hidden)
+        .background(CopycoaColors.itemSurface, in: RoundedRectangle(cornerRadius: CopycoaColors.largeSurfaceRadius, style: .continuous))
         .frame(width: 540, height: dateKind == .dateRange ? 430 : 390)
         .padding(.top, 8)
         .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", action: dismiss.callAsFunction)
-                        .buttonStyle(GLWNInContentButtonStyle(tone: .neutral))
+                        .buttonStyle(NULButtonStyle(kind: .neutral))
                 }
+                .sharedBackgroundVisibility(.hidden)
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save", action: save)
-                        .buttonStyle(GLWNInContentButtonStyle(tone: .accent))
+                        .buttonStyle(NULButtonStyle(kind: .primary))
                     .keyboardShortcut(.defaultAction)
             }
+            .sharedBackgroundVisibility(.hidden)
         }
         .onChange(of: startDate) { _, newValue in
             if endDate < newValue {
@@ -111,7 +118,6 @@ struct CalendarEditorSheet: View {
         card.calendarEventTitleValue = eventTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             ? "Event"
             : eventTitle.trimmingCharacters(in: .whitespacesAndNewlines)
-        card.calendarEmojiValue = calendarStickerValues(from: emoji).joined()
         card.calendarRecurrenceLabelValue = recurrenceLabel.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             ? "Weekly"
             : recurrenceLabel.trimmingCharacters(in: .whitespacesAndNewlines)

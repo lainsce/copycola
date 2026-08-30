@@ -36,6 +36,7 @@ nonisolated enum WeatherCondition: String, Codable, CaseIterable, Identifiable {
         }
     }
 
+    /// Legacy payload metadata retained for persisted/weather compatibility; rendering is Item-based.
     var gradientHexes: (top: String, bottom: String) {
         switch self {
         case .clear: ("568CCA", "A1C8EA")
@@ -48,6 +49,7 @@ nonisolated enum WeatherCondition: String, Codable, CaseIterable, Identifiable {
         }
     }
 
+    /// Legacy payload metadata retained for persisted/weather compatibility; rendering uses the accent.
     var secondaryIconColorHex: String {
         switch self {
         case .clear, .partlyCloudy: "FFD52A"

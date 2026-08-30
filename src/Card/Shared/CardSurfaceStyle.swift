@@ -1,15 +1,12 @@
 import SwiftUI
 
-/// Shared neutral surface treatment for cards whose content should remain visually quiet.
+/// Shared monochrome surface treatment for cards whose content should remain visually quiet.
 enum CardSurfaceStyle {
-    static var subtleGrayGradient: LinearGradient {
-        LinearGradient(
-            colors: [
-                Color(nsColor: .textBackgroundColor),
-                .gray.opacity(0.08),
-            ],
-            startPoint: .top,
-            endPoint: .bottom
-        )
+    /// Every populated card resolves to the opaque Item surface in the active appearance.
+    static var item: Color {
+        CopycoaColors.itemSurface
     }
+
+    /// Kept as a source-compatible alias for older card implementations.
+    static var subtleGrayGradient: some ShapeStyle { item }
 }

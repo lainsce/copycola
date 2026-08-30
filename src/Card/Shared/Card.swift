@@ -82,7 +82,7 @@ final class Card {
     var quoteText: String?
     var quoteAttribution: String?
 
-    // Palette cards persist up to five Pantone-style chip colors as a small JSON string.
+    // Palette cards persist up to five legacy chip colors as a small JSON string.
     var paletteTitle: String?
     var paletteColorsJSON: String?
 

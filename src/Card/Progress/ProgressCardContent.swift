@@ -2,8 +2,8 @@ import Foundation
 import SwiftUI
 
 nonisolated enum ProgressCardDefaults {
-    static let dotColorHex = "7B4B2A"
-    static let backgroundColorHex = "F3EDE7"
+    static let dotColorHex = "DE9C32"
+    static let backgroundColorHex = "FDFDFD"
 }
 
 /// Date math for Progress cards is kept separate from the view so the same rules can be
@@ -71,12 +71,12 @@ struct ProgressCardContent: View {
                     columns: metrics.columns,
                     dotSize: metrics.dotSize(totalDots: total),
                     spacing: metrics.dotSpacing,
-                    dotColor: Color(hex: card.progressDotColorHexValue)
+                    dotColor: Color.accent
                 )
 
                 HStack(spacing: metrics.sectionSpacing) {
                     Text("\(completed) of \(total) days")
-                        .font(.system(size: metrics.footerFont, weight: .medium, design: .rounded))
+                        .font(CopycoaTypography.caption)
                         .foregroundStyle(.primary.opacity(0.56))
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
@@ -88,7 +88,7 @@ struct ProgressCardContent: View {
         }
         .background {
             RoundedRectangle(cornerRadius: card.cardSize.cornerRadius, style: .continuous)
-                .fill(Color(hex: card.progressBackgroundColorHexValue))
+                .fill(CopycoaColors.itemSurface)
         }
         .clipShape(.rect(cornerRadius: card.cardSize.cornerRadius))
         .accessibilityElement(children: .ignore)
@@ -127,9 +127,9 @@ private struct ProgressCardMetrics {
 
     var inset: CGFloat { CanvasMetrics.cardContentInset }
     var sectionSpacing: CGFloat { max(6, 8 * scale) }
-    var titleFont: CGFloat { max(13, 16 * scale) }
-    var goalFont: CGFloat { max(9, 11 * scale) }
-    var footerFont: CGFloat { max(8, 10 * scale) }
+    var titleFont: CGFloat { CopycoaTypography.Role.contentBlockTitle.size }
+    var goalFont: CGFloat { CopycoaTypography.Role.caption.size }
+    var footerFont: CGFloat { CopycoaTypography.Role.caption.size }
     var dotSpacing: CGFloat { max(4, min(10, 6 * scale)) }
     var columns: Int { size.width >= CanvasMetrics.footprintSize(columns: 2, rows: 1).width ? 10 : 6 }
 
@@ -153,7 +153,7 @@ private struct ProgressCardHeader: View {
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: metrics.sectionSpacing) {
             Text(verbatim: title)
-                .font(.system(size: metrics.titleFont, weight: .bold, design: .rounded))
+                .font(CopycoaTypography.contentBlockTitle)
                 .foregroundStyle(.primary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
@@ -161,7 +161,7 @@ private struct ProgressCardHeader: View {
             Spacer(minLength: metrics.sectionSpacing)
 
             Text(goalDate, format: .dateTime.month(.abbreviated).day())
-                .font(.system(size: metrics.goalFont, weight: .semibold, design: .rounded))
+                .font(CopycoaTypography.caption)
                 .foregroundStyle(.primary.opacity(0.56))
                 .lineLimit(1)
         }
@@ -185,7 +185,7 @@ private struct ProgressDotGrid: View {
             spacing: spacing
         ) {
             ForEach(0..<totalDots, id: \.self) { index in
-                Circle()
+                    Circle()
                     .fill(index < completedDots ? dotColor : dotColor.opacity(0.18))
                     .frame(width: dotSize, height: dotSize)
                     .frame(maxWidth: .infinity)

@@ -21,6 +21,7 @@ struct MapCardContent: View {
             }
         }
         .mapStyle(.standard(elevation: .flat, emphasis: .muted, pointsOfInterest: .excludingAll))
+        .saturation(0)
         .onChange(of: coordinate) { _, newCoordinate in
             position = Self.position(for: newCoordinate)
         }
@@ -30,19 +31,18 @@ struct MapCardContent: View {
     private var locationDot: some View {
         ZStack {
             Circle()
-                .fill(.blue.opacity(0.24))
+                .fill(Color.accent.opacity(0.20))
                 .frame(width: 48, height: 48)
                 .scaleEffect(pulse ? 1 : 0.45)
                 .opacity(pulse ? 0 : 0.65)
 
             Circle()
-                .fill(.blue)
+                .fill(Color.accent)
                 .frame(width: 24, height: 24)
                 .overlay {
-                    Circle().stroke(.white, lineWidth: 3)
+                    Circle().stroke(CopycoaColors.itemSurface, lineWidth: 3)
                 }
         }
-        .shadow(color: .black.opacity(0.3), radius: 2, y: 1)
         .accessibilityHidden(true)
         .onAppear {
             pulse = !reduceMotion

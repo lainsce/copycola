@@ -34,16 +34,16 @@ struct TextEntrySheet: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Label(title, systemImage: systemImage)
-                .font(.headline)
+                .font(CopycoaTypography.contentBlockTitle)
             TextField(fieldLabel, text: $text, prompt: Text(prompt))
-                .textFieldStyle(GLWNTextFieldStyle())
+                .textFieldStyle(NULTextFieldStyle())
                 .onSubmit(submit)
             HStack {
                 Spacer()
                 Button("Cancel", action: dismiss.callAsFunction)
-                    .buttonStyle(GLWNInContentButtonStyle(tone: .neutral))
+                    .buttonStyle(NULButtonStyle(kind: .neutral))
                 Button(submitTitle, action: submit)
-                    .buttonStyle(GLWNInContentButtonStyle(tone: .accent))
+                    .buttonStyle(NULButtonStyle(kind: .primary))
                     .keyboardShortcut(.defaultAction)
                     .disabled(trimmedText.isEmpty)
             }

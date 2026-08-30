@@ -5,9 +5,14 @@ import SwiftUI
 struct CopycoaApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
+    init() {
+        CopycoaFontRegistration.register()
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .font(CopycoaTypography.body)
         }
         .windowStyle(.hiddenTitleBar)
         .windowToolbarStyle(.unified)
@@ -21,11 +26,13 @@ struct CopycoaApp: App {
 
         Window("About Copycoa", id: CopycoaWindowID.about) {
             CopycoaAboutView()
+                .font(CopycoaTypography.body)
         }
         .windowResizability(.contentSize)
 
         Window("Privacy Policy", id: CopycoaWindowID.privacyPolicy) {
             PrivacyPolicyView()
+                .font(CopycoaTypography.body)
         }
         .defaultSize(width: 540, height: 540)
         .windowResizability(.contentSize)

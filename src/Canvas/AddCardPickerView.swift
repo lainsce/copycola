@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// The add-card surface. Each option keeps the full-color visual language of the
-/// sidebar previews while remaining compact enough for a four-column grid.
+/// The add-card surface. Each option uses the same quiet, monochrome preview
+/// treatment as the sidebar while remaining compact enough for a four-column grid.
 struct AddCardPickerView: View {
     let addCard: (CardKind) -> Void
     let animation: Animation?
@@ -46,8 +46,8 @@ struct AddCardPickerView: View {
 
     private var hoverBackground: Color {
         colorScheme == .dark
-            ? Color(hex: "#523822")
-            : Color(hex: "#F5E5D2")
+            ? Color.white.opacity(0.12)
+            : Color.black.opacity(0.07)
     }
 }
 
@@ -62,11 +62,11 @@ private struct AddCardPickerItem: View {
 
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 6) {
+            VStack(spacing: CopycoaColors.controlGap) {
                 AddCardOptionIcon(kind: kind)
 
                 Text(kind.displayName)
-                    .font(.caption.weight(.semibold))
+                    .font(CopycoaTypography.caption)
                     .foregroundStyle(foreground)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
@@ -74,11 +74,11 @@ private struct AddCardPickerItem: View {
             .frame(maxWidth: .infinity, minHeight: 72)
             .padding(.vertical, 8)
             .background {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                RoundedRectangle(cornerRadius: CopycoaColors.controlRadius, style: .continuous)
                     .fill(isHovered ? hoverBackground : .clear)
             }
             .overlay {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                RoundedRectangle(cornerRadius: CopycoaColors.controlRadius, style: .continuous)
                     .stroke(
                         isHovered ? foreground.opacity(0.75) : .clear,
                         lineWidth: 1
@@ -86,7 +86,7 @@ private struct AddCardPickerItem: View {
             }
         }
         .buttonStyle(.plain)
-        .contentShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .contentShape(RoundedRectangle(cornerRadius: CopycoaColors.controlRadius, style: .continuous))
         .onHover { hovering in
             isHovered = hovering
         }
@@ -104,9 +104,9 @@ private struct AddCardOptionIcon: View {
             .resizable()
             .interpolation(.high)
             .scaledToFill()
+            .saturation(0)
             .frame(width: 32, height: 32)
-            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-            .cardChrome(cornerRadius: 8)
+            .clipShape(RoundedRectangle(cornerRadius: CopycoaColors.controlRadius, style: .continuous))
             .accessibilityHidden(true)
     }
 

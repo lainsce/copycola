@@ -1,6 +1,7 @@
 import SwiftUI
 
-struct GLWNPullDownMenu<Selection: Hashable, ItemLabel: View>: View {
+/// Nuul's flat menu picker with a native disclosure affordance.
+struct NULMenuPicker<Selection: Hashable, ItemLabel: View>: View {
     private let title: LocalizedStringKey
     @Binding private var selection: Selection
     private let options: [Selection]
@@ -33,30 +34,23 @@ struct GLWNPullDownMenu<Selection: Hashable, ItemLabel: View>: View {
                 .accessibilityAddTraits(option == selection ? .isSelected : [])
             }
         } label: {
-            HStack(spacing: 8) {
+            HStack(spacing: CopycoaColors.gridUnit * 2) {
                 if showsTitle {
                     Text(title)
                         .foregroundStyle(.secondary)
                     Spacer(minLength: 8)
                 }
+
                 label(selection)
                     .lineLimit(1)
-                Spacer(minLength: 8)
-                Image(systemName: "chevron.up.chevron.down")
-                    .font(.caption.weight(.semibold))
+                    .font(CopycoaTypography.caption)
                     .foregroundStyle(.secondary)
             }
-            .frame(minHeight: 36, alignment: .leading)
+            .frame(minHeight: CopycoaColors.controlHeight, alignment: .leading)
+            .padding(.horizontal, CopycoaColors.gridUnit * 2)
         }
-        .buttonStyle(
-            GLWNInContentButtonStyle(
-                tone: .neutral,
-                horizontalPadding: 10,
-                minHeight: 36
-            )
-        )
+        .menuStyle(.borderlessButton)
+        .accessibilityLabel(Text(title))
         .fixedSize(horizontal: true, vertical: false)
-        .accessibilityLabel(title)
     }
 }
-

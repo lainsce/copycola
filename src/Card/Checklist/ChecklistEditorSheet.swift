@@ -26,9 +26,10 @@ struct ChecklistEditorSheet: View {
     var body: some View {
         Form {
             Section {
-                GLWNFormRow("Title") {
+                NULFormRow("Title") {
                     TextField("", text: $title, prompt: Text("Checklist"))
-                        .textFieldStyle(GLWNTextFieldStyle())
+                        .textFieldStyle(.plain)
+                        .textFieldStyle(NULTextFieldStyle())
                         .accessibilityLabel("Title")
                 }
             } header: {
@@ -54,18 +55,22 @@ struct ChecklistEditorSheet: View {
             }
         }
         .formStyle(.grouped)
+        .scrollContentBackground(.hidden)
+        .background(CopycoaColors.itemSurface, in: RoundedRectangle(cornerRadius: CopycoaColors.largeSurfaceRadius, style: .continuous))
         .frame(width: 500, height: 390)
         .padding(.top, 8)
         .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", action: dismiss.callAsFunction)
-                        .buttonStyle(GLWNInContentButtonStyle(tone: .neutral))
+                        .buttonStyle(NULButtonStyle(kind: .neutral))
                 }
+                .sharedBackgroundVisibility(.hidden)
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save", action: save)
-                        .buttonStyle(GLWNInContentButtonStyle(tone: .accent))
+                        .buttonStyle(NULButtonStyle(kind: .primary))
                     .keyboardShortcut(.defaultAction)
             }
+            .sharedBackgroundVisibility(.hidden)
         }
     }
 
@@ -95,14 +100,15 @@ private struct ChecklistEditorRow: View {
     @Binding var isCompleted: Bool
 
     var body: some View {
-        GLWNFormRow(title) {
-            VStack(alignment: .leading, spacing: 6) {
+        NULFormRow(title) {
+            VStack(alignment: .leading, spacing: CopycoaColors.controlGap) {
                 TextField("", text: $text, prompt: Text("Optional"))
-                    .textFieldStyle(GLWNTextFieldStyle())
+                    .textFieldStyle(.plain)
+                    .textFieldStyle(NULTextFieldStyle())
                     .accessibilityLabel(title)
                 Toggle("Completed", isOn: $isCompleted)
                     .labelsHidden()
-                    .toggleStyle(GLWNAquaToggleStyle())
+                    .toggleStyle(NULToggleStyle())
                     .accessibilityLabel("Completed")
             }
         }

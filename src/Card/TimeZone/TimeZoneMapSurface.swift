@@ -59,7 +59,6 @@ private enum TimeZoneMapLayout {
 
 struct TimeZoneMapSurface: View {
     let preset: TimeZoneCardPreset
-    let isDaytime: Bool
 
     var body: some View {
         GeometryReader { proxy in
@@ -69,13 +68,15 @@ struct TimeZoneMapSurface: View {
             )
 
             ZStack {
-                Color(red: 0.05, green: 0.05, blue: 0.05)
+                CopycoaColors.itemSurface
 
                 if let image = TimeZoneMapRenderer.image(for: preset) {
                     Image(nsImage: image)
                         .interpolation(.high)
                         .resizable()
                         .scaledToFill()
+                        .saturation(0)
+                        .opacity(0.12)
                         .scaleEffect(1.04)
                         .frame(width: proxy.size.width, height: proxy.size.height)
                 }
@@ -84,28 +85,20 @@ struct TimeZoneMapSurface: View {
                 // center, so it stays on the selected city at every card aspect ratio.
                 ZStack {
                     Circle()
-                        .fill(.white.opacity(0.25))
+                        .fill(Color.accent.opacity(0.16))
                         .frame(width: 30, height: 30)
                         .overlay {
                             Circle()
-                                .stroke(.white.opacity(0.33), lineWidth: 1)
+                                .stroke(Color.accent.opacity(0.28), lineWidth: 1)
                         }
                     Circle()
-                        .fill(.black)
+                        .fill(Color.accent)
                         .frame(width: 7, height: 7)
                     Circle()
-                        .fill(.white)
+                        .fill(CopycoaColors.itemSurface)
                         .frame(width: 5, height: 5)
                 }
                 .position(markerPosition)
-
-                LinearGradient(
-                    colors: isDaytime
-                        ? [.white.opacity(0.08), .clear, .black.opacity(0.10)]
-                        : [.black.opacity(0.18), .clear, .black.opacity(0.24)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
             }
             .frame(width: proxy.size.width, height: proxy.size.height)
             .clipped()

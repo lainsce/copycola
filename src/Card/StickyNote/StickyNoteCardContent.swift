@@ -7,6 +7,7 @@ struct StickyNoteCardContent: View {
     let cornerRadius: CGFloat
 
     @FocusState private var focused: Bool
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         Group {
@@ -16,19 +17,19 @@ struct StickyNoteCardContent: View {
                     .scrollContentBackground(.hidden)
             } else if card.text.isEmpty {
                 Text("Write a note…")
-                    .foregroundStyle(.black.opacity(0.35))
+                    .foregroundStyle(CopycoaColors.itemSecondaryText(for: colorScheme).opacity(0.7))
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             } else {
                 Text(verbatim: card.text)
-                    .foregroundStyle(.black.opacity(0.85))
+                    .foregroundStyle(CopycoaColors.itemText(for: colorScheme).opacity(0.85))
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
         }
-        .font(.custom("Marker Felt", size: 16, relativeTo: .body))
+        .font(CopycoaTypography.contentBlockSubtitle)
         .padding(CanvasMetrics.cardContentInset)
         .background {
             RoundedRectangle(cornerRadius: cornerRadius)
-                .fill(Color(hex: card.colorHex ?? StickyPalette.yellow))
+                .fill(CopycoaColors.itemSurface)
         }
         .onChange(of: isEditing) { _, editing in
             focused = editing

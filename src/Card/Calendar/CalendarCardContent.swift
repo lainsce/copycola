@@ -26,7 +26,7 @@ nonisolated enum CalendarDateKind: String, Codable, CaseIterable, Identifiable {
     }
 }
 
-/// Keeps emoji entry ordered while limiting a calendar card to its three sticker positions.
+/// Keeps legacy emoji entry ordered while limiting the persisted value to three positions.
 nonisolated func calendarStickerValues(from input: String) -> [String] {
     input
         .filter { !$0.isWhitespace && !$0.isNewline }
@@ -35,7 +35,7 @@ nonisolated func calendarStickerValues(from input: String) -> [String] {
         .map { $0 }
 }
 
-/// Calendar artwork is authored at the 1×1 footprint (160 points). Larger cards use the same
+/// Calendar artwork is authored at the 1×1 footprint (175 points). Larger cards use the same
 /// composition and scale it from the shortest available edge, so a 2×1 card stays as legible
 /// as the baseline while a 2×2 card gets the extra breathing room shown in the reference.
 private struct CalendarCardMetrics {
@@ -44,7 +44,7 @@ private struct CalendarCardMetrics {
 
     init(size: CGSize) {
         self.size = size
-        scale = max(0.1, min(size.width / 160, size.height / 160))
+        scale = max(0.1, min(size.width / CanvasMetrics.cell, size.height / CanvasMetrics.cell))
     }
 
     func scaled(_ value: CGFloat) -> CGFloat {
@@ -53,20 +53,18 @@ private struct CalendarCardMetrics {
 
     var padding: CGFloat { CanvasMetrics.cardContentInset }
     var sectionSpacing: CGFloat { scaled(6) }
-    var labelFont: CGFloat { scaled(14) }
-    var dateRangeDayFont: CGFloat { scaled(38) }
-    var singleDateDayFont: CGFloat { scaled(42) }
-    var yearFont: CGFloat { scaled(12) }
-    var eventTitleFont: CGFloat { scaled(10) }
-    var recurringWeekdayFont: CGFloat { scaled(30) }
-    var recurringLabelFont: CGFloat { scaled(14) }
-    var timelineFont: CGFloat { scaled(9) }
+    var labelFont: CGFloat { CopycoaTypography.Role.caption.size }
+    var dateRangeDayFont: CGFloat { CopycoaTypography.Role.bigDisplay.size }
+    var singleDateDayFont: CGFloat { CopycoaTypography.Role.bigDisplay.size }
+    var yearFont: CGFloat { CopycoaTypography.Role.caption.size }
+    var eventTitleFont: CGFloat { CopycoaTypography.Role.body.size }
+    var recurringWeekdayFont: CGFloat { CopycoaTypography.Role.display.size }
+    var recurringLabelFont: CGFloat { CopycoaTypography.Role.body.size }
+    var timelineFont: CGFloat { CopycoaTypography.Role.micro.size }
     var timelineLabelWidth: CGFloat { scaled(44) }
     var timelineSpacing: CGFloat { scaled(5) }
     var timelineEventHeight: CGFloat { scaled(24) }
     var timelineStroke: CGFloat { max(1, scaled(1.5)) }
-    var stickerFont: CGFloat { scaled(24) }
-    var stickerPadding: CGFloat { CanvasMetrics.cardContentInset }
     var gridColumns: Int { size.width >= 280 ? 7 : 6 }
     var gridRows: Int { size.height >= 280 ? 5 : 4 }
     var gridCell: CGFloat { scaled(11) }
@@ -77,8 +75,7 @@ private struct CalendarCardMetrics {
     }
 }
 
-/// A compact event card inspired by the supplied Calendar reference: bold date hierarchy,
-/// a lightweight time rail, and an optional emoji sticker layered over the surface.
+/// A compact event card with a clear date hierarchy and a lightweight time rail.
 struct CalendarCardContent: View {
     @Bindable var card: Card
     @Environment(\.locale) private var locale
@@ -89,7 +86,6 @@ struct CalendarCardContent: View {
 
             ZStack(alignment: .topLeading) {
                 content(metrics: metrics)
-                sticker(metrics: metrics)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
@@ -114,15 +110,15 @@ struct CalendarCardContent: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .firstTextBaseline) {
                 Text(monthText(card.calendarStartDateValue))
-                    .foregroundStyle(.red)
+                    .foregroundStyle(Color.accent)
                 Spacer(minLength: metrics.sectionSpacing)
                 Text("\(rangeDays)d")
                     .foregroundStyle(.secondary)
                 Spacer(minLength: metrics.sectionSpacing)
                 Text(monthText(card.calendarEndDateValue))
-                    .foregroundStyle(.red)
+                    .foregroundStyle(Color.accent)
             }
-            .font(.system(size: metrics.labelFont, weight: .bold, design: .rounded))
+            .font(CopycoaTypography.caption)
             .lineLimit(1)
             .minimumScaleFactor(0.7)
 
@@ -130,13 +126,13 @@ struct CalendarCardContent: View {
                 Text(dayText(card.calendarStartDateValue))
                 Spacer(minLength: metrics.sectionSpacing)
                 Image(systemName: "arrow.right")
-                    .font(.system(size: metrics.scaled(13), weight: .bold))
+                    .font(.system(size: 13, weight: .bold))
                     .foregroundStyle(.primary)
                     .accessibilityHidden(true)
                 Spacer(minLength: metrics.sectionSpacing)
                 Text(dayText(card.calendarEndDateValue))
             }
-            .font(.system(size: metrics.dateRangeDayFont, weight: .black, design: .rounded))
+            .font(CopycoaTypography.bigDisplay)
             .foregroundStyle(.primary)
 
             Spacer(minLength: metrics.sectionSpacing)
@@ -155,31 +151,31 @@ struct CalendarCardContent: View {
         VStack(alignment: .leading, spacing: metrics.sectionSpacing) {
             HStack(alignment: .firstTextBaseline, spacing: metrics.sectionSpacing) {
                 Text(monthOnlyText(card.calendarStartDateValue))
-                    .foregroundStyle(.red)
+                    .foregroundStyle(Color.accent)
                 Text(shortWeekdayText(card.calendarStartDateValue))
                     .foregroundStyle(.secondary)
             }
-            .font(.system(size: metrics.labelFont, weight: .bold, design: .rounded))
+            .font(CopycoaTypography.caption)
             .lineLimit(1)
             .minimumScaleFactor(0.7)
 
             VStack(alignment: .leading, spacing: 0) {
                 Text(dayText(card.calendarStartDateValue))
-                    .font(.system(size: metrics.singleDateDayFont, weight: .black, design: .rounded))
+                    .font(CopycoaTypography.bigDisplay)
                     .foregroundStyle(.primary)
 
 
                 HStack {
                     if let year = yearText(card.calendarStartDateValue) {
                         Text(verbatim: year)
-                            .font(.system(size: metrics.yearFont, weight: .bold, design: .rounded))
+                            .font(CopycoaTypography.caption)
                             .foregroundStyle(.secondary)
                     }
                     Spacer(minLength: metrics.sectionSpacing)
                     let eventTitle = card.calendarEventTitleValue.trimmingCharacters(in: .whitespacesAndNewlines)
                     if !eventTitle.isEmpty {
                         Text(verbatim: eventTitle)
-                            .font(.system(size: metrics.eventTitleFont, weight: .semibold, design: .rounded))
+                        .font(CopycoaTypography.body)
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
                             .truncationMode(.tail)
@@ -214,17 +210,17 @@ struct CalendarCardContent: View {
     private func recurring(metrics: CalendarCardMetrics) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("Every")
-                .font(.system(size: metrics.labelFont, weight: .bold, design: .rounded))
-                .foregroundStyle(.red)
+                .font(CopycoaTypography.caption)
+                .foregroundStyle(Color.accent)
 
             Text(weekdayText(card.calendarStartDateValue))
-                .font(.system(size: metrics.recurringWeekdayFont, weight: .black, design: .rounded))
+                .font(CopycoaTypography.display)
                 .foregroundStyle(.primary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
 
             Text(card.calendarRecurrenceLabelValue)
-                .font(.system(size: metrics.recurringLabelFont, weight: .bold, design: .rounded))
+                .font(CopycoaTypography.body)
                 .foregroundStyle(.secondary)
 
             Spacer(minLength: metrics.sectionSpacing)
@@ -238,87 +234,8 @@ struct CalendarCardContent: View {
         .padding(metrics.padding)
     }
 
-    @ViewBuilder
-    private func sticker(metrics: CalendarCardMetrics) -> some View {
-        ForEach(Array(calendarStickerValues(from: card.calendarEmojiValue).enumerated()), id: \.offset) { index, value in
-            stickerView(value, index: index, metrics: metrics)
-        }
-    }
-
-    @ViewBuilder
-    private func stickerView(
-        _ value: String,
-        index: Int,
-        metrics: CalendarCardMetrics
-    ) -> some View {
-        let base = Text(verbatim: value)
-            .font(.system(size: metrics.stickerFont))
-            .lineLimit(1)
-            .minimumScaleFactor(0.5)
-            .allowsHitTesting(false)
-            .accessibilityLabel(Text("Sticker \(value)"))
-
-        switch index {
-        case 0:
-            base
-                .rotationEffect(.degrees(-8))
-                .padding(metrics.stickerPadding)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: firstStickerAlignment)
-        case 1:
-            base
-                .rotationEffect(.degrees(8))
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                .offset(secondStickerOffset(metrics: metrics))
-        default:
-            base
-                .rotationEffect(.degrees(-6))
-                .padding(metrics.stickerPadding)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-                .offset(thirdStickerOffset(metrics: metrics))
-        }
-    }
-
-    private var firstStickerAlignment: Alignment {
-        switch card.calendarDateKind {
-        case .dateRange: .bottomTrailing
-        case .singleDate, .recurring: .topTrailing
-        }
-    }
-
-    private func secondStickerOffset(metrics: CalendarCardMetrics) -> CGSize {
-        switch card.calendarDateKind {
-        case .dateRange:
-            CGSize(
-                width: metrics.padding + metrics.dateRangeDayFont * 0.86,
-                height: metrics.padding + metrics.labelFont + metrics.sectionSpacing * 0.35
-            )
-        case .singleDate:
-            CGSize(
-                width: metrics.padding + metrics.singleDateDayFont * 0.84,
-                height: metrics.padding + metrics.labelFont + metrics.sectionSpacing + metrics.singleDateDayFont * 0.10
-            )
-        case .recurring:
-            CGSize(
-                width: metrics.padding + metrics.recurringWeekdayFont * 0.84,
-                height: metrics.padding + metrics.labelFont + metrics.recurringWeekdayFont * 0.10
-            )
-        }
-    }
-
-    private func thirdStickerOffset(metrics: CalendarCardMetrics) -> CGSize {
-        guard card.calendarDateKind == .dateRange else { return .zero }
-        return CGSize(width: -metrics.scaled(24), height: -metrics.scaled(10))
-    }
-
     private var surface: some ShapeStyle {
-        LinearGradient(
-            colors: [
-                .red.opacity(0.08),
-                Color(nsColor: .textBackgroundColor),
-            ],
-            startPoint: .top,
-            endPoint: .bottom
-        )
+        CopycoaColors.itemSurface
     }
 
     private var calendar: Foundation.Calendar {
@@ -420,11 +337,11 @@ private struct MonthDotGrid: View {
             if day == calendar.component(.day, from: date) {
                 ZStack {
                     Circle()
-                        .strokeBorder(.red, lineWidth: 2)
+                        .strokeBorder(Color.accent, lineWidth: 2)
                         .frame(width: 24, height: 24)
 
                     Text(verbatim: "\(day)")
-                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .font(CopycoaTypography.body)
                         .foregroundStyle(.primary)
                         .fixedSize()
                 }
@@ -460,11 +377,7 @@ private struct CalendarTimeline: View {
     private func timelineRow(date: Date, isActive: Bool) -> some View {
         HStack(alignment: .center, spacing: metrics.sectionSpacing) {
             Text(date.formatted(date: .omitted, time: .shortened))
-                .font(.system(
-                    size: metrics.timelineFont,
-                    weight: isActive ? .bold : .regular,
-                    design: .rounded
-                ))
+                .font(CopycoaTypography.micro)
                 .foregroundStyle(isActive ? Color.primary : Color.secondary.opacity(0.45))
                 .frame(width: metrics.timelineLabelWidth, alignment: .leading)
 
@@ -473,7 +386,7 @@ private struct CalendarTimeline: View {
                     timelineLine(isActive: true)
 
                     Text(verbatim: eventTitle)
-                        .font(.system(size: metrics.timelineFont, weight: .bold, design: .rounded))
+                        .font(CopycoaTypography.body)
                         .foregroundStyle(.primary)
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
@@ -485,7 +398,7 @@ private struct CalendarTimeline: View {
                     .frame(height: metrics.timelineEventHeight)
                     .overlay {
                             Text(verbatim: eventTitle)
-                            .font(.system(size: metrics.timelineFont, weight: .bold, design: .rounded))
+                            .font(CopycoaTypography.body)
                             .foregroundStyle(.primary)
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)
@@ -499,15 +412,7 @@ private struct CalendarTimeline: View {
 
     private func timelineLine(isActive: Bool) -> some View {
         Rectangle()
-            .fill(isActive ? .red : .secondary.opacity(0.22))
+            .fill(isActive ? Color.accent : .secondary.opacity(0.22))
             .frame(height: isActive ? metrics.timelineStroke : max(1, metrics.scaled(1)))
-            .overlay(alignment: .leading) {
-                if isActive {
-                    Image(systemName: "play.fill")
-                        .font(.system(size: metrics.scaled(7), weight: .bold))
-                        .foregroundStyle(.red)
-                        .offset(x: -2)
-                }
-            }
     }
 }

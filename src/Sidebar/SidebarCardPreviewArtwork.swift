@@ -38,6 +38,7 @@ struct SidebarCardPreviewArtwork: View {
             Image(resource)
                 .resizable()
                 .scaledToFill()
+                .saturation(0)
         }
     }
 }

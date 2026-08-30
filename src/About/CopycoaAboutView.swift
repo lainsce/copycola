@@ -8,56 +8,50 @@ struct CopycoaAboutView: View {
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
-        VStack(spacing: 18) {
+        VStack(spacing: 16) {
             Image(nsImage: NSApp.applicationIconImage)
                 .resizable()
                 .interpolation(.high)
                 .scaledToFit()
                 .frame(width: 128, height: 128)
-                .shadow(color: .black.opacity(0.18), radius: 12, y: 6)
 
-            VStack(spacing: 6) {
+            VStack(spacing: 8) {
                 Text("Copycoa")
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .font(CopycoaTypography.display)
 
                 Text("A calm, spatial canvas for ideas.")
-                    .font(.title3)
+                    .font(CopycoaTypography.viewSubtitle)
                     .foregroundStyle(.secondary)
             }
 
             Text("Keep notes, references, dates, places, and useful fragments together on a canvas you can return to.")
-                .font(.body)
+                .font(CopycoaTypography.body)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .lineLimit(2...2)
                 .frame(width: 310)
 
-            Divider()
-
             VStack(spacing: 4) {
                 Text("Version \(versionString)")
-                    .font(.caption)
+                    .font(CopycoaTypography.caption)
                     .foregroundStyle(.secondary)
 
                 Text("Made with SwiftUI for Mac.")
-                    .font(.caption)
+                    .font(CopycoaTypography.caption)
                     .foregroundStyle(.tertiary)
             }
 
             Button("Privacy Policy") {
                 openWindow(id: CopycoaWindowID.privacyPolicy)
             }
-            .buttonStyle(.link)
+            .buttonStyle(NULButtonStyle(kind: .quiet))
         }
         .padding(32)
+        .background(
+            CopycoaColors.itemSurface,
+            in: RoundedRectangle(cornerRadius: CopycoaColors.largeSurfaceRadius, style: .continuous)
+        )
         .frame(width: 400)
-        .background {
-            LinearGradient(
-                colors: [Color.accent.opacity(0.10), .clear],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        }
     }
 
     private var versionString: String {

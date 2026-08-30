@@ -21,26 +21,28 @@ struct WeatherEditorSheet: View {
     var body: some View {
         Form {
             Section("Location") {
-                GLWNFormRow("Place") {
+                NULFormRow("Place") {
                     TextField("", text: $location, prompt: Text("City or address"))
-                        .textFieldStyle(GLWNTextFieldStyle())
+                    .textFieldStyle(.plain)
+                    .textFieldStyle(NULTextFieldStyle())
                         .accessibilityLabel("Place")
                 }
             }
 
             Section {
-                GLWNFormRow("Automatic summary") {
+                NULFormRow("Automatic summary") {
                     Toggle("", isOn: $usesAutomaticSummary)
                         .labelsHidden()
-                        .toggleStyle(GLWNAquaToggleStyle())
+                        .toggleStyle(NULToggleStyle())
                         .accessibilityLabel("Automatic summary")
                 }
 
                 if !usesAutomaticSummary {
-                    GLWNFormRow("Custom summary") {
+                    NULFormRow("Custom summary") {
                         TextField("", text: $summary, axis: .vertical)
                             .lineLimit(2...4)
-                            .textFieldStyle(GLWNTextFieldStyle())
+                            .textFieldStyle(.plain)
+                            .textFieldStyle(NULTextFieldStyle())
                             .accessibilityLabel("Custom summary")
                     }
                 }
@@ -51,19 +53,23 @@ struct WeatherEditorSheet: View {
             }
         }
         .formStyle(.grouped)
+        .scrollContentBackground(.hidden)
+        .background(CopycoaColors.itemSurface, in: RoundedRectangle(cornerRadius: CopycoaColors.largeSurfaceRadius, style: .continuous))
         .frame(width: 520, height: 390)
         .padding(.top, 8)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel", action: dismiss.callAsFunction)
-                    .buttonStyle(GLWNInContentButtonStyle(tone: .neutral))
+                    .buttonStyle(NULButtonStyle(kind: .neutral))
             }
+            .sharedBackgroundVisibility(.hidden)
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save & Update", action: save)
-                    .buttonStyle(GLWNInContentButtonStyle(tone: .accent))
+                    .buttonStyle(NULButtonStyle(kind: .primary))
                     .keyboardShortcut(.defaultAction)
                     .disabled(cleanedLocation.isEmpty)
             }
+            .sharedBackgroundVisibility(.hidden)
         }
     }
 

@@ -35,7 +35,7 @@ private struct DetailsSheetItem: Identifiable {
     var id: UUID { card.id }
 }
 
-/// The fixed-column card surface: draws a viewport-sized dot field, positions cards, and
+    /// The fixed-column card surface: draws a viewport-sized technical grid, positions cards, and
 /// handles vertical scrolling, card dragging with grid + magnetic snapping, and card creation.
 struct CanvasView: View {
     @Bindable var board: Board
@@ -46,7 +46,6 @@ struct CanvasView: View {
     @State private var editingCardID: UUID?
     @State private var draggingCardID: UUID?
     @State private var dragTranslation: CGSize = .zero
-    @AppStorage("copycoa.canvas.shows-dot-grid") private var showsDotGrid = true
     /// Where the currently dragged card will land, in content space (for the drop-preview ghost).
     @State private var dropPreview: CGRect?
     @State private var viewportSize: CGSize = .zero
@@ -78,6 +77,8 @@ struct CanvasView: View {
     @State private var presentedError: CanvasError?
     @State private var cardToDeleteID: UUID?
     @State private var showingDeleteConfirmation = false
+    @State private var canvasPrompt = ""
+    @StateObject private var voiceRecorder = CanvasVoiceRecorder()
 
     var body: some View {
         canvasWithCommands
@@ -112,6 +113,7 @@ struct CanvasView: View {
             .focusedSceneValue(\.refreshWeatherAction, refreshSelectedWeatherAction)
             .toolbar {
                 ToolbarSpacer(placement: .navigation)
+                    .sharedBackgroundVisibility(.hidden)
                 ToolbarItem(placement: .primaryAction) {
                     AddCardFanView(
                         isExpanded: $showingCardOptions,
@@ -185,8 +187,19 @@ struct CanvasView: View {
                         .padding(24)
                 }
             }
+            .overlay(alignment: .bottom) {
+                CanvasPromptComposer(
+                    text: $canvasPrompt,
+                    submit: submitCanvasPrompt,
+                    recorder: voiceRecorder
+                )
+                .padding(.bottom, 20)
+            }
             .clipped()
-            .onAppear(perform: normalizeBoardGeometry)
+            .onAppear {
+                ensureCanvasHeader()
+                normalizeBoardGeometry()
+            }
             .task(id: board.id) {
                 await monitorWeatherCards()
             }
@@ -270,7 +283,7 @@ struct CanvasView: View {
     private var canvasScrollView: some View {
         ScrollView(.vertical) {
             canvasSurface
-                // Keep the dot field anchored at the scroll view's top-left. It fills the window
+                // Keep the technical grid anchored at the scroll view's top-left. It fills the window
                 // when the viewport is wider than the four-column card area, while the minimum
                 // width still preserves the 4×1 footprint plus its one-dot side margins.
                 .frame(width: canvasContentWidth, height: canvasHeight)
@@ -286,14 +299,12 @@ struct CanvasView: View {
                 .contentShape(.rect)
                 .onTapGesture(perform: clearSelection)
 
-            if showsDotGrid {
-                DotGrid(
-                    origin: CGPoint(
-                        x: CanvasMetrics.canvasMargin,
-                        y: cardGridOriginY
-                    )
+            DotGrid(
+                origin: CGPoint(
+                    x: CanvasMetrics.canvasMargin,
+                    y: cardGridOriginY
                 )
-            }
+            )
 
             dropPreviewView
             cardsLayer
@@ -303,8 +314,7 @@ struct CanvasView: View {
     @ViewBuilder
     private var dropPreviewView: some View {
         if let preview = dropPreview {
-            // The landing ghost is a flat placement cue. It intentionally
-            // does not use CardChrome so it never reads as a second card.
+            // The landing ghost is a flat placement cue so it never reads as a second card.
             RoundedRectangle(cornerRadius: dropPreviewCornerRadius)
                 .fill(.primary.opacity(0.08))
                 .frame(width: preview.width, height: preview.height)
@@ -359,10 +369,10 @@ struct CanvasView: View {
     }
 
     private var canvasBackgroundColor: Color {
-        colorScheme == .dark ? Color(hex: "#181818") : .white
+        CopycoaColors.workspaceBackground(for: colorScheme)
     }
 
-    /// The dot rows share the same origin as body-card placement. A header is structural and
+    /// The grid lines share the same origin as body-card placement. A header is structural and
     /// establishes a deliberately tighter first content row through `headerContentSpacing`.
     private var cardGridOriginY: CGFloat {
         CGFloat(contentMinimumY(for: .stickyNote) ?? Double(CanvasMetrics.canvasMargin))
@@ -406,6 +416,7 @@ struct CanvasView: View {
     // MARK: - Gestures
 
     private func dragChanged(_ card: Card, translation: CGSize) {
+        guard card.kind != .header else { return }
         if draggingCardID != card.id {
             draggingCardID = card.id
             bringToFront(card)
@@ -416,6 +427,7 @@ struct CanvasView: View {
     }
 
     private func dragEnded(_ card: Card, translation: CGSize) {
+        guard card.kind != .header else { return }
         let landing = landingRect(for: card, translation: translation)
         card.x = landing.minX
         card.y = landing.minY
@@ -829,14 +841,16 @@ struct CanvasView: View {
         return card
     }
 
-    /// Placement for a newly created card: the free slot nearest the visible viewport center.
+    /// Placement for a newly created card: scan the plane row-first from the first content row,
+    /// filling columns left-to-right before advancing to the next row.
     private func placement(for pointSize: CGSize, kind: CardKind) -> (x: Double, y: Double) {
-        let centerX = Double(CanvasMetrics.canvasWidth) / 2
-        let centerY = Double(scrollOffset + viewportSize.height / 2)
+        let firstRowY = kind == .header
+            ? Double(CanvasMetrics.headerTopInset)
+            : (contentMinimumY(for: kind) ?? Double(CanvasMetrics.canvasMargin))
         let origin = nearestFreePosition(
             for: pointSize,
-            nearX: centerX - Double(pointSize.width) / 2,
-            nearY: centerY - Double(pointSize.height) / 2,
+            nearX: Double(CanvasMetrics.canvasMargin),
+            nearY: firstRowY,
             kind: kind
         )
         return (origin.x, origin.y)
@@ -873,6 +887,11 @@ struct CanvasView: View {
     /// Clamps legacy or resized cards to the one-dot horizontal margins. The y-axis remains
     /// unbounded, so only its lower margin needs normalization.
     private func constrainToCanvasWidth(_ card: Card) {
+        if card.kind == .header {
+            card.x = Double(CanvasMetrics.canvasMargin)
+            card.y = Double(CanvasMetrics.headerTopInset)
+            return
+        }
         let minX = Double(CanvasMetrics.canvasMargin)
         let maxX = max(minX, Double(CanvasMetrics.canvasWidth - CanvasMetrics.canvasMargin) - card.width)
         let snappedX = minX + Double(CanvasMetrics.module) * ((card.x - minX) / Double(CanvasMetrics.module)).rounded()
@@ -900,6 +919,30 @@ struct CanvasView: View {
         }
     }
 
+    /// Every canvas gets one structural header anchored to the top of the plane. It sits behind
+    /// later cards in the persisted z-order while remaining part of the same grid.
+    @discardableResult
+    private func ensureCanvasHeader() -> Card {
+        if let existing = board.cards.first(where: { $0.kind == .header }) {
+            constrainToCanvasWidth(existing)
+            existing.zIndex = max(existing.zIndex, 1)
+            return existing
+        }
+        let size = CardKind.header.defaultCardSize
+        let header = Card(
+            kind: .header,
+            size: size,
+            x: Double(CanvasMetrics.canvasMargin),
+            y: Double(CanvasMetrics.headerTopInset),
+            zIndex: 1
+        )
+        header.text = board.name
+        context.insert(header)
+        header.board = board
+        board.cards.append(header)
+        return header
+    }
+
     private var headerBottomY: Double? {
         board.cards
             .filter { $0.kind == .header }
@@ -917,6 +960,77 @@ struct CanvasView: View {
         if kind == .header || kind == .stickyNote {
             editingCardID = card.id
         }
+    }
+
+    private func submitCanvasPrompt() {
+        let prompt = canvasPrompt.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !prompt.isEmpty else { return }
+
+        let interpretation = CanvasPromptInterpreter.interpret(prompt)
+        let canvasTitle = CanvasTitleInferer.title(for: prompt, interpretation: interpretation)
+        board.name = canvasTitle
+        let header = ensureCanvasHeader()
+        header.text = interpretation.kind == .calendar ? interpretation.content : canvasTitle
+        normalizeBoardGeometry()
+        let card = newCard(interpretation.kind)
+        switch interpretation.kind {
+        case .header, .stickyNote, .image:
+            card.text = interpretation.content
+            editingCardID = card.id
+        case .quote:
+            card.quoteText = interpretation.content
+        case .checklist:
+            card.checklistTitle = interpretation.content
+        case .progress:
+            card.progressTitle = interpretation.content
+        case .palette:
+            card.paletteTitle = interpretation.content
+        case .calendar:
+            card.calendarEventTitle = interpretation.location.map { "\(interpretation.content) · \($0)" } ?? interpretation.content
+            if let date = interpretation.date {
+                card.calendarDateKind = .singleDate
+                card.calendarStartDate = date
+                card.calendarEndDate = date.addingTimeInterval(24 * 60 * 60)
+            }
+        default:
+            card.text = interpretation.content
+        }
+        canvasPrompt = ""
+
+        if let location = interpretation.location {
+            Task { @MainActor in
+                await setupLocationContext(location)
+            }
+        }
+    }
+
+    /// A location-bearing request sets up the useful spatial context around the event.
+    private func setupLocationContext(_ query: String) async {
+        guard let found = try? await searchLocation(query) else { return }
+
+        let map = newCard(.map)
+        map.title = found.name
+        map.latitude = found.latitude
+        map.longitude = found.longitude
+
+        let weather = newCard(.weather)
+        weather.weatherLocation = found.name
+        weather.latitude = found.latitude
+        weather.longitude = found.longitude
+        refreshWeather(weather, resolvingLocation: false)
+
+        if let preset = timeZonePreset(for: query) {
+            let timeZone = newCard(.timeZone)
+            timeZone.timeZoneIdentifier = preset.identifier
+        }
+    }
+
+    private func timeZonePreset(for location: String) -> TimeZoneCardPreset? {
+        let value = location.lowercased()
+        if value.contains("cupertino") || value.contains("california") || value.contains("los angeles") {
+            return TimeZoneCardPreset.all.first { $0.identifier == "America/Los_Angeles" }
+        }
+        return TimeZoneCardPreset.all.first { value.contains($0.city.lowercased()) }
     }
 
     private func requestNewCard(_ kind: CardKind) {

@@ -9,7 +9,7 @@ struct SidebarCanvasThumbnail: View {
     private enum Metrics {
         static let cardWidth: CGFloat = 64
         static let cardHeight: CGFloat = 72
-        static let cardCornerRadius = CardChromeMetrics.previewCornerRadius
+        static let cardCornerRadius: CGFloat = 10
         static let stackWidth: CGFloat = 76
         static let stackHeight: CGFloat = 84
     }
@@ -41,10 +41,10 @@ struct SidebarCanvasThumbnail: View {
     private var emptyCanvasCard: some View {
         // This is an empty-state affordance, not a card surface: keep it flat and
         // reserve the dotted outline for the add cue only.
-        RoundedRectangle(cornerRadius: 10, style: .continuous)
+        RoundedRectangle(cornerRadius: CopycoaColors.largeSurfaceRadius, style: .continuous)
             .fill(.primary.opacity(0.08))
             .overlay {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                RoundedRectangle(cornerRadius: CopycoaColors.largeSurfaceRadius, style: .continuous)
                     .strokeBorder(
                         .secondary.opacity(0.42),
                         style: StrokeStyle(lineWidth: 1, dash: [3, 3])
@@ -65,7 +65,6 @@ struct SidebarCanvasThumbnail: View {
             // growing to match the source card's actual footprint.
             .frame(width: Metrics.cardWidth, height: Metrics.cardHeight)
             .clipShape(RoundedRectangle(cornerRadius: Metrics.cardCornerRadius, style: .continuous))
-            .cardChrome(cornerRadius: Metrics.cardCornerRadius)
             .overlay(alignment: .topTrailing) {
                 if card.kind == .image, card.urlString != nil {
                     Image(systemName: "arrow.up.right")
@@ -76,7 +75,7 @@ struct SidebarCanvasThumbnail: View {
                         .overlay {
                             Circle().strokeBorder(.white.opacity(0.20), lineWidth: 1.5)
                         }
-                        .padding(7)
+                        .padding(CopycoaColors.controlGap)
                 }
             }
             .overlay {

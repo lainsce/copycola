@@ -60,17 +60,17 @@ struct ImageCardSurface: View {
     private var captionField: some View {
         TextField("Caption", text: $card.text)
             .textFieldStyle(.plain)
-            .font(.caption.bold())
+            .font(CopycoaTypography.caption)
             .foregroundStyle(.primary)
             .focused($focused)
             .frame(maxWidth: 180)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 6)
+            .padding(.horizontal, CopycoaColors.fieldHorizontalPadding)
+            .padding(.vertical, CopycoaColors.gridUnit * 2)
             .background {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                RoundedRectangle(cornerRadius: CopycoaColors.controlRadius, style: .continuous)
                     .strokeBorder(.black.opacity(0.06), lineWidth: 1)
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color(nsColor: .textBackgroundColor).opacity(0.96))
+                RoundedRectangle(cornerRadius: CopycoaColors.controlRadius)
+                    .fill(CopycoaColors.itemSurface.opacity(0.96))
                     .padding(1)
             }
     }

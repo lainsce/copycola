@@ -22,6 +22,10 @@ struct CanvasCardLayer: View {
         let dragging = draggingCardID == card.id
         let selected = selectedCardID == card.id
         let extra = dragging ? dragTranslation : .zero
+        let renderedSize = CGSize(
+            width: max(card.width, card.cardSize.pointSize.width),
+            height: max(card.height, card.cardSize.pointSize.height)
+        )
 
         return CardView(
             card: card,
@@ -41,10 +45,10 @@ struct CanvasCardLayer: View {
             onRefreshWeather: { actions.refreshWeather(card) },
             onEditDetails: { actions.editDetails(card) }
         )
-        .frame(width: card.width, height: card.height)
+        .frame(width: renderedSize.width, height: renderedSize.height)
         .position(
-            x: card.x + card.width / 2 + extra.width,
-            y: card.y + card.height / 2 + extra.height
+            x: card.x + renderedSize.width / 2 + extra.width,
+            y: card.y + renderedSize.height / 2 + extra.height
         )
         .zIndex(cardZIndex(for: card, dragging: dragging, selected: selected))
         .onTapGesture(count: 2) { actions.beginEditing(card) }

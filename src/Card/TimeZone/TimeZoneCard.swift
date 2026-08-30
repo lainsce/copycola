@@ -117,9 +117,9 @@ private struct TimeZoneCardMetrics {
     }
 
     var padding: CGFloat { max(16, scaled(80)) }
-    var titleFont: CGFloat { max(15, scaled(56)) }
-    var zoneFont: CGFloat { max(18, scaled(50)) }
-    var offsetFont: CGFloat { max(30, scaled(88)) }
+    var titleFont: CGFloat { CopycoaTypography.Role.contentBlockTitle.size }
+    var zoneFont: CGFloat { CopycoaTypography.Role.display.size }
+    var offsetFont: CGFloat { CopycoaTypography.Role.bigDisplay.size }
     var zoneSpacing: CGFloat { -max(1, scaled(4)) }
 }
 
@@ -131,38 +131,30 @@ struct TimeZoneCardContent: View {
     var body: some View {
         TimelineView(.periodic(from: .now, by: 60)) { context in
             let preset = TimeZoneCardPreset.preset(for: card.timeZoneIdentifier)
-            let isDaytime = TimeZoneCardLogic.isDaytime(at: context.date, in: preset.timeZone)
             let offset = TimeZoneCardLogic.offsetText(at: context.date, in: preset.timeZone)
 
             GeometryReader { proxy in
                 let metrics = TimeZoneCardMetrics(size: proxy.size)
 
                 ZStack(alignment: .topLeading) {
-                    TimeZoneMapSurface(preset: preset, isDaytime: isDaytime)
-
-                    LinearGradient(
-                        colors: isDaytime
-                            ? [.white.opacity(0.18), .clear, .black.opacity(0.06)]
-                            : [.black.opacity(0.26), .clear, .black.opacity(0.18)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
+                    TimeZoneMapSurface(preset: preset)
 
                     VStack(alignment: .leading, spacing: 0) {
                         Text("Time Zone")
-                            .font(.system(size: metrics.titleFont, weight: .semibold, design: .rounded))
+                            .font(CopycoaTypography.contentBlockTitle)
+                            .foregroundStyle(.primary)
 
                         Spacer(minLength: 0)
 
                         VStack(alignment: .leading, spacing: metrics.zoneSpacing) {
                             Text("GMT")
-                                .font(.system(size: metrics.zoneFont, weight: .regular, design: .rounded))
-                                .foregroundStyle(.white.opacity(0.68))
+                                .font(CopycoaTypography.display)
+                                .foregroundStyle(.secondary)
                             Text(offset)
-                                .font(.system(size: metrics.offsetFont, weight: .medium, design: .rounded))
+                                .font(CopycoaTypography.bigDisplay)
+                                .foregroundStyle(.primary)
                         }
                     }
-                    .foregroundStyle(.white)
                     .padding(.horizontal, metrics.padding)
                     .padding(.vertical, metrics.padding)
                 }

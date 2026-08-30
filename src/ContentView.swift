@@ -5,34 +5,32 @@ struct ContentView: View {
     @Query(sort: \Board.createdAt) private var boards: [Board]
     @Environment(\.modelContext) private var context
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.colorScheme) private var colorScheme
     @State private var selection: UUID?
 
     private let sidebarWidth: CGFloat = 300
 
     var body: some View {
-        ZStack(alignment: .topLeading) {
+        ZStack {
+            CopycoaColors.workspaceBackground(for: colorScheme)
+                .ignoresSafeArea()
+
             HStack(spacing: 0) {
                 SidebarView(selection: $selection)
                     .frame(maxWidth: sidebarWidth, maxHeight: .infinity)
                     .ignoresSafeArea(.all, edges: .top)
+                    .overlay(alignment: .trailing) {
+                        Rectangle()
+                            .fill(CopycoaColors.sidebarDivider(for: colorScheme))
+                            .frame(width: 1)
+                            .allowsHitTesting(false)
+                    }
 
                 detail
                     .ignoresSafeArea(.container, edges: .top)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .ignoresSafeArea(.all, edges: .top)
-
-            // Draw the divider above the HStack so its shadow can bleed into the
-            // canvas without becoming another pane or changing either width.
-            GLWNSidebarBoundaryDivider()
-                // The divider's line is on the overlay's trailing edge, so the
-                // overlay starts just inside the sidebar and ends at the pane
-                // boundary. This keeps the shadow on the sidebar side.
-                .offset(x: sidebarWidth - GLWNSidebarBoundaryDivider.overlayWidth)
-                .ignoresSafeArea(.container, edges: .top)
-                .frame(width: GLWNSidebarBoundaryDivider.overlayWidth)
-                .frame(maxHeight: .infinity)
-                .accessibilityHidden(true)
         }
         .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
         // Keep both panes visually active while the app is active. Losing window

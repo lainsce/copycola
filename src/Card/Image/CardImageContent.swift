@@ -14,7 +14,7 @@ struct CardImageContent: View {
                 ZStack {
                     Color.secondary.opacity(0.12)
                     Image(systemName: "photo")
-                        .font(.largeTitle)
+                        .font(.system(size: 32, weight: .regular))
                         .foregroundStyle(.secondary)
                 }
             }

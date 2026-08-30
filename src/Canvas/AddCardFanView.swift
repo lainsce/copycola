@@ -10,6 +10,7 @@ struct AddCardFanView: View {
             .popover(isPresented: $isExpanded, arrowEdge: .bottom) {
                 AddCardPickerView(addCard: selectCard, animation: fanAnimation)
                     .padding(8)
+                    .presentationBackground(CopycoaColors.itemSurface)
             }
     }
 
@@ -19,13 +20,13 @@ struct AddCardFanView: View {
                 isExpanded.toggle()
             }
         } label: {
-            Image(systemName: "plus")
+            NULIcon(systemImage: "plus")
                 .rotationEffect(.degrees(isExpanded ? 45 : 0))
         }
         .accessibilityLabel(Text(anchorTitle))
         .accessibilityHint(Text("Shows card types"))
         .help(Text(anchorTitle))
-        .buttonStyle(GLWNToolbarButtonStyle(diameter: 38))
+        .buttonStyle(NULToolbarButtonStyle(diameter: 38))
     }
 
     private func selectCard(_ kind: CardKind) {
@@ -40,6 +41,6 @@ struct AddCardFanView: View {
     }
 
     private var fanAnimation: Animation? {
-        reduceMotion ? nil : .snappy
+        reduceMotion ? nil : CopycoaColors.controlMotion
     }
 }

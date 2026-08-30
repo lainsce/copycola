@@ -11,11 +11,7 @@ struct SidebarView: View {
     @State private var editingBoardID: UUID?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Canvases")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-
+        VStack(alignment: .leading, spacing: CopycoaColors.controlGap) {
             ForEach(boards) { board in
                 SidebarBoardButton(
                     board: board,
@@ -34,16 +30,17 @@ struct SidebarView: View {
             }
         }
         .padding(8)
-        .padding(.top, 50)
+        .padding(.top, CopycoaColors.gridUnit * 13)
         .frame(width: 300)
         .frame(maxHeight: .infinity, alignment: .top)
-        .background(GLWNSidebarMaterialSurface())
+        .background(NULSidebarSurface())
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button("New Canvas", systemImage: "rectangle.badge.plus", action: addBoard)
                     .labelStyle(.iconOnly)
                     .help(Text("New Canvas"))
-                    .buttonStyle(GLWNToolbarButtonStyle())
+                    .buttonStyle(NULToolbarButtonStyle())
+                    .padding(.leading, 158)
             }
             .sharedBackgroundVisibility(.hidden)
         }

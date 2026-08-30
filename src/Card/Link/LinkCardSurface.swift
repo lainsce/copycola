@@ -1,39 +1,40 @@
 import SwiftUI
 
-/// The link card's favicon, metadata hierarchy, and theme-color/fallback surface.
+/// The link card's favicon and metadata hierarchy on the shared Item surface.
 struct LinkCardSurface: View {
     let card: Card
     let cornerRadius: CGFloat
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             CardFaviconContent(card: card)
                 .frame(width: 40, height: 40)
-                .clipShape(.rect(cornerRadius: 10))
+                .clipShape(.rect(cornerRadius: CopycoaColors.largeSurfaceRadius))
                 .overlay {
-                    RoundedRectangle(cornerRadius: 10)
-                        .strokeBorder(.black.opacity(0.04), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: CopycoaColors.largeSurfaceRadius)
+                        .strokeBorder(CopycoaColors.itemRule(for: colorScheme).opacity(0.35), lineWidth: 1)
                 }
 
-            Spacer(minLength: 8)
+            Spacer(minLength: CanvasMetrics.gridUnit / 5)
 
             Text(verbatim: card.title ?? card.urlString ?? String(localized: "Link"))
-                .font(.headline)
+                .font(CopycoaTypography.contentBlockTitle)
                 .foregroundStyle(.primary)
-                .lineLimit(2)
+                .lineLimit(card.cardSize == .oneByOne ? 1 : 2)
             if let host = URL(string: card.urlString ?? "")?.host {
                 Text(verbatim: host)
-                    .font(.caption)
+                    .font(CopycoaTypography.caption)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
-                    .padding(.top, 2)
+                    .padding(.top, CanvasMetrics.gridUnit / 10)
             }
             if let detail = card.detail, !detail.isEmpty {
                 Text(verbatim: detail)
-                    .font(.caption)
+                    .font(CopycoaTypography.body)
                     .foregroundStyle(.secondary)
-                    .lineLimit(3)
-                    .padding(.top, 6)
+                    .lineLimit(card.cardSize == .oneByOne ? 2 : 3)
+                    .padding(.top, CanvasMetrics.gridUnit / 5)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -43,32 +44,6 @@ struct LinkCardSurface: View {
 
     private var linkCardSurface: some View {
         RoundedRectangle(cornerRadius: cornerRadius)
-            .fill(Color(nsColor: .textBackgroundColor))
-            .overlay {
-                if let themeColor = linkThemeColor {
-                    LinearGradient(
-                        colors: [
-                            themeColor.opacity(0.16),
-                            themeColor.opacity(0.06),
-                            .clear,
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                    .clipShape(.rect(cornerRadius: cornerRadius))
-                } else {
-                    CardFaviconBlurBackground(card: card)
-                        .clipShape(.rect(cornerRadius: cornerRadius))
-                }
-            }
-    }
-
-    private var linkThemeColor: Color? {
-        guard let hex = card.themeColorHex,
-              hex.count == 6,
-              hex.allSatisfy(\.isHexDigit) else {
-            return nil
-        }
-        return Color(hex: hex)
+            .fill(CopycoaColors.itemSurface)
     }
 }

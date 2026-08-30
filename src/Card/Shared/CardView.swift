@@ -20,28 +20,22 @@ struct CardView: View {
     var onEditDetails: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var isStickyPalettePresented = false
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         Group {
             if card.kind == .header {
                 content
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .overlay(alignment: .bottom) {
-                        Rectangle()
-                            .fill(Color(nsColor: .separatorColor))
-                            .frame(height: 1)
-                    }
             } else {
                 content
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .cardChrome(cornerRadius: cornerRadius)
             }
         }
         .overlay {
             if isSelected && card.kind != .header {
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .strokeBorder(Color.accent, lineWidth: 1)
+                    .strokeBorder(Color.accent.opacity(0.82), lineWidth: 1)
             }
         }
         .overlay(alignment: .topLeading) {
@@ -60,7 +54,7 @@ struct CardView: View {
         }
         .rotationEffect(.degrees(dragTiltDegrees))
         .animation(
-            reduceMotion ? nil : .interactiveSpring(response: 0.22, dampingFraction: 1),
+            reduceMotion ? nil : CopycoaColors.controlMotion,
             value: dragTiltDegrees
         )
     }
@@ -117,10 +111,9 @@ struct CardView: View {
         Button("Delete Card", systemImage: "trash", action: onDelete)
             .labelStyle(.iconOnly)
             .font(.system(size: 12, weight: .semibold))
-            .foregroundStyle(.black.opacity(0.8))
+            .foregroundStyle(CopycoaColors.itemText(for: colorScheme).opacity(0.8))
             .frame(width: 30, height: 30)
-            .background(Circle().fill(.white))
-            .shadow(color: .black.opacity(0.2), radius: 4, y: 2)
+            .background(Circle().fill(CopycoaColors.itemSurface))
             .buttonStyle(.plain)
             .help(Text("Delete Card"))
     }
@@ -128,20 +121,19 @@ struct CardView: View {
     /// Dark bar under a selected card: size options, then the card's kind-specific actions
     /// (edit text, change image, edit link/location/calendar) after a divider.
     private var controlBar: some View {
-        HStack(spacing: 3) {
+        HStack(spacing: CopycoaColors.gridUnit) {
             ForEach(CardSize.selectable) { sizeButton($0) }
 
             Rectangle()
                 .fill(.white.opacity(0.22))
                 .frame(width: 1, height: 20)
-                .padding(.horizontal, 6)
+                .padding(.horizontal, CopycoaColors.gridUnit)
             actionButtons
         }
-        .padding(5)
+        .padding(CopycoaColors.gridUnit)
         .background {
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: CopycoaColors.largeSurfaceRadius)
                 .fill(.black.opacity(0.82))
-                .shadow(color: .black.opacity(0.25), radius: 6, y: 3)
         }
     }
 
@@ -149,7 +141,6 @@ struct CardView: View {
     private var actionButtons: some View {
         switch card.kind {
         case .stickyNote:
-            stickyPaletteMenu
             barButton("Edit Note", symbol: "pencil", action: onBeginEdit)
         case .image:
             barButton("Change Image", symbol: "photo", action: onChooseImage)
@@ -179,68 +170,6 @@ struct CardView: View {
         }
     }
 
-    private var stickyPaletteMenu: some View {
-        Button {
-            isStickyPalettePresented.toggle()
-        } label: {
-            ZStack {
-                Circle()
-                    .fill(Color(hex: currentStickyColorHex))
-                    .overlay {
-                        Circle().stroke(.white.opacity(0.65), lineWidth: 1)
-                    }
-                Image(systemName: "paintpalette.fill")
-                    .symbolRenderingMode(.monochrome)
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(.white)
-                    .shadow(color: .black.opacity(0.2), radius: 1, y: 0)
-            }
-            .frame(width: 26, height: 26)
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(Text("Choose Note Color"))
-        .help(Text("Choose Note Color"))
-        .popover(isPresented: $isStickyPalettePresented, arrowEdge: .bottom) {
-            VStack(alignment: .leading, spacing: 8) {
-                ForEach(StickyPalette.all, id: \.self) { colorHex in
-                    Button {
-                        card.colorHex = colorHex
-                        isStickyPalettePresented = false
-                    } label: {
-                        HStack(spacing: 8) {
-                            Circle()
-                                .fill(Color(hex: colorHex))
-                                .frame(width: 14, height: 14)
-                                .overlay {
-                                    Circle().stroke(.black.opacity(0.12), lineWidth: 1)
-                                }
-                            Text(StickyPalette.name(for: colorHex))
-                            Spacer(minLength: 8)
-                            if card.colorHex == colorHex {
-                                Image(systemName: "checkmark")
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(.rect)
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(Text(StickyPalette.name(for: colorHex)))
-                    .accessibilityAddTraits(card.colorHex == colorHex ? .isSelected : [])
-                }
-            }
-            .padding(12)
-            .frame(width: 180)
-        }
-    }
-
-    private var currentStickyColorHex: String {
-        guard let colorHex = card.colorHex, StickyPalette.all.contains(colorHex) else {
-            return StickyPalette.yellow
-        }
-        return colorHex
-    }
-
     private func sizeButton(_ size: CardSize) -> some View {
         let selected = card.cardSize == size
         // Proportional glyph representing the footprint's cols × rows.
@@ -252,7 +181,7 @@ struct CardView: View {
                 Text(size.accessibilityLabel)
             } icon: {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: CopycoaColors.controlRadius)
                         .fill(selected ? Color.white : .clear)
                         .frame(width: 28, height: 28)
                     RoundedRectangle(cornerRadius: 1)

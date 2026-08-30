@@ -13,7 +13,7 @@ struct ChecklistCardContent: View {
                 if card.checklistSlots.isEmpty {
                     Spacer(minLength: metrics.sectionSpacing)
                     Text("Add up to 3 checks")
-                        .font(.system(size: metrics.bodyFont, weight: .medium, design: .rounded))
+                        .font(CopycoaTypography.body)
                         .foregroundStyle(.secondary)
                 } else {
                     Spacer(minLength: metrics.sectionSpacing)
@@ -37,7 +37,7 @@ struct ChecklistCardContent: View {
         }
         .background {
             RoundedRectangle(cornerRadius: card.cardSize.cornerRadius, style: .continuous)
-                .fill(CardSurfaceStyle.subtleGrayGradient)
+                .fill(CardSurfaceStyle.item)
         }
         .clipShape(.rect(cornerRadius: card.cardSize.cornerRadius))
         .accessibilityElement(children: .contain)
@@ -54,8 +54,8 @@ private struct ChecklistCardMetrics {
     var inset: CGFloat { CanvasMetrics.cardContentInset }
     var sectionSpacing: CGFloat { max(8, 10 * scale) }
     var rowSpacing: CGFloat { max(8, 12 * scale) }
-    var titleFont: CGFloat { max(13, 17 * scale) }
-    var bodyFont: CGFloat { max(10, 13 * scale) }
+    var titleFont: CGFloat { CopycoaTypography.Role.contentBlockTitle.size }
+    var bodyFont: CGFloat { CopycoaTypography.Role.body.size }
     var checkSize: CGFloat { max(16, 22 * scale) }
     var checkStroke: CGFloat { max(1.5, 2 * scale) }
 }
@@ -67,12 +67,12 @@ private struct ChecklistCardHeader: View {
     var body: some View {
         HStack(spacing: metrics.sectionSpacing) {
             Image(systemName: "checklist")
-                .font(.system(size: metrics.titleFont, weight: .semibold))
-                .foregroundStyle(.accent)
+                .font(.system(size: 18, weight: .regular))
+                .foregroundStyle(Color.accent)
                 .accessibilityHidden(true)
 
             Text(verbatim: title)
-                .font(.system(size: metrics.titleFont, weight: .bold, design: .rounded))
+                .font(CopycoaTypography.contentBlockTitle)
                 .foregroundStyle(.primary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
@@ -97,7 +97,7 @@ private struct ChecklistRow: View {
                     .frame(width: metrics.checkSize, height: metrics.checkSize)
 
                 Text(verbatim: text)
-                    .font(.system(size: metrics.bodyFont, weight: .medium, design: .rounded))
+                    .font(CopycoaTypography.body)
                     .foregroundStyle(isCompleted ? .secondary : .primary)
                     .strikethrough(isCompleted, color: .secondary)
                     .lineLimit(2)

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct PrivacyPolicyView: View {
     @Environment(\.dismissWindow) private var dismissWindow
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         NavigationStack {
@@ -9,12 +10,11 @@ struct PrivacyPolicyView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     VStack(alignment: .leading, spacing: 8) {
                         Label("Your data stays yours", systemImage: "lock.shield.fill")
-                            .font(.title2.bold())
+                            .font(CopycoaTypography.viewTitle)
                         Text("Copycoa is a local-first canvas. This policy explains what happens when you use the app.")
+                            .font(CopycoaTypography.body)
                             .foregroundStyle(.secondary)
                     }
-
-                    Divider()
 
                     VStack(alignment: .leading, spacing: 20) {
                         PrivacyPolicySection(
@@ -46,6 +46,10 @@ struct PrivacyPolicyView: View {
                 }
                 .padding(28)
                 .frame(maxWidth: 680, alignment: .leading)
+                .background(
+                    CopycoaColors.itemSurface,
+                    in: RoundedRectangle(cornerRadius: CopycoaColors.largeSurfaceRadius, style: .continuous)
+                )
             }
             .navigationTitle("Privacy Policy")
             .toolbar {
@@ -53,11 +57,12 @@ struct PrivacyPolicyView: View {
                     Button("Done") {
                         dismissWindow(id: "privacy-policy")
                     }
-                    .buttonStyle(GLWNInContentButtonStyle(tone: .neutral))
+                    .buttonStyle(NULButtonStyle(kind: .neutral))
                 }
                 .sharedBackgroundVisibility(.hidden)
             }
         }
         .frame(minWidth: 540, minHeight: 520)
+        .background(CopycoaColors.workspaceBackground(for: colorScheme))
     }
 }

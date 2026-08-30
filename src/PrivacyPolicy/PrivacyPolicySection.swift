@@ -6,10 +6,11 @@ struct PrivacyPolicySection: View {
     let text: LocalizedStringResource
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 8) {
             Label(title, systemImage: systemImage)
-                .font(.headline)
+                .font(CopycoaTypography.contentBlockTitle)
             Text(text)
+                .font(CopycoaTypography.body)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
         }

@@ -3,8 +3,10 @@ import SwiftUI
 
 nonisolated enum PaletteCardDefaults {
     static let maximumColors = 5
-    static let defaultColors = ["FFD84D", "FF9F45", "9CE29C", "8FD0FF", "D0B3FF"]
-    static let defaultColorsJSON = "[\"FFD84D\",\"FF9F45\",\"9CE29C\",\"8FD0FF\",\"D0B3FF\"]"
+    /// The palette card documents the app's visual tokens rather than introducing
+    /// a second set of per-card accents.
+    static let defaultColors = ["DE9C32", "F2F2F2", "E4E4E4", "BDBDBD", "747474"]
+    static let defaultColorsJSON = "[\"DE9C32\",\"F2F2F2\",\"E4E4E4\",\"BDBDBD\",\"747474\"]"
 }
 
 nonisolated enum PaletteChipSlot: Int, CaseIterable, Identifiable {
@@ -27,11 +29,11 @@ struct PaletteCardContent: View {
     var body: some View {
         GeometryReader { proxy in
             let metrics = PaletteCardMetrics(size: proxy.size)
-            let colors = card.paletteColorHexValues
+            let colors = PaletteCardDefaults.defaultColors
 
             VStack(alignment: .leading, spacing: metrics.sectionSpacing) {
                 Text(verbatim: card.paletteTitleValue)
-                    .font(.system(size: metrics.titleFont, weight: .bold, design: .rounded))
+                    .font(CopycoaTypography.contentBlockTitle)
                     .foregroundStyle(.primary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
@@ -58,7 +60,7 @@ struct PaletteCardContent: View {
         }
         .background {
             RoundedRectangle(cornerRadius: card.cardSize.cornerRadius, style: .continuous)
-                .fill(CardSurfaceStyle.subtleGrayGradient)
+                .fill(CardSurfaceStyle.item)
         }
         .clipShape(.rect(cornerRadius: card.cardSize.cornerRadius))
         .accessibilityElement(children: .contain)
@@ -74,20 +76,21 @@ private struct PaletteCardMetrics {
 
     var inset: CGFloat { CanvasMetrics.cardContentInset }
     var sectionSpacing: CGFloat { max(8, 10 * scale) }
-    var titleFont: CGFloat { max(13, 17 * scale) }
+    var titleFont: CGFloat { CopycoaTypography.Role.contentBlockTitle.size }
     var chipSpacing: CGFloat { max(3, 5 * scale) }
     var chipWidth: CGFloat {
         let available = max(40, size.width - inset * 2)
         return max(16, (available - CGFloat(PaletteCardDefaults.maximumColors - 1) * chipSpacing) / 5)
     }
     var chipHeight: CGFloat { max(46, min(70, 64 * scale)) }
-    var chipLabelFont: CGFloat { max(7, 9 * scale) }
+    var chipLabelFont: CGFloat { CopycoaTypography.Role.caption.size }
 }
 
 private struct PaletteChip: View {
     let label: String
     let colorHex: String
     let metrics: PaletteCardMetrics
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         VStack(spacing: 0) {
@@ -95,17 +98,16 @@ private struct PaletteChip: View {
                 .frame(width: metrics.chipWidth, height: metrics.chipHeight)
 
             Text(verbatim: label)
-                .font(.system(size: metrics.chipLabelFont, weight: .bold, design: .rounded))
+                .font(CopycoaTypography.caption)
                 .foregroundStyle(.secondary)
                 .frame(width: metrics.chipWidth, height: metrics.chipLabelFont * 1.8)
-                .background(.white)
+                .background(CopycoaColors.itemSurface)
         }
         .clipShape(.rect(cornerRadius: max(5, 8 * metrics.scale)))
         .overlay {
             RoundedRectangle(cornerRadius: max(5, 8 * metrics.scale), style: .continuous)
-                .strokeBorder(.black.opacity(0.08), lineWidth: 1)
+                .strokeBorder(CopycoaColors.itemRule(for: colorScheme).opacity(0.5), lineWidth: 1)
         }
-        .shadow(color: .black.opacity(0.04), radius: 1.5, y: 1)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("\(label), \(colorHex)"))
     }

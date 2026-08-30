@@ -8,7 +8,7 @@ struct WeatherAttributionLink: View {
         if let licenseURL {
             Link(destination: licenseURL) {
                 Label("Weather data from MET Norway", systemImage: "cloud.sun")
-                    .font(.caption)
+                    .font(CopycoaTypography.caption)
                     .foregroundStyle(.secondary)
             }
             .buttonStyle(.plain)

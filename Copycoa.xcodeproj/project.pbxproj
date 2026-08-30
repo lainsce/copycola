@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6724F0D2302E8DFD00F747A0 /* WorldTimeZonesMap.svg in Resources */ = {isa = PBXBuildFile; fileRef = 6724F0D1302E8DFD00F747A0 /* WorldTimeZonesMap.svg */; };
 		67FF08943027C17000F9DB17 /* Copycoa.icon in Resources */ = {isa = PBXBuildFile; fileRef = 67FF08933027C17000F9DB17 /* Copycoa.icon */; };
 		67FF08963027CE1300F9DB17 /* Copycoa.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 67FF08953027CE1300F9DB17 /* Copycoa.xcassets */; };
 		67FF08A13027C17000F9DB21 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 67FF08983027C17000F9DB18 /* Localizable.xcstrings */; };
@@ -22,11 +21,11 @@
 		67FF08B83027C17000F9DB2B /* SaoPaulo.png in Resources */ = {isa = PBXBuildFile; fileRef = 67FF08C83027C17000F9DB37 /* SaoPaulo.png */; };
 		67FF08B93027C17000F9DB2C /* Sydney.png in Resources */ = {isa = PBXBuildFile; fileRef = 67FF08C93027C17000F9DB38 /* Sydney.png */; };
 		67FF08BA3027C17000F9DB2D /* Tokyo.png in Resources */ = {isa = PBXBuildFile; fileRef = 67FF08CA3027C17000F9DB39 /* Tokyo.png */; };
+		7A0000010000000000000001 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = 7A0000010000000000000002 /* Fonts */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		000000000000000000000120 /* Copycoa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Copycoa.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		6724F0D1302E8DFD00F747A0 /* WorldTimeZonesMap.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = WorldTimeZonesMap.svg; sourceTree = "<group>"; };
 		67FF08933027C17000F9DB17 /* Copycoa.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Copycoa.icon; sourceTree = "<group>"; };
 		67FF08953027CE1300F9DB17 /* Copycoa.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Copycoa.xcassets; sourceTree = "<group>"; };
 		67FF08973027C17000F9DB17 /* Copycoa.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Copycoa.entitlements; sourceTree = "<group>"; };
@@ -42,7 +41,7 @@
 		67FF08C83027C17000F9DB37 /* SaoPaulo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SaoPaulo.png; sourceTree = "<group>"; };
 		67FF08C93027C17000F9DB38 /* Sydney.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Sydney.png; sourceTree = "<group>"; };
 		67FF08CA3027C17000F9DB39 /* Tokyo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Tokyo.png; sourceTree = "<group>"; };
-		67FF08CB3027C17000F9DB3E /* Copycoa-English.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Copycoa-English.png"; sourceTree = "<group>"; };
+		7A0000010000000000000002 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fonts; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -91,9 +90,8 @@
 				67FF08973027C17000F9DB17 /* Copycoa.entitlements */,
 				67FF08983027C17000F9DB18 /* Localizable.xcstrings */,
 				67FF08993027C17000F9DB19 /* PrivacyInfo.xcprivacy */,
-				67FF08CB3027C17000F9DB3E /* Copycoa-English.png */,
-				6724F0D1302E8DFD00F747A0 /* WorldTimeZonesMap.svg */,
 				67FF08D03027C17000F9DB40 /* TimeZoneMaps */,
+				7A0000010000000000000002 /* Fonts */,
 				67FF08953027CE1300F9DB17 /* Copycoa.xcassets */,
 				67FF08933027C17000F9DB17 /* Copycoa.icon */,
 			);
@@ -176,9 +174,9 @@
 		000000000000000140000000 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
+				7A0000010000000000000001 /* Fonts in Resources */,
 				67FF08963027CE1300F9DB17 /* Copycoa.xcassets in Resources */,
 				67FF08943027C17000F9DB17 /* Copycoa.icon in Resources */,
-				6724F0D2302E8DFD00F747A0 /* WorldTimeZonesMap.svg in Resources */,
 				67FF08A13027C17000F9DB21 /* Localizable.xcstrings in Resources */,
 				67FF08A23027C17000F9DB22 /* PrivacyInfo.xcprivacy in Resources */,
 				67FF08B13027C17000F9DB24 /* Berlin.png in Resources */,
@@ -352,8 +350,11 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_ATSApplicationFontsPath = Fonts;
 				INFOPLIST_KEY_CFBundleDisplayName = Copycoa;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Copycoa uses the microphone to turn spoken thoughts into cards.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Copycoa uses speech recognition to turn spoken thoughts into cards.";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MARKETING_VERSION = 1.0;
@@ -404,8 +405,11 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_ATSApplicationFontsPath = Fonts;
 				INFOPLIST_KEY_CFBundleDisplayName = Copycoa;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Copycoa uses the microphone to turn spoken thoughts into cards.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Copycoa uses speech recognition to turn spoken thoughts into cards.";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MARKETING_VERSION = 1.0;

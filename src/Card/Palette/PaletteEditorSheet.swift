@@ -1,60 +1,73 @@
 import SwiftUI
 
-/// Edits a five-chip Pantone-style palette. Each chip stays a fixed slot so the card remains
-/// visually compact and its colors can be changed without reordering state.
+/// Edits the palette title while keeping the five chips bound to the shared
+/// Nuul token ramp: one accent followed by four neutral values.
 struct PaletteEditorSheet: View {
     @Bindable var card: Card
     let onSave: () -> Void
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
 
     @State private var title: String
-    @State private var colors: [Color]
 
     init(card: Card, onSave: @escaping () -> Void = {}) {
         self.card = card
         self.onSave = onSave
         _title = State(initialValue: card.paletteTitleValue)
-        _colors = State(initialValue: card.paletteColorHexValues.map(Color.init(hex:)))
     }
 
     var body: some View {
         Form {
             Section {
-                GLWNFormRow("Title") {
+                NULFormRow("Title") {
                     TextField("", text: $title, prompt: Text("Palette"))
-                        .textFieldStyle(GLWNTextFieldStyle())
+                        .textFieldStyle(NULTextFieldStyle())
                         .accessibilityLabel("Title")
                 }
             } header: {
                 Text("Palette")
             }
 
-            Section("Pantone chips") {
+            Section("Nuul tokens") {
                 ForEach(PaletteChipSlot.allCases) { slot in
-                    GLWNFormRow("Chip \(slot.rawValue + 1)") {
-                        ColorPicker(
-                            "",
-                            selection: $colors[slot.rawValue],
-                            supportsOpacity: false
+                    NULFormRow("Chip \(slot.rawValue + 1)") {
+                        HStack(spacing: CopycoaColors.controlGap) {
+                            RoundedRectangle(cornerRadius: CopycoaColors.controlRadius)
+                                .fill(Color(hex: PaletteCardDefaults.defaultColors[slot.rawValue]))
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: CopycoaColors.controlRadius)
+                                        .strokeBorder(CopycoaColors.itemRule(for: colorScheme), lineWidth: 1)
+                                }
+                                .frame(width: 28, height: 28)
+                            Text(PaletteCardDefaults.defaultColors[slot.rawValue])
+                                .font(CopycoaTypography.caption.monospaced())
+                                .foregroundStyle(.secondary)
+                        }
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel(
+                            "Chip \(slot.rawValue + 1), \(PaletteCardDefaults.defaultColors[slot.rawValue])"
                         )
-                        .labelsHidden()
                     }
                 }
             }
         }
         .formStyle(.grouped)
+        .scrollContentBackground(.hidden)
+        .background(CopycoaColors.itemSurface, in: RoundedRectangle(cornerRadius: CopycoaColors.largeSurfaceRadius, style: .continuous))
         .frame(width: 460, height: 400)
         .padding(.top, 8)
         .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", action: dismiss.callAsFunction)
-                        .buttonStyle(GLWNInContentButtonStyle(tone: .neutral))
+                        .buttonStyle(NULButtonStyle(kind: .neutral))
                 }
+                .sharedBackgroundVisibility(.hidden)
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save", action: save)
-                        .buttonStyle(GLWNInContentButtonStyle(tone: .accent))
+                        .buttonStyle(NULButtonStyle(kind: .primary))
                     .keyboardShortcut(.defaultAction)
             }
+            .sharedBackgroundVisibility(.hidden)
         }
     }
 
@@ -62,9 +75,7 @@ struct PaletteEditorSheet: View {
         card.paletteTitleValue = title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             ? "Palette"
             : title.trimmingCharacters(in: .whitespacesAndNewlines)
-        card.paletteColorHexValues = colors.enumerated().map { index, color in
-            color.hexValue ?? PaletteCardDefaults.defaultColors[index]
-        }
+        card.paletteColorHexValues = PaletteCardDefaults.defaultColors
         onSave()
         dismiss()
     }

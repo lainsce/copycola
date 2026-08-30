@@ -2,26 +2,27 @@ import CoreGraphics
 
 /// Shared geometry values for the canvas grid and magnetic snapping.
 nonisolated enum CanvasMetrics {
-    /// One-dot gutter between adjacent cards, in points.
+    /// Structural gutter between adjacent cards, in points.
     static let gridUnit: CGFloat = 40
-    /// Fine positioning-dot spacing. Both the 40px gutter and card pitch are exact multiples.
+    /// Fine positioning-dot spacing. It divides the card cell, gutter, and module pitches.
     static let dotSpacing: CGFloat = 5
     /// Diameter of a regular positioning dot.
     static let dotDiameter: CGFloat = 2
-    /// Diameter of the emphasized dot at every fifth grid intersection.
+    /// Diameter of an emphasized card-grid origin marker.
     static let majorDotDiameter: CGFloat = 3
-    /// Number of fine-grid steps between emphasized intersections.
+    /// Legacy interval retained for callers that used the original dot-grid rhythm.
     static let majorDotInterval = 5
     /// Base size of a 1×1 card cell, in points.
     static let cell: CGFloat = 175
     /// Fixed footprint height for a header card.
     static let headerHeight: CGFloat = 60
+    /// The canvas content runs beneath the unified toolbar; keep the structural header below it.
+    static let headerTopInset: CGFloat = 56
     /// Minimum breathing room between a header's divider and the cards below it.
     static let headerContentSpacing: CGFloat = 8
-    /// Shared radius for every card surface and its selection/drag chrome.
-    static let cardCornerRadius: CGFloat = 24
-    /// Shared radius for every card surface that's 2x2 and its selection/drag chrome.
-    static let bigCardCornerRadius: CGFloat = 28
+    /// Industrial geometry: tight enough to feel structural without becoming sharp.
+    static let cardCornerRadius: CGFloat = 12
+    static let bigCardCornerRadius: CGFloat = 12
     /// Shared design-pixel inset between card content and its card edge.
     static let cardContentInset: CGFloat = 16
     /// Maximum rotation applied to a card while it is being dragged.
@@ -34,7 +35,7 @@ nonisolated enum CanvasMetrics {
     static let fourColumnWidth: CGFloat = 4 * cell + 3 * gridUnit
     /// The fixed inset around the canvas content.
     static let canvasMargin: CGFloat = gridUnit
-    /// The canvas is four columns wide with one dot of space on either side.
+    /// The canvas is four columns wide with one structural gutter on either side.
     static let canvasWidth: CGFloat = fourColumnWidth + 2 * canvasMargin
 
     /// Returns a card footprint using the current base cell and dot gutter metrics.

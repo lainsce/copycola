@@ -9,7 +9,7 @@ struct QuoteCardContent: View {
 
             ZStack(alignment: .topLeading) {
                 Text(verbatim: "“")
-                    .font(.system(size: metrics.quoteMarkFont, weight: .black, design: .serif))
+                    .font(CopycoaTypography.display)
                     .foregroundStyle(Color.accent.opacity(0.42))
                     .offset(x: metrics.quoteMarkOffset, y: -metrics.quoteMarkOffset / 2)
                     .accessibilityHidden(true)
@@ -18,7 +18,7 @@ struct QuoteCardContent: View {
                     Spacer(minLength: metrics.quoteMarkFont * 0.38)
 
                     Text(verbatim: card.quoteTextValue)
-                        .font(.system(size: metrics.quoteFont, weight: .medium, design: .serif))
+                        .font(CopycoaTypography.viewSubtitle)
                         .italic()
                         .foregroundStyle(.primary)
                         .lineSpacing(metrics.lineSpacing)
@@ -27,7 +27,7 @@ struct QuoteCardContent: View {
 
                     if !card.quoteAttributionValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                         Text("— \(card.quoteAttributionValue)")
-                            .font(.system(size: metrics.attributionFont, weight: .semibold, design: .rounded))
+                            .font(CopycoaTypography.caption)
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)
@@ -41,7 +41,7 @@ struct QuoteCardContent: View {
         }
         .background {
             RoundedRectangle(cornerRadius: card.cardSize.cornerRadius, style: .continuous)
-                .fill(CardSurfaceStyle.subtleGrayGradient)
+                .fill(CardSurfaceStyle.item)
         }
         .clipShape(.rect(cornerRadius: card.cardSize.cornerRadius))
         .accessibilityElement(children: .ignore)
@@ -64,10 +64,10 @@ private struct QuoteCardMetrics {
 
     var inset: CGFloat { CanvasMetrics.cardContentInset }
     var sectionSpacing: CGFloat { max(8, 10 * scale) }
-    var quoteMarkFont: CGFloat { max(30, 58 * scale) }
+    var quoteMarkFont: CGFloat { CopycoaTypography.Role.display.size }
     var quoteMarkOffset: CGFloat { max(3, 8 * scale) }
-    var quoteFont: CGFloat { max(17, 24 * scale) }
-    var attributionFont: CGFloat { max(10, 12 * scale) }
+    var quoteFont: CGFloat { CopycoaTypography.Role.viewSubtitle.size }
+    var attributionFont: CGFloat { CopycoaTypography.Role.caption.size }
     var lineSpacing: CGFloat { max(1, 2 * scale) }
     var lineLimit: Int { size.width >= 300 ? 4 : 3 }
 }

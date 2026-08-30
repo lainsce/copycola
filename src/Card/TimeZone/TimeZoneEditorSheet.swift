@@ -17,8 +17,8 @@ struct TimeZoneEditorSheet: View {
     var body: some View {
         Form {
             Section {
-                GLWNFormRow("Region") {
-                    GLWNPullDownMenu(
+                NULFormRow("Region") {
+                    NULMenuPicker(
                         "Region",
                         selection: $identifier,
                         options: TimeZoneCardPreset.all.map(\.identifier),
@@ -29,7 +29,7 @@ struct TimeZoneEditorSheet: View {
                 }
 
                 if let preset = TimeZoneCardPreset.all.first(where: { $0.identifier == identifier }) {
-                    GLWNFormRow("Time zone") {
+                    NULFormRow("Time zone") {
                         Text(verbatim: preset.identifier)
                             .foregroundStyle(.secondary)
                     }
@@ -39,18 +39,22 @@ struct TimeZoneEditorSheet: View {
             }
         }
         .formStyle(.grouped)
+        .scrollContentBackground(.hidden)
+        .background(CopycoaColors.itemSurface, in: RoundedRectangle(cornerRadius: CopycoaColors.largeSurfaceRadius, style: .continuous))
         .frame(width: 460, height: 220)
         .padding(.top, 8)
         .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", action: dismiss.callAsFunction)
-                        .buttonStyle(GLWNInContentButtonStyle(tone: .neutral))
+                        .buttonStyle(NULButtonStyle(kind: .neutral))
                 }
+                .sharedBackgroundVisibility(.hidden)
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save", action: save)
-                        .buttonStyle(GLWNInContentButtonStyle(tone: .accent))
+                        .buttonStyle(NULButtonStyle(kind: .primary))
                     .keyboardShortcut(.defaultAction)
             }
+            .sharedBackgroundVisibility(.hidden)
         }
     }
 
