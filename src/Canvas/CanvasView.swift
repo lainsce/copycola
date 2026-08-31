@@ -369,7 +369,7 @@ struct CanvasView: View {
     }
 
     private var canvasBackgroundColor: Color {
-        CopycoaColors.workspaceBackground(for: colorScheme)
+        CopycolaColors.workspaceBackground(for: colorScheme)
     }
 
     /// The grid lines share the same origin as body-card placement. A header is structural and

@@ -4,7 +4,7 @@ import SwiftUI
 enum CardSurfaceStyle {
     /// Every populated card resolves to the opaque Item surface in the active appearance.
     static var item: Color {
-        CopycoaColors.itemSurface
+        CopycolaColors.itemSurface
     }
 
     /// Kept as a source-compatible alias for older card implementations.

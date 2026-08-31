@@ -7,17 +7,17 @@ struct NULTextFieldStyle: TextFieldStyle {
 
     func _body(configuration: TextField<Self._Label>) -> some View {
         configuration
-            .font(CopycoaTypography.body)
-            .padding(.horizontal, CopycoaColors.fieldHorizontalPadding)
-            .frame(minHeight: CopycoaColors.fieldHeight)
+            .font(CopycolaTypography.body)
+            .padding(.horizontal, CopycolaColors.fieldHorizontalPadding)
+            .frame(minHeight: CopycolaColors.fieldHeight)
             .textFieldStyle(.plain)
             .background(
-                CopycoaColors.itemSurface,
-                in: RoundedRectangle(cornerRadius: CopycoaColors.controlRadius, style: .continuous)
+                CopycolaColors.itemSurface,
+                in: RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous)
             )
             .overlay {
-                RoundedRectangle(cornerRadius: CopycoaColors.controlRadius, style: .continuous)
-                    .strokeBorder(CopycoaColors.controlRule(for: colorScheme), lineWidth: 2)
+                RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous)
+                    .strokeBorder(CopycolaColors.controlRule(for: colorScheme), lineWidth: 2)
             }
             .opacity(isEnabled ? 1 : 0.42)
     }

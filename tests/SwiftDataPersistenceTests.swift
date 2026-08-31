@@ -1,6 +1,6 @@
 import SwiftData
 import Testing
-@testable import Copycoa
+@testable import Copycola
 
 struct SwiftDataPersistenceTests {
     @Test @MainActor

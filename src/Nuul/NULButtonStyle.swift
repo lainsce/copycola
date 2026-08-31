@@ -24,21 +24,21 @@ struct NULButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(CopycoaTypography.contentBlockSubtitle)
+            .font(CopycolaTypography.contentBlockSubtitle)
             .symbolRenderingMode(.monochrome)
             .foregroundStyle(labelColor ?? (kind == .primary ? .black : .primary))
             .padding(
                 .horizontal,
-                horizontalPadding ?? (kind == .quiet ? CopycoaColors.gridUnit : CopycoaColors.gridUnit * 2)
+                horizontalPadding ?? (kind == .quiet ? CopycolaColors.gridUnit : CopycolaColors.gridUnit * 2)
             )
-            .frame(minWidth: CopycoaColors.controlHeight, minHeight: CopycoaColors.controlHeight)
+            .frame(minWidth: CopycolaColors.controlHeight, minHeight: CopycolaColors.controlHeight)
             .background(
                 backgroundColor,
-                in: RoundedRectangle(cornerRadius: CopycoaColors.controlRadius, style: .continuous)
+                in: RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous)
             )
             .overlay {
                 if configuration.isPressed && kind != .quiet {
-                    RoundedRectangle(cornerRadius: CopycoaColors.controlRadius, style: .continuous)
+                    RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous)
                         .fill(Color.primary.opacity(0.10))
                 }
             }
@@ -46,7 +46,7 @@ struct NULButtonStyle: ButtonStyle {
             .opacity(isEnabled ? (configuration.isPressed ? 0.84 : 1) : 0.42)
             .scaleEffect(configuration.isPressed && !reduceMotion ? 0.98 : 1)
             .animation(
-                reduceMotion ? nil : CopycoaColors.controlMotion,
+                reduceMotion ? nil : CopycolaColors.controlMotion,
                 value: configuration.isPressed
             )
             .nulWindowActivityAppearance()
@@ -57,7 +57,7 @@ struct NULButtonStyle: ButtonStyle {
         case .primary:
             accentColor
         case .neutral, .quiet:
-            CopycoaColors.itemSurface
+            CopycolaColors.itemSurface
         }
     }
 }

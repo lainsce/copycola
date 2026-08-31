@@ -7,12 +7,12 @@ struct NULSearchField: View {
     @FocusState private var isFocused
 
     var body: some View {
-        HStack(spacing: CopycoaColors.controlGap) {
+        HStack(spacing: CopycolaColors.controlGap) {
             NULIcon(systemImage: "magnifyingglass", foregroundColor: .secondary)
 
             TextField(prompt, text: $text)
                 .textFieldStyle(.plain)
-                .font(CopycoaTypography.contentBlockSubtitle)
+                .font(CopycolaTypography.contentBlockSubtitle)
                 .focused($isFocused)
                 .submitLabel(.search)
                 .accessibilityLabel(prompt)
@@ -27,14 +27,14 @@ struct NULSearchField: View {
                 .foregroundStyle(.secondary)
             }
         }
-        .padding(.horizontal, CopycoaColors.fieldHorizontalPadding)
-        .frame(width: 200, height: CopycoaColors.fieldHeight)
+        .padding(.horizontal, CopycolaColors.fieldHorizontalPadding)
+        .frame(width: 200, height: CopycolaColors.fieldHeight)
         .background(
-            CopycoaColors.itemSurface,
-            in: RoundedRectangle(cornerRadius: CopycoaColors.controlRadius, style: .continuous)
+            CopycolaColors.itemSurface,
+            in: RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous)
         )
         .overlay {
-            RoundedRectangle(cornerRadius: CopycoaColors.controlRadius, style: .continuous)
+            RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous)
                 .strokeBorder(
                     isFocused ? Color.accent.opacity(0.72) : .clear,
                     lineWidth: 2

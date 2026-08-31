@@ -1,13 +1,13 @@
 import SwiftUI
 
-private struct CopycoaSidebarRowPressedKey: EnvironmentKey {
+private struct CopycolaSidebarRowPressedKey: EnvironmentKey {
     static let defaultValue = false
 }
 
 extension EnvironmentValues {
-    var copycoaSidebarRowIsPressed: Bool {
-        get { self[CopycoaSidebarRowPressedKey.self] }
-        set { self[CopycoaSidebarRowPressedKey.self] = newValue }
+    var copycolaSidebarRowIsPressed: Bool {
+        get { self[CopycolaSidebarRowPressedKey.self] }
+        set { self[CopycolaSidebarRowPressedKey.self] = newValue }
     }
 }
 
@@ -16,21 +16,21 @@ struct NULSidebarButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .contentShape(Rectangle())
-            .environment(\.copycoaSidebarRowIsPressed, configuration.isPressed)
+            .environment(\.copycolaSidebarRowIsPressed, configuration.isPressed)
     }
 }
 
 /// Adds the row's pressed fill without attaching a competing zero-distance
 /// drag recognizer to the button. `ButtonStyle.Configuration.isPressed` keeps
 /// the primary click action available on the first click.
-struct CopycoaSidebarRowPressSurface<Content: View>: View {
+struct CopycolaSidebarRowPressSurface<Content: View>: View {
     let content: Content
     let cornerRadius: CGFloat
 
-    @Environment(\.copycoaSidebarRowIsPressed) private var isPressed
+    @Environment(\.copycolaSidebarRowIsPressed) private var isPressed
 
     init(
-        cornerRadius: CGFloat = CopycoaColors.controlRadius,
+        cornerRadius: CGFloat = CopycolaColors.controlRadius,
         @ViewBuilder content: () -> Content
     ) {
         self.content = content()
@@ -41,7 +41,7 @@ struct CopycoaSidebarRowPressSurface<Content: View>: View {
         content
             .background {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(Color.accent.opacity(isPressed ? CopycoaColors.sidebarPressedFillOpacity : 0))
+                    .fill(Color.accent.opacity(isPressed ? CopycolaColors.sidebarPressedFillOpacity : 0))
             }
     }
 }

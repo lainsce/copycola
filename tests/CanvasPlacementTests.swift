@@ -1,6 +1,6 @@
 import CoreGraphics
 import Testing
-@testable import Copycoa
+@testable import Copycola
 
 struct CanvasPlacementTests {
     @Test func snapsANewCardToTheGrid() {

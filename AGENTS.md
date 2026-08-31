@@ -1,13 +1,13 @@
-# Copycoa agent guide
+# Copycola agent guide
 
-This file is the short, reusable orientation for agents working on Copycoa. Read it before exploring the project. Preserve unrelated user changes in the worktree.
+This file is the short, reusable orientation for agents working on Copycola. Read it before exploring the project. Preserve unrelated user changes in the worktree.
 
 ## Project identity
 
-- Native macOS SwiftUI + SwiftData app named Copycoa.
+- Native macOS SwiftUI + SwiftData app named Copycola.
 - Swift 6, macOS deployment target 27.0, AppKit/MapKit integration.
 - The project is intentionally unsigned until Apple notarization/signing is available. Do not sign, notarize, submit, or change the team/signing policy unless explicitly asked.
-- Xcode project: `Copycoa.xcodeproj/project.pbxproj`.
+- Xcode project: `Copycola.xcodeproj/project.pbxproj`.
 
 ## Repository layout
 
@@ -29,7 +29,7 @@ tests/                       Swift Testing tests
 data/                       non-Swift files and resources in this checkout
 ```
 
-`data/` is part of this repository. It contains `Copycoa.xcassets`, `Copycoa.icon`, `Copycoa.entitlements`, `Localizable.xcstrings`, and `PrivacyInfo.xcprivacy`.
+`data/` is part of this repository. It contains `Copycola.xcassets`, `Copycola.icon`, `Copycola.entitlements`, `Localizable.xcstrings`, and `PrivacyInfo.xcprivacy`.
 
 The Xcode project uses `PBXFileSystemSynchronizedRootGroup` for `src/` and `tests/`, so files placed below those roots are automatically target-managed. The `data` group is explicit because it contains resources outside the synchronized source roots; update the project file when adding or moving data resources.
 
@@ -40,7 +40,7 @@ The Xcode project uses `PBXFileSystemSynchronizedRootGroup` for `src/` and `test
 - `src/Canvas/CanvasView.swift` owns board presentation, vertical scrolling, card placement, selection, drag/drop, sheets, creation, deletion, and canvas commands.
 - `CanvasCardLayer.swift` owns repeated card interaction/gesture/accessibility wiring; `CardView` owns card chrome and type routing.
 - The canvas is fixed-width (four card columns plus 40-point margins) with unbounded vertical space. Do not reintroduce x-axis panning.
-- Dot-grid visibility persists through `@AppStorage("copycoa.canvas.shows-dot-grid")`.
+- Dot-grid visibility persists through `@AppStorage("copycola.canvas.shows-dot-grid")`.
 - Sheet presentation uses `Identifiable` payloads carrying the actual `Card`; avoid target-ID lookups that can race sheet presentation.
 - `CanvasPlacement` is pure placement logic and has tests in `tests/CanvasPlacementTests.swift`.
 
@@ -85,7 +85,7 @@ The Xcode project uses `PBXFileSystemSynchronizedRootGroup` for `src/` and `test
 
 - Keep user-facing strings in `data/Localizable.xcstrings`; use SwiftUI localization APIs and translator comments for interpolated strings.
 - Keep `PrivacyInfo.xcprivacy` in the data resource set. Do not remove it during resource moves.
-- Entitlements are referenced by both Debug and Release as `data/Copycoa.entitlements`.
+- Entitlements are referenced by both Debug and Release as `data/Copycola.entitlements`.
 - Asset catalog and icon composer resources are explicit members of the app Resources build phase.
 
 ## Validation
@@ -99,24 +99,24 @@ find src tests -name '*.swift' -print0 | xargs -0 xcrun swiftc -frontend -parse 
 
 git diff --check
 
-plutil -lint data/Copycoa.entitlements
+plutil -lint data/Copycola.entitlements
 plutil -lint data/PrivacyInfo.xcprivacy
 ```
 
 For a string catalog check, compile to a temporary output directory:
 
 ```sh
-catalog_tmp=$(mktemp -d /tmp/Copycoa-xcstrings.XXXXXX)
+catalog_tmp=$(mktemp -d /tmp/Copycola-xcstrings.XXXXXX)
 xcrun xcstringstool compile data/Localizable.xcstrings \
   --output-directory "$catalog_tmp" --dry-run
 ```
 
-For asset metadata, run `find data/Copycoa.xcassets data/Copycoa.icon -name '*.json' -print0 | xargs -0 -n1 jq empty`; `xcrun actool --compile` can validate the catalog.
+For asset metadata, run `find data/Copycola.xcassets data/Copycola.icon -name '*.json' -print0 | xargs -0 -n1 jq empty`; `xcrun actool --compile` can validate the catalog.
 
 Use an unsigned macOS build when the host permits it:
 
 ```sh
-xcodebuild -project Copycoa.xcodeproj -scheme Copycoa \
+xcodebuild -project Copycola.xcodeproj -scheme Copycola \
   -configuration Release -destination 'platform=macOS' build \
   CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
 ```

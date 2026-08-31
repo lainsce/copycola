@@ -10,9 +10,9 @@ struct PrivacyPolicyView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     VStack(alignment: .leading, spacing: 8) {
                         Label("Your data stays yours", systemImage: "lock.shield.fill")
-                            .font(CopycoaTypography.viewTitle)
-                        Text("Copycoa is a local-first canvas. This policy explains what happens when you use the app.")
-                            .font(CopycoaTypography.body)
+                            .font(CopycolaTypography.viewTitle)
+                        Text("Copycola is a local-first canvas. This policy explains what happens when you use the app.")
+                            .font(CopycolaTypography.body)
                             .foregroundStyle(.secondary)
                     }
 
@@ -20,12 +20,12 @@ struct PrivacyPolicyView: View {
                         PrivacyPolicySection(
                             title: "Data stored on this Mac",
                             systemImage: "internaldrive",
-                            text: "Your canvases and cards are stored on this Mac. Copycoa does not require an account and does not use cloud sync."
+                            text: "Your canvases and cards are stored on this Mac. Copycola does not require an account and does not use cloud sync."
                         )
                         PrivacyPolicySection(
                             title: "Files you choose",
                             systemImage: "photo",
-                            text: "When you import an image, Copycoa reads the file you select and stores it in the local canvas data. Copycoa does not upload that image."
+                            text: "When you import an image, Copycola reads the file you select and stores it in the local canvas data. Copycola does not upload that image."
                         )
                         PrivacyPolicySection(
                             title: "Network requests",
@@ -35,7 +35,7 @@ struct PrivacyPolicyView: View {
                         PrivacyPolicySection(
                             title: "No tracking or ads",
                             systemImage: "eye.slash",
-                            text: "Copycoa does not use advertising, analytics, tracking, or third-party account services."
+                            text: "Copycola does not use advertising, analytics, tracking, or third-party account services."
                         )
                         PrivacyPolicySection(
                             title: "Your choices",
@@ -47,8 +47,8 @@ struct PrivacyPolicyView: View {
                 .padding(28)
                 .frame(maxWidth: 680, alignment: .leading)
                 .background(
-                    CopycoaColors.itemSurface,
-                    in: RoundedRectangle(cornerRadius: CopycoaColors.largeSurfaceRadius, style: .continuous)
+                    CopycolaColors.itemSurface,
+                    in: RoundedRectangle(cornerRadius: CopycolaColors.largeSurfaceRadius, style: .continuous)
                 )
             }
             .navigationTitle("Privacy Policy")
@@ -63,6 +63,6 @@ struct PrivacyPolicyView: View {
             }
         }
         .frame(minWidth: 540, minHeight: 520)
-        .background(CopycoaColors.workspaceBackground(for: colorScheme))
+        .background(CopycolaColors.workspaceBackground(for: colorScheme))
     }
 }

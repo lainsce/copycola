@@ -33,7 +33,7 @@ struct PaletteCardContent: View {
 
             VStack(alignment: .leading, spacing: metrics.sectionSpacing) {
                 Text(verbatim: card.paletteTitleValue)
-                    .font(CopycoaTypography.contentBlockTitle)
+                    .font(CopycolaTypography.contentBlockTitle)
                     .foregroundStyle(.primary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
@@ -76,14 +76,14 @@ private struct PaletteCardMetrics {
 
     var inset: CGFloat { CanvasMetrics.cardContentInset }
     var sectionSpacing: CGFloat { max(8, 10 * scale) }
-    var titleFont: CGFloat { CopycoaTypography.Role.contentBlockTitle.size }
+    var titleFont: CGFloat { CopycolaTypography.Role.contentBlockTitle.size }
     var chipSpacing: CGFloat { max(3, 5 * scale) }
     var chipWidth: CGFloat {
         let available = max(40, size.width - inset * 2)
         return max(16, (available - CGFloat(PaletteCardDefaults.maximumColors - 1) * chipSpacing) / 5)
     }
     var chipHeight: CGFloat { max(46, min(70, 64 * scale)) }
-    var chipLabelFont: CGFloat { CopycoaTypography.Role.caption.size }
+    var chipLabelFont: CGFloat { CopycolaTypography.Role.caption.size }
 }
 
 private struct PaletteChip: View {
@@ -98,15 +98,15 @@ private struct PaletteChip: View {
                 .frame(width: metrics.chipWidth, height: metrics.chipHeight)
 
             Text(verbatim: label)
-                .font(CopycoaTypography.caption)
+                .font(CopycolaTypography.caption)
                 .foregroundStyle(.secondary)
                 .frame(width: metrics.chipWidth, height: metrics.chipLabelFont * 1.8)
-                .background(CopycoaColors.itemSurface)
+                .background(CopycolaColors.itemSurface)
         }
         .clipShape(.rect(cornerRadius: max(5, 8 * metrics.scale)))
         .overlay {
             RoundedRectangle(cornerRadius: max(5, 8 * metrics.scale), style: .continuous)
-                .strokeBorder(CopycoaColors.itemRule(for: colorScheme).opacity(0.5), lineWidth: 1)
+                .strokeBorder(CopycolaColors.itemRule(for: colorScheme).opacity(0.5), lineWidth: 1)
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("\(label), \(colorHex)"))

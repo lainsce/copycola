@@ -34,7 +34,7 @@ struct TextEntrySheet: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Label(title, systemImage: systemImage)
-                .font(CopycoaTypography.contentBlockTitle)
+                .font(CopycolaTypography.contentBlockTitle)
             TextField(fieldLabel, text: $text, prompt: Text(prompt))
                 .textFieldStyle(NULTextFieldStyle())
                 .onSubmit(submit)

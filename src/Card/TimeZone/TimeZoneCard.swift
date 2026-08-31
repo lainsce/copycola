@@ -117,9 +117,9 @@ private struct TimeZoneCardMetrics {
     }
 
     var padding: CGFloat { max(16, scaled(80)) }
-    var titleFont: CGFloat { CopycoaTypography.Role.contentBlockTitle.size }
-    var zoneFont: CGFloat { CopycoaTypography.Role.display.size }
-    var offsetFont: CGFloat { CopycoaTypography.Role.bigDisplay.size }
+    var titleFont: CGFloat { CopycolaTypography.Role.contentBlockTitle.size }
+    var zoneFont: CGFloat { CopycolaTypography.Role.display.size }
+    var offsetFont: CGFloat { CopycolaTypography.Role.bigDisplay.size }
     var zoneSpacing: CGFloat { -max(1, scaled(4)) }
 }
 
@@ -141,17 +141,17 @@ struct TimeZoneCardContent: View {
 
                     VStack(alignment: .leading, spacing: 0) {
                         Text("Time Zone")
-                            .font(CopycoaTypography.contentBlockTitle)
+                            .font(CopycolaTypography.contentBlockTitle)
                             .foregroundStyle(.primary)
 
                         Spacer(minLength: 0)
 
                         VStack(alignment: .leading, spacing: metrics.zoneSpacing) {
                             Text("GMT")
-                                .font(CopycoaTypography.display)
+                                .font(CopycolaTypography.display)
                                 .foregroundStyle(.secondary)
                             Text(offset)
-                                .font(CopycoaTypography.bigDisplay)
+                                .font(CopycolaTypography.bigDisplay)
                                 .foregroundStyle(.primary)
                         }
                     }

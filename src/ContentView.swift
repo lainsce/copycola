@@ -11,7 +11,7 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            CopycoaColors.workspaceBackground(for: colorScheme)
+            CopycolaColors.workspaceBackground(for: colorScheme)
                 .ignoresSafeArea()
 
             HStack(spacing: 0) {
@@ -20,7 +20,7 @@ struct ContentView: View {
                     .ignoresSafeArea(.all, edges: .top)
                     .overlay(alignment: .trailing) {
                         Rectangle()
-                            .fill(CopycoaColors.sidebarDivider(for: colorScheme))
+                            .fill(CopycolaColors.sidebarDivider(for: colorScheme))
                             .frame(width: 1)
                             .allowsHitTesting(false)
                     }

@@ -23,7 +23,7 @@ struct HeaderCardContent: View {
                     .foregroundStyle(.primary)
             }
         }
-        .font(CopycoaTypography.viewTitle)
+        .font(CopycolaTypography.viewTitle)
         .lineLimit(1)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .onChange(of: isEditing) { _, editing in

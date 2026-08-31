@@ -5,7 +5,7 @@ struct NULFieldModifier: ViewModifier {
     let cornerRadius: CGFloat
     let isFocused: Bool
 
-    init(cornerRadius: CGFloat = CopycoaColors.controlRadius, isFocused: Bool = false) {
+    init(cornerRadius: CGFloat = CopycolaColors.controlRadius, isFocused: Bool = false) {
         self.cornerRadius = cornerRadius
         self.isFocused = isFocused
     }

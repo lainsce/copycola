@@ -7,16 +7,16 @@ struct CardCaptionPill: View {
 
     var body: some View {
         Text(verbatim: text)
-            .font(CopycoaTypography.caption)
+            .font(CopycolaTypography.caption)
             .foregroundStyle(.primary)
             .lineLimit(3)
             .padding(.horizontal, 8)
-            .padding(.vertical, CopycoaColors.gridUnit * 2)
+            .padding(.vertical, CopycolaColors.gridUnit * 2)
             .background {
-                RoundedRectangle(cornerRadius: CopycoaColors.controlRadius, style: .continuous)
-                    .strokeBorder(CopycoaColors.itemRule(for: colorScheme).opacity(0.5), lineWidth: 1)
-                RoundedRectangle(cornerRadius: CopycoaColors.controlRadius)
-                    .fill(CopycoaColors.itemSurface.opacity(0.92))
+                RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous)
+                    .strokeBorder(CopycolaColors.itemRule(for: colorScheme).opacity(0.5), lineWidth: 1)
+                RoundedRectangle(cornerRadius: CopycolaColors.controlRadius)
+                    .fill(CopycolaColors.itemSurface.opacity(0.92))
                     .padding(1)
             }
     }

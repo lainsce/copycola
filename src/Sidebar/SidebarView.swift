@@ -11,8 +11,8 @@ struct SidebarView: View {
     @State private var editingBoardID: UUID?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: CopycoaColors.controlGap) {
-            Text("Canvases").font(CopycoaTypography.viewTitle)
+        VStack(alignment: .leading, spacing: CopycolaColors.controlGap) {
+            Text("Canvases").font(CopycolaTypography.viewTitle)
 
             ForEach(boards) { board in
                 SidebarBoardButton(

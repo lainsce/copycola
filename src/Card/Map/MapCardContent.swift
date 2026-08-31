@@ -40,7 +40,7 @@ struct MapCardContent: View {
                 .fill(Color.accent)
                 .frame(width: 24, height: 24)
                 .overlay {
-                    Circle().stroke(CopycoaColors.itemSurface, lineWidth: 3)
+                    Circle().stroke(CopycolaColors.itemSurface, lineWidth: 3)
                 }
         }
         .accessibilityHidden(true)

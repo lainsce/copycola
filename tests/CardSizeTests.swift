@@ -1,6 +1,6 @@
 import CoreGraphics
 import Testing
-@testable import Copycoa
+@testable import Copycola
 
 struct CardSizeTests {
     @Test func footprintsIncludeGridGutters() {

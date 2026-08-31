@@ -6,11 +6,11 @@ import AppKit
 import UIKit
 #endif
 
-/// Copycoa's typographic voice: a compact Geist hierarchy with Old Standard TT
+/// Copycola's typographic voice: a compact Geist hierarchy with Old Standard TT
 /// reserved for view titles. Missing glyphs remain eligible for the platform's
 /// serif/Mincho fallback.
-enum CopycoaTypography {
-    /// Copycoa's canonical UI type scale. Every role is Dynamic Type aware;
+enum CopycolaTypography {
+    /// Copycola's canonical UI type scale. Every role is Dynamic Type aware;
     /// Geist handles the interface roles while Old Standard TT handles titles.
     enum Role: CaseIterable {
         case bigDisplay, display, viewTitle, viewSubtitle

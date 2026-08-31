@@ -62,11 +62,11 @@ private struct AddCardPickerItem: View {
 
     var body: some View {
         Button(action: action) {
-            VStack(spacing: CopycoaColors.controlGap) {
+            VStack(spacing: CopycolaColors.controlGap) {
                 AddCardOptionIcon(kind: kind)
 
                 Text(kind.displayName)
-                    .font(CopycoaTypography.caption)
+                    .font(CopycolaTypography.caption)
                     .foregroundStyle(foreground)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
@@ -74,11 +74,11 @@ private struct AddCardPickerItem: View {
             .frame(maxWidth: .infinity, minHeight: 72)
             .padding(.vertical, 8)
             .background {
-                RoundedRectangle(cornerRadius: CopycoaColors.controlRadius, style: .continuous)
+                RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous)
                     .fill(isHovered ? hoverBackground : .clear)
             }
             .overlay {
-                RoundedRectangle(cornerRadius: CopycoaColors.controlRadius, style: .continuous)
+                RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous)
                     .stroke(
                         isHovered ? foreground.opacity(0.75) : .clear,
                         lineWidth: 1
@@ -86,7 +86,7 @@ private struct AddCardPickerItem: View {
             }
         }
         .buttonStyle(.plain)
-        .contentShape(RoundedRectangle(cornerRadius: CopycoaColors.controlRadius, style: .continuous))
+        .contentShape(RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous))
         .onHover { hovering in
             isHovered = hovering
         }
@@ -106,7 +106,7 @@ private struct AddCardOptionIcon: View {
             .scaledToFill()
             .saturation(0)
             .frame(width: 32, height: 32)
-            .clipShape(RoundedRectangle(cornerRadius: CopycoaColors.controlRadius, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous))
             .accessibilityHidden(true)
     }
 

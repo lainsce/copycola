@@ -6,10 +6,10 @@ import AppKit
 import UIKit
 #endif
 
-/// Copycoa's two-layer surface palette. The workspace and sidebar are a
+/// Copycola's two-layer surface palette. The workspace and sidebar are a
 /// deliberate industrial gray; cards and controls sit on a stable, opaque
 /// item surface so their content remains easy to read.
-enum CopycoaColors {
+enum CopycolaColors {
     // The control layer follows a small four-point rhythm. Canvas placement
     // keeps its own card grid, while settings, toolbars, and sheets share
     // these UI measurements.
@@ -95,7 +95,7 @@ enum CopycoaColors {
         colorScheme == .dark ? Color.white.opacity(0.16) : Color.black.opacity(0.12)
     }
 
-    /// Copycoa's sole chromatic UI token. The asset supplies the light/dark values.
+    /// Copycola's sole chromatic UI token. The asset supplies the light/dark values.
     static var accent: Color { .accent }
 
     static let itemSurfaceLightHex = "FDFDFD"

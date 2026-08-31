@@ -1,10 +1,10 @@
-# Copycoa
+# Copycola
 
 ## A calm, spatial canvas for ideas
 
-![Copycoa in English with sample canvases and cards](data/Copycoa-English.png)
+![Copycola in English with sample canvases and cards](data/Copycola-English.png)
 
-Copycoa is a native macOS app for arranging notes, references, dates, places, and other useful fragments on canvases. Each canvas keeps a simple four-column rhythm, an optional dot grid, and an open vertical workspace so related ideas can stay visible together.
+Copycola is a native macOS app for arranging notes, references, dates, places, and other useful fragments on canvases. Each canvas keeps a simple four-column rhythm, an optional dot grid, and an open vertical workspace so related ideas can stay visible together.
 
 ## What you can make
 
@@ -29,27 +29,27 @@ Cards share a common visual treatment while keeping their own editing and displa
 - Xcode 27 or later
 - Swift 6
 
-Copycoa is currently an unsigned development project. Signing, notarization, and App Store distribution are intentionally not configured yet.
+Copycola is currently an unsigned development project. Signing, notarization, and App Store distribution are intentionally not configured yet.
 
 ## Build
 
 Clone the repository and open the Xcode project:
 
 ```bash
-git clone https://github.com/lainsce/copycoa.git
-cd copycoa
-open Copycoa.xcodeproj
+git clone https://github.com/lainsce/copycola.git
+cd copycola
+open Copycola.xcodeproj
 ```
 
 To build an unsigned macOS app from Terminal:
 
 ```bash
 xcodebuild \
-  -project Copycoa.xcodeproj \
-  -scheme Copycoa \
+  -project Copycola.xcodeproj \
+  -scheme Copycola \
   -configuration Debug \
   -destination 'platform=macOS' \
-  -derivedDataPath /tmp/Copycoa-DerivedData \
+  -derivedDataPath /tmp/Copycola-DerivedData \
   build \
   CODE_SIGNING_ALLOWED=NO \
   CODE_SIGNING_REQUIRED=NO
@@ -67,7 +67,7 @@ src/                         application source
   PrivacyPolicy/             privacy policy window
 tests/                       Swift Testing tests
 data/                        asset catalog, icon, localization, privacy, entitlements
-Copycoa.xcodeproj/           Xcode project and shared scheme
+Copycola.xcodeproj/           Xcode project and shared scheme
 ```
 
 The `data/` folder is part of the repository so a fresh checkout contains every resource required by the project.
@@ -85,11 +85,11 @@ find src tests -name '*.swift' -print0 | \
 Resource metadata and privacy files can be checked with:
 
 ```bash
-find data/Copycoa.xcassets data/Copycoa.icon -name '*.json' -print0 | \
+find data/Copycola.xcassets data/Copycola.icon -name '*.json' -print0 | \
   xargs -0 -n1 jq empty
-plutil -lint data/Copycoa.entitlements data/PrivacyInfo.xcprivacy
+plutil -lint data/Copycola.entitlements data/PrivacyInfo.xcprivacy
 ```
 
 ## Privacy
 
-Copycoa includes a privacy policy window in the macOS Help menu and ships its required privacy manifest in [`data/PrivacyInfo.xcprivacy`](data/PrivacyInfo.xcprivacy).
+Copycola includes a privacy policy window in the macOS Help menu and ships its required privacy manifest in [`data/PrivacyInfo.xcprivacy`](data/PrivacyInfo.xcprivacy).

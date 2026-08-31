@@ -22,7 +22,7 @@ struct SidebarBoardButton: View {
                 nameEditor
             } else {
                 Button(action: select) {
-                    CopycoaSidebarRowPressSurface {
+                    CopycolaSidebarRowPressSurface {
                         rowLabel
                     }
                 }
@@ -38,11 +38,11 @@ struct SidebarBoardButton: View {
             isHovered = hovering
         }
         .animation(
-            reduceMotion ? nil : CopycoaColors.controlMotion,
+            reduceMotion ? nil : CopycolaColors.controlMotion,
             value: isHovered
         )
         .animation(
-            reduceMotion ? nil : CopycoaColors.navigationMotion,
+            reduceMotion ? nil : CopycolaColors.navigationMotion,
             value: isSelected
         )
         .onChange(of: isEditing) { _, editing in
@@ -67,21 +67,21 @@ struct SidebarBoardButton: View {
     }
 
     private var rowLabel: some View {
-        HStack(spacing: CopycoaColors.controlGap) {
+        HStack(spacing: CopycolaColors.controlGap) {
             SidebarCanvasThumbnail(
                 cards: board.cards,
                 isSelected: isSelected
             )
 
-            VStack(alignment: .leading, spacing: CopycoaColors.gridUnit) {
+            VStack(alignment: .leading, spacing: CopycolaColors.gridUnit) {
                 Text(verbatim: board.name)
-                    .font(CopycoaTypography.contentBlockTitle)
+                    .font(CopycolaTypography.contentBlockTitle)
                     .lineLimit(1)
                     .foregroundStyle(.primary)
 
                 if let headerLabel = firstHeaderLabel {
                     Text(verbatim: headerLabel)
-                        .font(CopycoaTypography.caption)
+                        .font(CopycolaTypography.caption)
                         .lineLimit(1)
                         .foregroundStyle(.secondary)
                 }
@@ -89,8 +89,8 @@ struct SidebarBoardButton: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             Spacer(minLength: 0)
         }
-        .padding(.horizontal, CopycoaColors.gridUnit * 2)
-        .padding(.vertical, CopycoaColors.controlGap)
+        .padding(.horizontal, CopycolaColors.gridUnit * 2)
+        .padding(.vertical, CopycolaColors.controlGap)
         .background(rowBackground)
         .contentShape(.rect)
     }
@@ -105,7 +105,7 @@ struct SidebarBoardButton: View {
     }
 
     private var nameEditor: some View {
-        HStack(spacing: CopycoaColors.controlGap) {
+        HStack(spacing: CopycolaColors.controlGap) {
             SidebarCanvasThumbnail(
                 cards: board.cards,
                 isSelected: true
@@ -119,29 +119,29 @@ struct SidebarBoardButton: View {
                 .onSubmit(commitName)
                 .onExitCommand(perform: cancelName)
         }
-        .font(CopycoaTypography.contentBlockTitle)
-        .padding(.horizontal, CopycoaColors.gridUnit * 2)
-        .padding(.vertical, CopycoaColors.controlGap)
+        .font(CopycolaTypography.contentBlockTitle)
+        .padding(.horizontal, CopycolaColors.gridUnit * 2)
+        .padding(.vertical, CopycolaColors.controlGap)
         .background(rowBackground)
         .contentShape(.rect)
         .accessibilityLabel(Text("Canvas name"))
     }
 
     private var rowBackground: some View {
-            RoundedRectangle(cornerRadius: CopycoaColors.controlRadius, style: .continuous)
+            RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous)
             .fill(
                 isSelected
-                    ? Color.accent.opacity(CopycoaColors.sidebarSelectedFillOpacity)
+                    ? Color.accent.opacity(CopycolaColors.sidebarSelectedFillOpacity)
                     : (isHovered
-                        ? Color.primary.opacity(CopycoaColors.sidebarHoverFillOpacity)
+                        ? Color.primary.opacity(CopycolaColors.sidebarHoverFillOpacity)
                         : .clear)
             )
             .overlay {
-                RoundedRectangle(cornerRadius: CopycoaColors.controlRadius, style: .continuous)
+                RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous)
                     .strokeBorder(
                         Color.accent.opacity(
                             isSelected && isHovered
-                                ? CopycoaColors.sidebarSelectedBorderOpacity
+                                ? CopycolaColors.sidebarSelectedBorderOpacity
                                 : 0
                         ),
                         lineWidth: 1

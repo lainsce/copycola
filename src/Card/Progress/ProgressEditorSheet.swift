@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Edits a Progress card's date range and label. The card always uses the
-/// shared Item surface and Copycoa accent, so appearance is shown as a
+/// shared Item surface and Copycola accent, so appearance is shown as a
 /// read-only token preview rather than a per-card color picker.
 struct ProgressEditorSheet: View {
     @Bindable var card: Card
@@ -54,12 +54,12 @@ struct ProgressEditorSheet: View {
 
             Section("Appearance") {
                 NULFormRow("Surface") {
-                    HStack(spacing: CopycoaColors.controlGap) {
-                        RoundedRectangle(cornerRadius: CopycoaColors.controlRadius)
-                            .fill(CopycoaColors.itemSurface)
+                    HStack(spacing: CopycolaColors.controlGap) {
+                        RoundedRectangle(cornerRadius: CopycolaColors.controlRadius)
+                            .fill(CopycolaColors.itemSurface)
                             .overlay {
-                                RoundedRectangle(cornerRadius: CopycoaColors.controlRadius)
-                                    .strokeBorder(CopycoaColors.itemRule(for: colorScheme), lineWidth: 1)
+                                RoundedRectangle(cornerRadius: CopycolaColors.controlRadius)
+                                    .strokeBorder(CopycolaColors.itemRule(for: colorScheme), lineWidth: 1)
                             }
                             .frame(width: 28, height: 28)
                         Text("Item")
@@ -67,11 +67,11 @@ struct ProgressEditorSheet: View {
                     }
                 }
                 NULFormRow("Accent") {
-                    HStack(spacing: CopycoaColors.controlGap) {
+                    HStack(spacing: CopycolaColors.controlGap) {
                         Circle()
                             .fill(Color.accent)
                             .frame(width: 20, height: 20)
-                        Text("Copycoa")
+                        Text("Copycola")
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -79,7 +79,7 @@ struct ProgressEditorSheet: View {
         }
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
-        .background(CopycoaColors.itemSurface, in: RoundedRectangle(cornerRadius: CopycoaColors.largeSurfaceRadius, style: .continuous))
+        .background(CopycolaColors.itemSurface, in: RoundedRectangle(cornerRadius: CopycolaColors.largeSurfaceRadius, style: .continuous))
         .frame(width: 460, height: 370)
         .padding(.top, 8)
         .toolbar {

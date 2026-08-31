@@ -56,7 +56,7 @@ struct ChecklistEditorSheet: View {
         }
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
-        .background(CopycoaColors.itemSurface, in: RoundedRectangle(cornerRadius: CopycoaColors.largeSurfaceRadius, style: .continuous))
+        .background(CopycolaColors.itemSurface, in: RoundedRectangle(cornerRadius: CopycolaColors.largeSurfaceRadius, style: .continuous))
         .frame(width: 500, height: 390)
         .padding(.top, 8)
         .toolbar {
@@ -101,7 +101,7 @@ private struct ChecklistEditorRow: View {
 
     var body: some View {
         NULFormRow(title) {
-            VStack(alignment: .leading, spacing: CopycoaColors.controlGap) {
+            VStack(alignment: .leading, spacing: CopycolaColors.controlGap) {
                 TextField("", text: $text, prompt: Text("Optional"))
                     .textFieldStyle(.plain)
                     .textFieldStyle(NULTextFieldStyle())

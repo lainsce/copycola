@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		67BCCC84304496BF00A74237 /* WhisperKit in Frameworks */ = {isa = PBXBuildFile; productRef = 9A7F00000000000000000001 /* WhisperKit */; };
-		67FF08943027C17000F9DB17 /* Copycoa.icon in Resources */ = {isa = PBXBuildFile; fileRef = 67FF08933027C17000F9DB17 /* Copycoa.icon */; };
-		67FF08963027CE1300F9DB17 /* Copycoa.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 67FF08953027CE1300F9DB17 /* Copycoa.xcassets */; };
+		67FF08943027C17000F9DB17 /* Copycola.icon in Resources */ = {isa = PBXBuildFile; fileRef = 67FF08933027C17000F9DB17 /* Copycola.icon */; };
+		67FF08963027CE1300F9DB17 /* Copycola.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 67FF08953027CE1300F9DB17 /* Copycola.xcassets */; };
 		67FF08A13027C17000F9DB21 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 67FF08983027C17000F9DB18 /* Localizable.xcstrings */; };
 		67FF08A23027C17000F9DB22 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 67FF08993027C17000F9DB19 /* PrivacyInfo.xcprivacy */; };
 		67FF08B13027C17000F9DB24 /* Berlin.png in Resources */ = {isa = PBXBuildFile; fileRef = 67FF08C13027C17000F9DB30 /* Berlin.png */; };
@@ -26,10 +26,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		000000000000000000000120 /* Copycoa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Copycoa.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		67FF08933027C17000F9DB17 /* Copycoa.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Copycoa.icon; sourceTree = "<group>"; };
-		67FF08953027CE1300F9DB17 /* Copycoa.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Copycoa.xcassets; sourceTree = "<group>"; };
-		67FF08973027C17000F9DB17 /* Copycoa.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Copycoa.entitlements; sourceTree = "<group>"; };
+		000000000000000000000120 /* Copycola.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Copycola.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		67FF08933027C17000F9DB17 /* Copycola.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Copycola.icon; sourceTree = "<group>"; };
+		67FF08953027CE1300F9DB17 /* Copycola.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Copycola.xcassets; sourceTree = "<group>"; };
+		67FF08973027C17000F9DB17 /* Copycola.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Copycola.entitlements; sourceTree = "<group>"; };
 		67FF08983027C17000F9DB18 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		67FF08993027C17000F9DB19 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		67FF08C13027C17000F9DB30 /* Berlin.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Berlin.png; sourceTree = "<group>"; };
@@ -81,7 +81,7 @@
 		000000000000000000000020 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				000000000000000000000120 /* Copycoa.app */,
+				000000000000000000000120 /* Copycola.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -89,13 +89,13 @@
 		67FF08A03027C17000F9DB20 /* data */ = {
 			isa = PBXGroup;
 			children = (
-				67FF08973027C17000F9DB17 /* Copycoa.entitlements */,
+				67FF08973027C17000F9DB17 /* Copycola.entitlements */,
 				67FF08983027C17000F9DB18 /* Localizable.xcstrings */,
 				67FF08993027C17000F9DB19 /* PrivacyInfo.xcprivacy */,
 				67FF08D03027C17000F9DB40 /* TimeZoneMaps */,
 				7A0000010000000000000002 /* Fonts */,
-				67FF08953027CE1300F9DB17 /* Copycoa.xcassets */,
-				67FF08933027C17000F9DB17 /* Copycoa.icon */,
+				67FF08953027CE1300F9DB17 /* Copycola.xcassets */,
+				67FF08933027C17000F9DB17 /* Copycola.icon */,
 			);
 			path = data;
 			sourceTree = "<group>";
@@ -120,9 +120,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		000000000000000100000000 /* Copycoa */ = {
+		000000000000000100000000 /* Copycola */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 000000000000000110000000 /* Build configuration list for PBXNativeTarget "Copycoa" */;
+			buildConfigurationList = 000000000000000110000000 /* Build configuration list for PBXNativeTarget "Copycola" */;
 			buildPhases = (
 				000000000000000120000000 /* Sources */,
 				000000000000000130000000 /* Frameworks */,
@@ -133,12 +133,12 @@
 			fileSystemSynchronizedGroups = (
 				000000000000000000000010 /* src */,
 			);
-			name = Copycoa;
+			name = Copycola;
 			packageProductDependencies = (
 				9A7F00000000000000000001 /* WhisperKit */,
 			);
-			productName = Copycoa;
-			productReference = 000000000000000000000120 /* Copycoa.app */;
+			productName = Copycola;
+			productReference = 000000000000000000000120 /* Copycola.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -156,7 +156,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 000000000000000010000000 /* Build configuration list for PBXProject "Copycoa" */;
+			buildConfigurationList = 000000000000000010000000 /* Build configuration list for PBXProject "Copycola" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -173,7 +173,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				000000000000000100000000 /* Copycoa */,
+				000000000000000100000000 /* Copycola */,
 			);
 		};
 /* End PBXProject section */
@@ -183,8 +183,8 @@
 			isa = PBXResourcesBuildPhase;
 			files = (
 				7A0000010000000000000001 /* Fonts in Resources */,
-				67FF08963027CE1300F9DB17 /* Copycoa.xcassets in Resources */,
-				67FF08943027C17000F9DB17 /* Copycoa.icon in Resources */,
+				67FF08963027CE1300F9DB17 /* Copycola.xcassets in Resources */,
+				67FF08943027C17000F9DB17 /* Copycola.icon in Resources */,
 				67FF08A13027C17000F9DB21 /* Localizable.xcstrings in Resources */,
 				67FF08A23027C17000F9DB22 /* PrivacyInfo.xcprivacy in Resources */,
 				67FF08B13027C17000F9DB24 /* Berlin.png in Resources */,
@@ -210,7 +210,7 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		000000000000000011000000 /* Debug configuration for PBXProject "Copycoa" */ = {
+		000000000000000011000000 /* Debug configuration for PBXProject "Copycola" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -275,7 +275,7 @@
 			};
 			name = Debug;
 		};
-		000000000000000012000000 /* Release configuration for PBXProject "Copycoa" */ = {
+		000000000000000012000000 /* Release configuration for PBXProject "Copycola" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -332,13 +332,13 @@
 			};
 			name = Release;
 		};
-		000000000000000111000000 /* Debug configuration for PBXNativeTarget "Copycoa" */ = {
+		000000000000000111000000 /* Debug configuration for PBXNativeTarget "Copycola" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = Copycoa;
+				ASSETCATALOG_COMPILER_APPICON_NAME = Copycola;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				AUTOMATION_APPLE_EVENTS = NO;
-				CODE_SIGN_ENTITLEMENTS = data/Copycoa.entitlements;
+				CODE_SIGN_ENTITLEMENTS = data/Copycola.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -359,14 +359,14 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_ATSApplicationFontsPath = Fonts;
-				INFOPLIST_KEY_CFBundleDisplayName = Copycoa;
+				INFOPLIST_KEY_CFBundleDisplayName = Copycola;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Copycoa uses the microphone to turn spoken thoughts into cards.";
-				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Copycoa uses speech recognition to turn spoken thoughts into cards.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Copycola uses the microphone to turn spoken thoughts into cards.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Copycola uses speech recognition to turn spoken thoughts into cards.";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.github.lainsce.Copycoa;
+				PRODUCT_BUNDLE_IDENTIFIER = com.github.lainsce.Copycola;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
@@ -387,13 +387,13 @@
 			};
 			name = Debug;
 		};
-		000000000000000112000000 /* Release configuration for PBXNativeTarget "Copycoa" */ = {
+		000000000000000112000000 /* Release configuration for PBXNativeTarget "Copycola" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = Copycoa;
+				ASSETCATALOG_COMPILER_APPICON_NAME = Copycola;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				AUTOMATION_APPLE_EVENTS = NO;
-				CODE_SIGN_ENTITLEMENTS = data/Copycoa.entitlements;
+				CODE_SIGN_ENTITLEMENTS = data/Copycola.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -414,14 +414,14 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_ATSApplicationFontsPath = Fonts;
-				INFOPLIST_KEY_CFBundleDisplayName = Copycoa;
+				INFOPLIST_KEY_CFBundleDisplayName = Copycola;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Copycoa uses the microphone to turn spoken thoughts into cards.";
-				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Copycoa uses speech recognition to turn spoken thoughts into cards.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Copycola uses the microphone to turn spoken thoughts into cards.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Copycola uses speech recognition to turn spoken thoughts into cards.";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.github.lainsce.Copycoa;
+				PRODUCT_BUNDLE_IDENTIFIER = com.github.lainsce.Copycola;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
@@ -445,19 +445,19 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		000000000000000010000000 /* Build configuration list for PBXProject "Copycoa" */ = {
+		000000000000000010000000 /* Build configuration list for PBXProject "Copycola" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				000000000000000011000000 /* Debug configuration for PBXProject "Copycoa" */,
-				000000000000000012000000 /* Release configuration for PBXProject "Copycoa" */,
+				000000000000000011000000 /* Debug configuration for PBXProject "Copycola" */,
+				000000000000000012000000 /* Release configuration for PBXProject "Copycola" */,
 			);
 			defaultConfigurationName = Release;
 		};
-		000000000000000110000000 /* Build configuration list for PBXNativeTarget "Copycoa" */ = {
+		000000000000000110000000 /* Build configuration list for PBXNativeTarget "Copycola" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				000000000000000111000000 /* Debug configuration for PBXNativeTarget "Copycoa" */,
-				000000000000000112000000 /* Release configuration for PBXNativeTarget "Copycoa" */,
+				000000000000000111000000 /* Debug configuration for PBXNativeTarget "Copycola" */,
+				000000000000000112000000 /* Release configuration for PBXNativeTarget "Copycola" */,
 			);
 			defaultConfigurationName = Release;
 		};

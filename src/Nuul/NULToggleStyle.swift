@@ -15,7 +15,7 @@ struct NULToggleStyle: ToggleStyle {
             if reduceMotion {
                 configuration.isOn.toggle()
             } else {
-                withAnimation(CopycoaColors.controlMotion) {
+                withAnimation(CopycolaColors.controlMotion) {
                     configuration.isOn.toggle()
                 }
             }
@@ -32,21 +32,21 @@ struct NULToggleStyle: ToggleStyle {
                         )
                         .overlay {
                             RoundedRectangle(cornerRadius: 999, style: .continuous)
-                                .strokeBorder(CopycoaColors.controlRule(for: colorScheme), lineWidth: 1)
+                                .strokeBorder(CopycolaColors.controlRule(for: colorScheme), lineWidth: 1)
                         }
 
                     RoundedRectangle(cornerRadius: 999, style: .continuous)
                         .fill(.white)
                         .overlay {
                             RoundedRectangle(cornerRadius: 999, style: .continuous)
-                                .strokeBorder(CopycoaColors.controlRule(for: colorScheme), lineWidth: 1)
+                                .strokeBorder(CopycolaColors.controlRule(for: colorScheme), lineWidth: 1)
                         }
                         .frame(width: 24, height: 24)
                         .padding(4)
                 }
                 .frame(width: 48, height: 32)
                 .animation(
-                    reduceMotion ? nil : CopycoaColors.controlMotion,
+                    reduceMotion ? nil : CopycolaColors.controlMotion,
                     value: configuration.isOn
                 )
             }

@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Chooses the forecast location and whether Copycoa should write the summary.
+/// Chooses the forecast location and whether Copycola should write the summary.
 struct WeatherEditorSheet: View {
     let card: Card
     let onSave: () -> Void
@@ -49,12 +49,12 @@ struct WeatherEditorSheet: View {
             } header: {
                 Text("Summary")
             } footer: {
-                Text("Copycoa writes this from the live conditions in the same playful tone as the card design.")
+                Text("Copycola writes this from the live conditions in the same playful tone as the card design.")
             }
         }
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
-        .background(CopycoaColors.itemSurface, in: RoundedRectangle(cornerRadius: CopycoaColors.largeSurfaceRadius, style: .continuous))
+        .background(CopycolaColors.itemSurface, in: RoundedRectangle(cornerRadius: CopycolaColors.largeSurfaceRadius, style: .continuous))
         .frame(width: 520, height: 390)
         .padding(.top, 8)
         .toolbar {

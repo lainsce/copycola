@@ -39,7 +39,7 @@ struct CanvasPromptComposer: View {
     private var transcriptionComposer: some View {
         HStack(spacing: 8) {
             Text(verbatim: recorder.transcript)
-                .font(CopycoaTypography.text(12))
+                .font(CopycolaTypography.text(12))
                 .foregroundStyle(colorScheme == .dark ? .white : .black)
                 .lineLimit(3)
                 .multilineTextAlignment(.leading)
@@ -82,7 +82,7 @@ struct CanvasPromptComposer: View {
             ZStack {
                 TextField("", text: $text)
                 .textFieldStyle(.plain)
-                .font(CopycoaTypography.text(12))
+                .font(CopycolaTypography.text(12))
                 .multilineTextAlignment(.leading)
                 .tint(Color.accent)
                 .focused($isFocused)
@@ -91,7 +91,7 @@ struct CanvasPromptComposer: View {
 
                 if text.isEmpty {
                     Text("Add a thought…")
-                        .font(CopycoaTypography.text(12))
+                        .font(CopycolaTypography.text(12))
                         .foregroundStyle(.secondary)
                         .allowsHitTesting(false)
                 }
@@ -129,7 +129,7 @@ struct CanvasPromptComposer: View {
                 Spacer(minLength: 0)
                 TimelineView(.periodic(from: .now, by: 1)) { context in
                     Text(elapsedTime(from: context.date))
-                        .font(CopycoaTypography.text(12, weight: .bold))
+                        .font(CopycolaTypography.text(12, weight: .bold))
                         .monospacedDigit()
                         .frame(width: 38, alignment: .leading)
                 }

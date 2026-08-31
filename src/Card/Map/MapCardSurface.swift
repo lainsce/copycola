@@ -10,7 +10,7 @@ struct MapCardSurface: View {
             if let lat = card.latitude, let lon = card.longitude {
                 MapCardContent(coordinate: MapCoordinate(latitude: lat, longitude: lon))
             } else {
-                CopycoaColors.itemSurface
+                CopycolaColors.itemSurface
             }
 
             if let title = card.title, !title.isEmpty {

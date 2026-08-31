@@ -1,7 +1,7 @@
 import Foundation
 import SwiftData
 import Testing
-@testable import Copycoa
+@testable import Copycola
 
 struct WeatherCardTests {
     @Test @MainActor
@@ -54,8 +54,8 @@ struct WeatherCardTests {
     }
 
     @Test func exposesAllSupportedConditions() {
-        #expect(Copycoa.WeatherCondition.allCases.count == 7)
-        #expect(Copycoa.WeatherCondition.partlyCloudy.systemImage == "cloud.sun.fill")
+        #expect(Copycola.WeatherCondition.allCases.count == 7)
+        #expect(Copycola.WeatherCondition.partlyCloudy.systemImage == "cloud.sun.fill")
     }
 
     @Test func derivesTheReferenceToneFromLiveConditions() {
@@ -132,7 +132,7 @@ struct WeatherCardTests {
 
         #expect(values["lat"] == "-23.5505")
         #expect(values["lon"] == "-46.6333")
-        #expect(request.value(forHTTPHeaderField: "User-Agent")?.contains("Copycoa/") == true)
+        #expect(request.value(forHTTPHeaderField: "User-Agent")?.contains("Copycola/") == true)
         #expect(request.value(forHTTPHeaderField: "If-Modified-Since") == modified)
     }
 

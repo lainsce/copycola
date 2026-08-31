@@ -8,9 +8,9 @@ struct PrivacyPolicySection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Label(title, systemImage: systemImage)
-                .font(CopycoaTypography.contentBlockTitle)
+                .font(CopycolaTypography.contentBlockTitle)
             Text(text)
-                .font(CopycoaTypography.body)
+                .font(CopycolaTypography.body)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
         }

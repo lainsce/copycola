@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import Copycoa
+@testable import Copycola
 
 struct URLNormalizationTests {
     @Test func addsHTTPSWhenTheSchemeIsMissing() {

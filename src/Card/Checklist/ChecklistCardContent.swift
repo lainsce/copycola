@@ -13,7 +13,7 @@ struct ChecklistCardContent: View {
                 if card.checklistSlots.isEmpty {
                     Spacer(minLength: metrics.sectionSpacing)
                     Text("Add up to 3 checks")
-                        .font(CopycoaTypography.body)
+                        .font(CopycolaTypography.body)
                         .foregroundStyle(.secondary)
                 } else {
                     Spacer(minLength: metrics.sectionSpacing)
@@ -54,8 +54,8 @@ private struct ChecklistCardMetrics {
     var inset: CGFloat { CanvasMetrics.cardContentInset }
     var sectionSpacing: CGFloat { max(8, 10 * scale) }
     var rowSpacing: CGFloat { max(8, 12 * scale) }
-    var titleFont: CGFloat { CopycoaTypography.Role.contentBlockTitle.size }
-    var bodyFont: CGFloat { CopycoaTypography.Role.body.size }
+    var titleFont: CGFloat { CopycolaTypography.Role.contentBlockTitle.size }
+    var bodyFont: CGFloat { CopycolaTypography.Role.body.size }
     var checkSize: CGFloat { max(16, 22 * scale) }
     var checkStroke: CGFloat { max(1.5, 2 * scale) }
 }
@@ -72,7 +72,7 @@ private struct ChecklistCardHeader: View {
                 .accessibilityHidden(true)
 
             Text(verbatim: title)
-                .font(CopycoaTypography.contentBlockTitle)
+                .font(CopycolaTypography.contentBlockTitle)
                 .foregroundStyle(.primary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
@@ -97,7 +97,7 @@ private struct ChecklistRow: View {
                     .frame(width: metrics.checkSize, height: metrics.checkSize)
 
                 Text(verbatim: text)
-                    .font(CopycoaTypography.body)
+                    .font(CopycolaTypography.body)
                     .foregroundStyle(isCompleted ? .secondary : .primary)
                     .strikethrough(isCompleted, color: .secondary)
                     .lineLimit(2)

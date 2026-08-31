@@ -1,6 +1,6 @@
 import SwiftUI
 
-enum CopycoaWindowID {
+enum CopycolaWindowID {
     static let about = "about"
     static let privacyPolicy = "privacy-policy"
 }
@@ -79,7 +79,7 @@ extension FocusedValues {
     }
 }
 
-struct CopycoaCommands: Commands {
+struct CopycolaCommands: Commands {
     @FocusedValue(\.newCanvasAction) private var newCanvasAction
     @FocusedValue(\.addCardAction) private var addCardAction
     @FocusedValue(\.editCardAction) private var editCardAction
@@ -92,8 +92,8 @@ struct CopycoaCommands: Commands {
 
     var body: some Commands {
         CommandGroup(replacing: .appInfo) {
-            Button("About Copycoa", systemImage: "info.circle") {
-                openWindow(id: CopycoaWindowID.about)
+            Button("About Copycola", systemImage: "info.circle") {
+                openWindow(id: CopycolaWindowID.about)
             }
         }
 
@@ -150,7 +150,7 @@ struct CopycoaCommands: Commands {
 
         CommandGroup(after: .help) {
             Button("Privacy Policy", systemImage: "hand.raised") {
-                openWindow(id: CopycoaWindowID.privacyPolicy)
+                openWindow(id: CopycolaWindowID.privacyPolicy)
             }
         }
     }

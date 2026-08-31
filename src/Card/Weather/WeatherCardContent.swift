@@ -10,7 +10,7 @@ struct WeatherCardContent: View {
             let inset = 16 * scale
 
             ZStack {
-                CopycoaColors.itemSurface
+                CopycolaColors.itemSurface
 
                 VStack(alignment: .leading, spacing: 0) {
                     Text(verbatim: card.weatherSummaryValue)

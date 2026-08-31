@@ -88,7 +88,7 @@ struct CalendarEditorSheet: View {
         }
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
-        .background(CopycoaColors.itemSurface, in: RoundedRectangle(cornerRadius: CopycoaColors.largeSurfaceRadius, style: .continuous))
+        .background(CopycolaColors.itemSurface, in: RoundedRectangle(cornerRadius: CopycolaColors.largeSurfaceRadius, style: .continuous))
         .frame(width: 540, height: dateKind == .dateRange ? 430 : 390)
         .padding(.top, 8)
         .toolbar {

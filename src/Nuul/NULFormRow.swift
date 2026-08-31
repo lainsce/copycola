@@ -11,13 +11,13 @@ struct NULFormRow<Control: View>: View {
     }
 
     var body: some View {
-        HStack(alignment: .top, spacing: CopycoaColors.formRowSpacing) {
+        HStack(alignment: .top, spacing: CopycolaColors.formRowSpacing) {
             Text(title)
-                .font(CopycoaTypography.caption)
+                .font(CopycolaTypography.caption)
                 .textCase(.uppercase)
                 .kerning(0.4)
                 .foregroundStyle(.secondary)
-                .frame(width: CopycoaColors.formLabelWidth, alignment: .leading)
+                .frame(width: CopycolaColors.formLabelWidth, alignment: .leading)
             control
                 .frame(maxWidth: .infinity, alignment: .trailing)
         }

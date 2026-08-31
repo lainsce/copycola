@@ -17,19 +17,19 @@ struct StickyNoteCardContent: View {
                     .scrollContentBackground(.hidden)
             } else if card.text.isEmpty {
                 Text("Write a note…")
-                    .foregroundStyle(CopycoaColors.itemSecondaryText(for: colorScheme).opacity(0.7))
+                    .foregroundStyle(CopycolaColors.itemSecondaryText(for: colorScheme).opacity(0.7))
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             } else {
                 Text(verbatim: card.text)
-                    .foregroundStyle(CopycoaColors.itemText(for: colorScheme).opacity(0.85))
+                    .foregroundStyle(CopycolaColors.itemText(for: colorScheme).opacity(0.85))
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
         }
-        .font(CopycoaTypography.contentBlockSubtitle)
+        .font(CopycolaTypography.contentBlockSubtitle)
         .padding(CanvasMetrics.cardContentInset)
         .background {
             RoundedRectangle(cornerRadius: cornerRadius)
-                .fill(CopycoaColors.itemSurface)
+                .fill(CopycolaColors.itemSurface)
         }
         .onChange(of: isEditing) { _, editing in
             focused = editing

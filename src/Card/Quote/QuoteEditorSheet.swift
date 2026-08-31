@@ -22,7 +22,7 @@ struct QuoteEditorSheet: View {
             Section {
                 NULFormRow("Quote") {
                     TextEditor(text: $quote)
-                        .font(CopycoaTypography.body)
+                        .font(CopycolaTypography.body)
                         .frame(minHeight: 110)
                 }
             } header: {
@@ -40,7 +40,7 @@ struct QuoteEditorSheet: View {
         }
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
-        .background(CopycoaColors.itemSurface, in: RoundedRectangle(cornerRadius: CopycoaColors.largeSurfaceRadius, style: .continuous))
+        .background(CopycolaColors.itemSurface, in: RoundedRectangle(cornerRadius: CopycolaColors.largeSurfaceRadius, style: .continuous))
         .frame(width: 500, height: 350)
         .padding(.top, 8)
         .toolbar {

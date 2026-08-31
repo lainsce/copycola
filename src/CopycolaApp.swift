@@ -2,17 +2,17 @@ import SwiftData
 import SwiftUI
 
 @main
-struct CopycoaApp: App {
+struct CopycolaApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
     init() {
-        CopycoaFontRegistration.register()
+        CopycolaFontRegistration.register()
     }
 
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .font(CopycoaTypography.body)
+                .font(CopycolaTypography.body)
                 .nulWindowActivityAppearance()
         }
         .windowStyle(.hiddenTitleBar)
@@ -21,20 +21,20 @@ struct CopycoaApp: App {
         .defaultSize(width: 1024, height: 600)
         .windowResizability(.contentSize)
         .commands {
-            CopycoaCommands()
+            CopycolaCommands()
         }
         .modelContainer(for: [Board.self, Card.self])
 
-        Window("About Copycoa", id: CopycoaWindowID.about) {
-            CopycoaAboutView()
-                .font(CopycoaTypography.body)
+        Window("About Copycola", id: CopycolaWindowID.about) {
+            CopycolaAboutView()
+                .font(CopycolaTypography.body)
                 .nulWindowActivityAppearance()
         }
         .windowResizability(.contentSize)
 
-        Window("Privacy Policy", id: CopycoaWindowID.privacyPolicy) {
+        Window("Privacy Policy", id: CopycolaWindowID.privacyPolicy) {
             PrivacyPolicyView()
-                .font(CopycoaTypography.body)
+                .font(CopycolaTypography.body)
                 .nulWindowActivityAppearance()
         }
         .defaultSize(width: 540, height: 540)

@@ -76,7 +76,7 @@ struct ProgressCardContent: View {
 
                 HStack(spacing: metrics.sectionSpacing) {
                     Text("\(completed) of \(total) days")
-                        .font(CopycoaTypography.caption)
+                        .font(CopycolaTypography.caption)
                         .foregroundStyle(.primary.opacity(0.56))
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
@@ -88,7 +88,7 @@ struct ProgressCardContent: View {
         }
         .background {
             RoundedRectangle(cornerRadius: card.cardSize.cornerRadius, style: .continuous)
-                .fill(CopycoaColors.itemSurface)
+                .fill(CopycolaColors.itemSurface)
         }
         .clipShape(.rect(cornerRadius: card.cardSize.cornerRadius))
         .accessibilityElement(children: .ignore)
@@ -127,9 +127,9 @@ private struct ProgressCardMetrics {
 
     var inset: CGFloat { CanvasMetrics.cardContentInset }
     var sectionSpacing: CGFloat { max(6, 8 * scale) }
-    var titleFont: CGFloat { CopycoaTypography.Role.contentBlockTitle.size }
-    var goalFont: CGFloat { CopycoaTypography.Role.caption.size }
-    var footerFont: CGFloat { CopycoaTypography.Role.caption.size }
+    var titleFont: CGFloat { CopycolaTypography.Role.contentBlockTitle.size }
+    var goalFont: CGFloat { CopycolaTypography.Role.caption.size }
+    var footerFont: CGFloat { CopycolaTypography.Role.caption.size }
     var dotSpacing: CGFloat { max(4, min(10, 6 * scale)) }
     var columns: Int { size.width >= CanvasMetrics.footprintSize(columns: 2, rows: 1).width ? 10 : 6 }
 
@@ -153,7 +153,7 @@ private struct ProgressCardHeader: View {
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: metrics.sectionSpacing) {
             Text(verbatim: title)
-                .font(CopycoaTypography.contentBlockTitle)
+                .font(CopycolaTypography.contentBlockTitle)
                 .foregroundStyle(.primary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
@@ -161,7 +161,7 @@ private struct ProgressCardHeader: View {
             Spacer(minLength: metrics.sectionSpacing)
 
             Text(goalDate, format: .dateTime.month(.abbreviated).day())
-                .font(CopycoaTypography.caption)
+                .font(CopycolaTypography.caption)
                 .foregroundStyle(.primary.opacity(0.56))
                 .lineLimit(1)
         }

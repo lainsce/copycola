@@ -24,17 +24,17 @@ struct NULSegmentedPicker<Selection: Hashable, ItemLabel: View>: View {
             ForEach(options.indices, id: \.self) { index in
                 let option = options[index]
                 Button {
-                    withAnimation(reduceMotion ? nil : CopycoaColors.controlMotion) {
+                    withAnimation(reduceMotion ? nil : CopycolaColors.controlMotion) {
                         selection = option
                     }
                 } label: {
                     label(option)
-                        .font(CopycoaTypography.body)
+                        .font(CopycolaTypography.body)
                         .foregroundStyle(option == selection ? .primary : .secondary)
-                        .frame(maxWidth: .infinity, minHeight: CopycoaColors.controlHeight)
-                        .padding(.horizontal, CopycoaColors.gridUnit * 2)
+                        .frame(maxWidth: .infinity, minHeight: CopycolaColors.controlHeight)
+                        .padding(.horizontal, CopycolaColors.gridUnit * 2)
                         .background {
-                            RoundedRectangle(cornerRadius: CopycoaColors.gridUnit / 2, style: .continuous)
+                            RoundedRectangle(cornerRadius: CopycolaColors.gridUnit / 2, style: .continuous)
                                 .fill(option == selection ? Color.primary.opacity(0.12) : .clear)
                         }
                 }
@@ -42,14 +42,14 @@ struct NULSegmentedPicker<Selection: Hashable, ItemLabel: View>: View {
                 .accessibilityAddTraits(option == selection ? .isSelected : [])
             }
         }
-        .padding(CopycoaColors.gridUnit / 2)
+        .padding(CopycolaColors.gridUnit / 2)
         .background(
-            CopycoaColors.itemSurface,
-            in: RoundedRectangle(cornerRadius: CopycoaColors.controlRadius, style: .continuous)
+            CopycolaColors.itemSurface,
+            in: RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous)
         )
         .overlay {
-            RoundedRectangle(cornerRadius: CopycoaColors.controlRadius, style: .continuous)
-                .strokeBorder(CopycoaColors.controlRule(for: colorScheme), lineWidth: 1)
+            RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous)
+                .strokeBorder(CopycolaColors.controlRule(for: colorScheme), lineWidth: 1)
         }
     }
 }

@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "000000000000000100000000"
-               BuildableName = "Copycoa.app"
-               BlueprintName = "Copycoa"
-               ReferencedContainer = "container:Copycoa.xcodeproj">
+               BuildableName = "Copycola.app"
+               BlueprintName = "Copycola"
+               ReferencedContainer = "container:Copycola.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -30,9 +30,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "000000000000000100000001"
-               BuildableName = "CopycoaTests.xctest"
-               BlueprintName = "CopycoaTests"
-               ReferencedContainer = "container:Copycoa.xcodeproj">
+               BuildableName = "CopycolaTests.xctest"
+               BlueprintName = "CopycolaTests"
+               ReferencedContainer = "container:Copycola.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -48,9 +48,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "000000000000000100000001"
-               BuildableName = "CopycoaTests.xctest"
-               BlueprintName = "CopycoaTests"
-               ReferencedContainer = "container:Copycoa.xcodeproj">
+               BuildableName = "CopycolaTests.xctest"
+               BlueprintName = "CopycolaTests"
+               ReferencedContainer = "container:Copycola.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -69,9 +69,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "000000000000000100000000"
-            BuildableName = "Copycoa.app"
-            BlueprintName = "Copycoa"
-            ReferencedContainer = "container:Copycoa.xcodeproj">
+            BuildableName = "Copycola.app"
+            BlueprintName = "Copycola"
+            ReferencedContainer = "container:Copycola.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -85,9 +85,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "000000000000000100000000"
-            BuildableName = "Copycoa.app"
-            BlueprintName = "Copycoa"
-            ReferencedContainer = "container:Copycoa.xcodeproj">
+            BuildableName = "Copycola.app"
+            BlueprintName = "Copycola"
+            ReferencedContainer = "container:Copycola.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

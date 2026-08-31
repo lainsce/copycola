@@ -5,7 +5,7 @@ struct NULSidebarSurface: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        CopycoaColors.sidebarBackground(for: colorScheme)
+        CopycolaColors.sidebarBackground(for: colorScheme)
             .ignoresSafeArea(.container, edges: .top)
             .accessibilityHidden(true)
     }

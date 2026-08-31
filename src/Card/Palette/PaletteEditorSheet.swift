@@ -31,16 +31,16 @@ struct PaletteEditorSheet: View {
             Section("Nuul tokens") {
                 ForEach(PaletteChipSlot.allCases) { slot in
                     NULFormRow("Chip \(slot.rawValue + 1)") {
-                        HStack(spacing: CopycoaColors.controlGap) {
-                            RoundedRectangle(cornerRadius: CopycoaColors.controlRadius)
+                        HStack(spacing: CopycolaColors.controlGap) {
+                            RoundedRectangle(cornerRadius: CopycolaColors.controlRadius)
                                 .fill(Color(hex: PaletteCardDefaults.defaultColors[slot.rawValue]))
                                 .overlay {
-                                    RoundedRectangle(cornerRadius: CopycoaColors.controlRadius)
-                                        .strokeBorder(CopycoaColors.itemRule(for: colorScheme), lineWidth: 1)
+                                    RoundedRectangle(cornerRadius: CopycolaColors.controlRadius)
+                                        .strokeBorder(CopycolaColors.itemRule(for: colorScheme), lineWidth: 1)
                                 }
                                 .frame(width: 28, height: 28)
                             Text(PaletteCardDefaults.defaultColors[slot.rawValue])
-                                .font(CopycoaTypography.caption.monospaced())
+                                .font(CopycolaTypography.caption.monospaced())
                                 .foregroundStyle(.secondary)
                         }
                         .accessibilityElement(children: .combine)
@@ -53,7 +53,7 @@ struct PaletteEditorSheet: View {
         }
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
-        .background(CopycoaColors.itemSurface, in: RoundedRectangle(cornerRadius: CopycoaColors.largeSurfaceRadius, style: .continuous))
+        .background(CopycolaColors.itemSurface, in: RoundedRectangle(cornerRadius: CopycolaColors.largeSurfaceRadius, style: .continuous))
         .frame(width: 460, height: 400)
         .padding(.top, 8)
         .toolbar {

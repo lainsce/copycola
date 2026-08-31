@@ -14,14 +14,14 @@ struct CardFaviconContent: View {
                     .saturation(0)
             } else {
                 ZStack {
-                    CopycoaColors.itemSurface
+                    CopycolaColors.itemSurface
                         .overlay(Color.accent.opacity(0.10))
                     Image(systemName: "globe")
                         .foregroundStyle(.primary)
                 }
             }
         }
-        .background(CopycoaColors.itemSurface)
+        .background(CopycolaColors.itemSurface)
         .task(id: card.faviconRevision) {
             image = await decodeImage(from: card.faviconData)
         }

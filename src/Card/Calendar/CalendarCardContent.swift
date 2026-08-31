@@ -53,14 +53,14 @@ private struct CalendarCardMetrics {
 
     var padding: CGFloat { CanvasMetrics.cardContentInset }
     var sectionSpacing: CGFloat { scaled(6) }
-    var labelFont: CGFloat { CopycoaTypography.Role.caption.size }
-    var dateRangeDayFont: CGFloat { CopycoaTypography.Role.bigDisplay.size }
-    var singleDateDayFont: CGFloat { CopycoaTypography.Role.bigDisplay.size }
-    var yearFont: CGFloat { CopycoaTypography.Role.caption.size }
-    var eventTitleFont: CGFloat { CopycoaTypography.Role.body.size }
-    var recurringWeekdayFont: CGFloat { CopycoaTypography.Role.display.size }
-    var recurringLabelFont: CGFloat { CopycoaTypography.Role.body.size }
-    var timelineFont: CGFloat { CopycoaTypography.Role.micro.size }
+    var labelFont: CGFloat { CopycolaTypography.Role.caption.size }
+    var dateRangeDayFont: CGFloat { CopycolaTypography.Role.bigDisplay.size }
+    var singleDateDayFont: CGFloat { CopycolaTypography.Role.bigDisplay.size }
+    var yearFont: CGFloat { CopycolaTypography.Role.caption.size }
+    var eventTitleFont: CGFloat { CopycolaTypography.Role.body.size }
+    var recurringWeekdayFont: CGFloat { CopycolaTypography.Role.display.size }
+    var recurringLabelFont: CGFloat { CopycolaTypography.Role.body.size }
+    var timelineFont: CGFloat { CopycolaTypography.Role.micro.size }
     var timelineLabelWidth: CGFloat { scaled(44) }
     var timelineSpacing: CGFloat { scaled(5) }
     var timelineEventHeight: CGFloat { scaled(24) }
@@ -118,7 +118,7 @@ struct CalendarCardContent: View {
                 Text(monthText(card.calendarEndDateValue))
                     .foregroundStyle(Color.accent)
             }
-            .font(CopycoaTypography.caption)
+            .font(CopycolaTypography.caption)
             .lineLimit(1)
             .minimumScaleFactor(0.7)
 
@@ -132,7 +132,7 @@ struct CalendarCardContent: View {
                 Spacer(minLength: metrics.sectionSpacing)
                 Text(dayText(card.calendarEndDateValue))
             }
-            .font(CopycoaTypography.bigDisplay)
+            .font(CopycolaTypography.bigDisplay)
             .foregroundStyle(.primary)
 
             Spacer(minLength: metrics.sectionSpacing)
@@ -155,27 +155,27 @@ struct CalendarCardContent: View {
                 Text(shortWeekdayText(card.calendarStartDateValue))
                     .foregroundStyle(.secondary)
             }
-            .font(CopycoaTypography.caption)
+            .font(CopycolaTypography.caption)
             .lineLimit(1)
             .minimumScaleFactor(0.7)
 
             VStack(alignment: .leading, spacing: 0) {
                 Text(dayText(card.calendarStartDateValue))
-                    .font(CopycoaTypography.bigDisplay)
+                    .font(CopycolaTypography.bigDisplay)
                     .foregroundStyle(.primary)
 
 
                 HStack {
                     if let year = yearText(card.calendarStartDateValue) {
                         Text(verbatim: year)
-                            .font(CopycoaTypography.caption)
+                            .font(CopycolaTypography.caption)
                             .foregroundStyle(.secondary)
                     }
                     Spacer(minLength: metrics.sectionSpacing)
                     let eventTitle = card.calendarEventTitleValue.trimmingCharacters(in: .whitespacesAndNewlines)
                     if !eventTitle.isEmpty {
                         Text(verbatim: eventTitle)
-                        .font(CopycoaTypography.body)
+                        .font(CopycolaTypography.body)
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
                             .truncationMode(.tail)
@@ -210,17 +210,17 @@ struct CalendarCardContent: View {
     private func recurring(metrics: CalendarCardMetrics) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("Every")
-                .font(CopycoaTypography.caption)
+                .font(CopycolaTypography.caption)
                 .foregroundStyle(Color.accent)
 
             Text(weekdayText(card.calendarStartDateValue))
-                .font(CopycoaTypography.display)
+                .font(CopycolaTypography.display)
                 .foregroundStyle(.primary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
 
             Text(card.calendarRecurrenceLabelValue)
-                .font(CopycoaTypography.body)
+                .font(CopycolaTypography.body)
                 .foregroundStyle(.secondary)
 
             Spacer(minLength: metrics.sectionSpacing)
@@ -235,7 +235,7 @@ struct CalendarCardContent: View {
     }
 
     private var surface: some ShapeStyle {
-        CopycoaColors.itemSurface
+        CopycolaColors.itemSurface
     }
 
     private var calendar: Foundation.Calendar {
@@ -341,7 +341,7 @@ private struct MonthDotGrid: View {
                         .frame(width: 24, height: 24)
 
                     Text(verbatim: "\(day)")
-                        .font(CopycoaTypography.body)
+                        .font(CopycolaTypography.body)
                         .foregroundStyle(.primary)
                         .fixedSize()
                 }
@@ -377,7 +377,7 @@ private struct CalendarTimeline: View {
     private func timelineRow(date: Date, isActive: Bool) -> some View {
         HStack(alignment: .center, spacing: metrics.sectionSpacing) {
             Text(date.formatted(date: .omitted, time: .shortened))
-                .font(CopycoaTypography.micro)
+                .font(CopycolaTypography.micro)
                 .foregroundStyle(isActive ? Color.primary : Color.secondary.opacity(0.45))
                 .frame(width: metrics.timelineLabelWidth, alignment: .leading)
 
@@ -386,7 +386,7 @@ private struct CalendarTimeline: View {
                     timelineLine(isActive: true)
 
                     Text(verbatim: eventTitle)
-                        .font(CopycoaTypography.body)
+                        .font(CopycolaTypography.body)
                         .foregroundStyle(.primary)
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
@@ -398,7 +398,7 @@ private struct CalendarTimeline: View {
                     .frame(height: metrics.timelineEventHeight)
                     .overlay {
                             Text(verbatim: eventTitle)
-                            .font(CopycoaTypography.body)
+                            .font(CopycolaTypography.body)
                             .foregroundStyle(.primary)
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)

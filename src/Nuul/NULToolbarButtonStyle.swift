@@ -50,14 +50,14 @@ struct NULToolbarButtonStyle: ButtonStyle {
             .frame(width: 22, height: 22)
             .frame(minWidth: max(diameter, 38), minHeight: max(diameter, 38))
             .background(
-                accented ? CopycoaColors.accent : CopycoaColors.itemSurface,
-                in: .rect(cornerRadius: CopycoaColors.controlRadius)
+                accented ? CopycolaColors.accent : CopycolaColors.itemSurface,
+                in: .rect(cornerRadius: CopycolaColors.controlRadius)
             )
             .contentShape(Rectangle())
             .opacity(isEnabled ? (configuration.isPressed ? 0.82 : 1) : 0.42)
             .scaleEffect(configuration.isPressed && !reduceMotion ? 0.97 : 1)
             .animation(
-                reduceMotion ? nil : CopycoaColors.controlMotion,
+                reduceMotion ? nil : CopycolaColors.controlMotion,
                 value: configuration.isPressed
             )
             .nulWindowActivityAppearance()

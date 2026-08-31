@@ -155,7 +155,7 @@ nonisolated enum WeatherClient {
     private static var userAgent: String {
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString")
             as? String ?? "1.0"
-        return "Copycoa/\(version) github.com/lainsce/Copycoa"
+        return "Copycola/\(version) github.com/lainsce/Copycola"
     }
 
     private static var preferredTemperatureUnit: UnitTemperature {

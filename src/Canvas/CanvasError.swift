@@ -36,7 +36,7 @@ nonisolated enum CanvasError: LocalizedError {
         case .fileImportFailed(let details):
             String(localized: "The selected file could not be imported: \(details)")
         case .imageAccessDenied:
-            String(localized: "Copycoa could not access the selected file.")
+            String(localized: "Copycola could not access the selected file.")
         case .targetCardMissing:
             String(localized: "The card was deleted before the operation completed.")
         case .weatherUpdateFailed(let details):

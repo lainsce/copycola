@@ -34,7 +34,7 @@ struct NULMenuPicker<Selection: Hashable, ItemLabel: View>: View {
                 .accessibilityAddTraits(option == selection ? .isSelected : [])
             }
         } label: {
-            HStack(spacing: CopycoaColors.gridUnit * 2) {
+            HStack(spacing: CopycolaColors.gridUnit * 2) {
                 if showsTitle {
                     Text(title)
                         .foregroundStyle(.secondary)
@@ -43,11 +43,11 @@ struct NULMenuPicker<Selection: Hashable, ItemLabel: View>: View {
 
                 label(selection)
                     .lineLimit(1)
-                    .font(CopycoaTypography.caption)
+                    .font(CopycolaTypography.caption)
                     .foregroundStyle(.secondary)
             }
-            .frame(minHeight: CopycoaColors.controlHeight, alignment: .leading)
-            .padding(.horizontal, CopycoaColors.gridUnit * 2)
+            .frame(minHeight: CopycolaColors.controlHeight, alignment: .leading)
+            .padding(.horizontal, CopycolaColors.gridUnit * 2)
         }
         .menuStyle(.borderlessButton)
         .accessibilityLabel(Text(title))

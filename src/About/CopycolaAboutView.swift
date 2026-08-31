@@ -4,7 +4,7 @@ import SwiftUI
 
 /// A compact, native About surface with the app identity, release metadata, and
 /// the existing privacy-policy route close at hand.
-struct CopycoaAboutView: View {
+struct CopycolaAboutView: View {
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
@@ -16,16 +16,16 @@ struct CopycoaAboutView: View {
                 .frame(width: 128, height: 128)
 
             VStack(spacing: 8) {
-                Text("Copycoa")
-                    .font(CopycoaTypography.display)
+                Text("Copycola")
+                    .font(CopycolaTypography.display)
 
                 Text("A calm, spatial canvas for ideas.")
-                    .font(CopycoaTypography.viewSubtitle)
+                    .font(CopycolaTypography.viewSubtitle)
                     .foregroundStyle(.secondary)
             }
 
             Text("Keep notes, references, dates, places, and useful fragments together on a canvas you can return to.")
-                .font(CopycoaTypography.body)
+                .font(CopycolaTypography.body)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .lineLimit(2...2)
@@ -33,23 +33,23 @@ struct CopycoaAboutView: View {
 
             VStack(spacing: 4) {
                 Text("Version \(versionString)")
-                    .font(CopycoaTypography.caption)
+                    .font(CopycolaTypography.caption)
                     .foregroundStyle(.secondary)
 
                 Text("Made with SwiftUI for Mac.")
-                    .font(CopycoaTypography.caption)
+                    .font(CopycolaTypography.caption)
                     .foregroundStyle(.tertiary)
             }
 
             Button("Privacy Policy") {
-                openWindow(id: CopycoaWindowID.privacyPolicy)
+                openWindow(id: CopycolaWindowID.privacyPolicy)
             }
             .buttonStyle(NULButtonStyle(kind: .quiet))
         }
         .padding(32)
         .background(
-            CopycoaColors.itemSurface,
-            in: RoundedRectangle(cornerRadius: CopycoaColors.largeSurfaceRadius, style: .continuous)
+            CopycolaColors.itemSurface,
+            in: RoundedRectangle(cornerRadius: CopycolaColors.largeSurfaceRadius, style: .continuous)
         )
         .frame(width: 400)
     }

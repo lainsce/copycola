@@ -10,7 +10,7 @@ struct AddCardFanView: View {
             .popover(isPresented: $isExpanded, arrowEdge: .bottom) {
                 AddCardPickerView(addCard: selectCard, animation: fanAnimation)
                     .padding(8)
-                    .presentationBackground(CopycoaColors.itemSurface)
+                    .presentationBackground(CopycolaColors.itemSurface)
             }
     }
 
@@ -41,6 +41,6 @@ struct AddCardFanView: View {
     }
 
     private var fanAnimation: Animation? {
-        reduceMotion ? nil : CopycoaColors.controlMotion
+        reduceMotion ? nil : CopycolaColors.controlMotion
     }
 }

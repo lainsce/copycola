@@ -1,7 +1,7 @@
 import CoreText
 import Foundation
 
-enum CopycoaFontRegistration {
+enum CopycolaFontRegistration {
     private static let fontNames = [
         "Geist-Regular",
         "Geist-Medium",

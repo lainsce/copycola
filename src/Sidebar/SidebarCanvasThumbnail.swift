@@ -41,10 +41,10 @@ struct SidebarCanvasThumbnail: View {
     private var emptyCanvasCard: some View {
         // This is an empty-state affordance, not a card surface: keep it flat and
         // reserve the dotted outline for the add cue only.
-        RoundedRectangle(cornerRadius: CopycoaColors.largeSurfaceRadius, style: .continuous)
+        RoundedRectangle(cornerRadius: CopycolaColors.largeSurfaceRadius, style: .continuous)
             .fill(.primary.opacity(0.08))
             .overlay {
-                RoundedRectangle(cornerRadius: CopycoaColors.largeSurfaceRadius, style: .continuous)
+                RoundedRectangle(cornerRadius: CopycolaColors.largeSurfaceRadius, style: .continuous)
                     .strokeBorder(
                         .secondary.opacity(0.42),
                         style: StrokeStyle(lineWidth: 1, dash: [3, 3])
@@ -75,7 +75,7 @@ struct SidebarCanvasThumbnail: View {
                         .overlay {
                             Circle().strokeBorder(.white.opacity(0.20), lineWidth: 1.5)
                         }
-                        .padding(CopycoaColors.controlGap)
+                        .padding(CopycolaColors.controlGap)
                 }
             }
             .overlay {

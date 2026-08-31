@@ -54,7 +54,7 @@ struct CardView: View {
         }
         .rotationEffect(.degrees(dragTiltDegrees))
         .animation(
-            reduceMotion ? nil : CopycoaColors.controlMotion,
+            reduceMotion ? nil : CopycolaColors.controlMotion,
             value: dragTiltDegrees
         )
     }
@@ -111,9 +111,9 @@ struct CardView: View {
         Button("Delete Card", systemImage: "trash", action: onDelete)
             .labelStyle(.iconOnly)
             .font(.system(size: 12, weight: .semibold))
-            .foregroundStyle(CopycoaColors.itemText(for: colorScheme).opacity(0.8))
+            .foregroundStyle(CopycolaColors.itemText(for: colorScheme).opacity(0.8))
             .frame(width: 30, height: 30)
-            .background(Circle().fill(CopycoaColors.itemSurface))
+            .background(Circle().fill(CopycolaColors.itemSurface))
             .buttonStyle(.plain)
             .help(Text("Delete Card"))
     }
@@ -121,18 +121,18 @@ struct CardView: View {
     /// Dark bar under a selected card: size options, then the card's kind-specific actions
     /// (edit text, change image, edit link/location/calendar) after a divider.
     private var controlBar: some View {
-        HStack(spacing: CopycoaColors.gridUnit) {
+        HStack(spacing: CopycolaColors.gridUnit) {
             ForEach(CardSize.selectable) { sizeButton($0) }
 
             Rectangle()
                 .fill(.white.opacity(0.22))
                 .frame(width: 1, height: 20)
-                .padding(.horizontal, CopycoaColors.gridUnit)
+                .padding(.horizontal, CopycolaColors.gridUnit)
             actionButtons
         }
-        .padding(CopycoaColors.gridUnit)
+        .padding(CopycolaColors.gridUnit)
         .background {
-            RoundedRectangle(cornerRadius: CopycoaColors.largeSurfaceRadius)
+            RoundedRectangle(cornerRadius: CopycolaColors.largeSurfaceRadius)
                 .fill(.black.opacity(0.82))
         }
     }
@@ -181,7 +181,7 @@ struct CardView: View {
                 Text(size.accessibilityLabel)
             } icon: {
                 ZStack {
-                    RoundedRectangle(cornerRadius: CopycoaColors.controlRadius)
+                    RoundedRectangle(cornerRadius: CopycolaColors.controlRadius)
                         .fill(selected ? Color.white : .clear)
                         .frame(width: 28, height: 28)
                     RoundedRectangle(cornerRadius: 1)

@@ -1,5 +1,5 @@
 import Testing
-@testable import Copycoa
+@testable import Copycola
 
 struct LocationSearchTests {
     @Test

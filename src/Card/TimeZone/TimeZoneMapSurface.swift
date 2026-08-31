@@ -68,7 +68,7 @@ struct TimeZoneMapSurface: View {
             )
 
             ZStack {
-                CopycoaColors.itemSurface
+                CopycolaColors.itemSurface
 
                 if let image = TimeZoneMapRenderer.image(for: preset) {
                     Image(nsImage: image)
@@ -95,7 +95,7 @@ struct TimeZoneMapSurface: View {
                         .fill(Color.accent)
                         .frame(width: 7, height: 7)
                     Circle()
-                        .fill(CopycoaColors.itemSurface)
+                        .fill(CopycolaColors.itemSurface)
                         .frame(width: 5, height: 5)
                 }
                 .position(markerPosition)
