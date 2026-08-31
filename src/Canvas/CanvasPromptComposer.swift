@@ -13,13 +13,56 @@ struct CanvasPromptComposer: View {
     @State private var recordingStartedAt = Date()
 
     var body: some View {
-        Group {
-            if isListening { listeningComposer } else { idleComposer }
+        VStack(spacing: 8) {
+            if !recorder.transcript.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                transcriptionComposer
+            }
+
+            Group {
+                if isListening { listeningComposer } else { idleComposer }
+            }
+            .frame(width: 300, height: 40)
+            .clipShape(Capsule())
         }
-        .frame(width: 300, height: 40)
-        .clipShape(Capsule())
         .animation(reduceMotion ? nil : .snappy, value: isListening)
         .onAppear { isFocused = false }
+        .onChange(of: recorder.transcript) { _, transcript in
+            guard isListening else { return }
+            text = transcript
+        }
+        .onChange(of: recorder.finalTranscript) { _, transcript in
+            guard !transcript.isEmpty else { return }
+            text = transcript
+        }
+    }
+
+    private var transcriptionComposer: some View {
+        HStack(spacing: 8) {
+            Text(verbatim: recorder.transcript)
+                .font(CopycoaTypography.text(12))
+                .foregroundStyle(colorScheme == .dark ? .white : .black)
+                .lineLimit(3)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Button(action: submitIfNeeded) {
+                Image(systemName: "paperplane.fill")
+                    .font(.system(size: 12, weight: .bold))
+                    .frame(width: 28, height: 28)
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(colorScheme == .dark ? Color.black : Color.white)
+            .background(
+                colorScheme == .dark ? Color(hex: "D39224") : Color(hex: "D9921E"),
+                in: Circle()
+            )
+            .accessibilityLabel(Text("Send transcription"))
+            .help(Text("Send transcription"))
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .frame(width: 300, alignment: .leading)
+        .background(colorScheme == .dark ? Color(hex: "171717") : Color.white, in: RoundedRectangle(cornerRadius: 12))
     }
 
     private var idleComposer: some View {
@@ -61,7 +104,7 @@ struct CanvasPromptComposer: View {
             }
             .buttonStyle(.plain)
             .foregroundStyle(colorScheme == .dark ? Color.black : Color.white)
-            .background(colorScheme == .dark ? Color(hex: "F5DAB4") : Color(hex: "D9921E"), in: Circle())
+            .background(colorScheme == .dark ? Color(hex: "D39224") : Color(hex: "D9921E"), in: Circle())
             .padding(.trailing, 4)
             .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             .accessibilityLabel(Text("Create card"))
@@ -95,7 +138,7 @@ struct CanvasPromptComposer: View {
         }
         .buttonStyle(.plain)
         .foregroundStyle(.black)
-        .background(colorScheme == .dark ? Color(hex: "F5DAB4") : Color(hex: "D9921E"))
+        .background(colorScheme == .dark ? Color(hex: "D39224") : Color(hex: "D9921E"))
         .accessibilityLabel(Text("Stop voice input"))
         .help(Text("Stop voice input"))
     }
@@ -127,6 +170,8 @@ struct CanvasPromptComposer: View {
         isListening = false
         recorder.stop()
         submit()
+        text = ""
+        recorder.clearTranscript()
         isFocused = true
     }
 }

@@ -101,5 +101,5 @@ enum CopycoaColors {
     static let itemSurfaceLightHex = "FDFDFD"
     static let itemSurfaceDarkHex = "111111"
     static let accentLightHex = "DE9C32"
-    static let accentDarkHex = "FFE1B9"
+    static let accentDarkHex = "D39224"
 }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		67BCCC84304496BF00A74237 /* WhisperKit in Frameworks */ = {isa = PBXBuildFile; productRef = 9A7F00000000000000000001 /* WhisperKit */; };
 		67FF08943027C17000F9DB17 /* Copycoa.icon in Resources */ = {isa = PBXBuildFile; fileRef = 67FF08933027C17000F9DB17 /* Copycoa.icon */; };
 		67FF08963027CE1300F9DB17 /* Copycoa.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 67FF08953027CE1300F9DB17 /* Copycoa.xcassets */; };
 		67FF08A13027C17000F9DB21 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 67FF08983027C17000F9DB18 /* Localizable.xcstrings */; };
@@ -61,6 +62,7 @@
 		000000000000000130000000 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
+				67BCCC84304496BF00A74237 /* WhisperKit in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -132,6 +134,9 @@
 				000000000000000000000010 /* src */,
 			);
 			name = Copycoa;
+			packageProductDependencies = (
+				9A7F00000000000000000001 /* WhisperKit */,
+			);
 			productName = Copycoa;
 			productReference = 000000000000000000000120 /* Copycoa.app */;
 			productType = "com.apple.product-type.application";
@@ -160,6 +165,9 @@
 			);
 			mainGroup = 000000000000000000000001;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				9A7F00000000000000000002 /* XCRemoteSwiftPackageReference "argmax-oss-swift" */,
+			);
 			preferredProjectObjectVersion = 90;
 			productRefGroup = 000000000000000000000020 /* Products */;
 			projectDirPath = "";
@@ -454,6 +462,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		9A7F00000000000000000002 /* XCRemoteSwiftPackageReference "argmax-oss-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/argmaxinc/argmax-oss-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9A7F00000000000000000001 /* WhisperKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9A7F00000000000000000002 /* XCRemoteSwiftPackageReference "argmax-oss-swift" */;
+			productName = WhisperKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 000000000000000000000000 /* Project object */;
 }

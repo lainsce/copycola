@@ -26,7 +26,7 @@ struct AddCardFanView: View {
         .accessibilityLabel(Text(anchorTitle))
         .accessibilityHint(Text("Shows card types"))
         .help(Text(anchorTitle))
-        .buttonStyle(NULToolbarButtonStyle(diameter: 38))
+        .buttonStyle(NULToolbarButtonStyle(diameter: 38, accented: true))
     }
 
     private func selectCard(_ kind: CardKind) {

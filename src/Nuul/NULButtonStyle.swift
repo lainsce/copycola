@@ -49,6 +49,7 @@ struct NULButtonStyle: ButtonStyle {
                 reduceMotion ? nil : CopycoaColors.controlMotion,
                 value: configuration.isPressed
             )
+            .nulWindowActivityAppearance()
     }
 
     private var backgroundColor: Color {

@@ -5,41 +5,52 @@ import SwiftUI
 /// remain flat and only communicate interaction through opacity.
 struct NULIcon: View {
     let systemImage: String
-    let foregroundColor: Color
+    let foregroundColor: Color?
 
-    init(systemImage: String, foregroundColor: Color = .primary) {
+    init(systemImage: String, foregroundColor: Color? = nil) {
         self.systemImage = systemImage
         self.foregroundColor = foregroundColor
     }
 
     var body: some View {
-        Image(systemName: systemImage)
+        icon
             .font(.system(size: 16, weight: .regular))
             .symbolRenderingMode(.monochrome)
-            .foregroundStyle(foregroundColor)
             .frame(width: 22, height: 22)
             .accessibilityHidden(true)
+    }
+
+    @ViewBuilder
+    private var icon: some View {
+        if let foregroundColor {
+            Image(systemName: systemImage)
+                .foregroundStyle(foregroundColor)
+        } else {
+            Image(systemName: systemImage)
+        }
     }
 }
 
 struct NULToolbarButtonStyle: ButtonStyle {
     private let diameter: CGFloat
+    private let accented: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.isEnabled) private var isEnabled
 
-    init(diameter: CGFloat = 38) {
+    init(diameter: CGFloat = 38, accented: Bool = false) {
         self.diameter = diameter
+        self.accented = accented
     }
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.system(size: 16, weight: .regular))
             .symbolRenderingMode(.monochrome)
-            .foregroundStyle(.primary)
+            .foregroundStyle(accented ? .black : .primary)
             .frame(width: 22, height: 22)
             .frame(minWidth: max(diameter, 38), minHeight: max(diameter, 38))
             .background(
-                CopycoaColors.itemSurface,
+                accented ? CopycoaColors.accent : CopycoaColors.itemSurface,
                 in: .rect(cornerRadius: CopycoaColors.controlRadius)
             )
             .contentShape(Rectangle())
@@ -49,5 +60,6 @@ struct NULToolbarButtonStyle: ButtonStyle {
                 reduceMotion ? nil : CopycoaColors.controlMotion,
                 value: configuration.isPressed
             )
+            .nulWindowActivityAppearance()
     }
 }

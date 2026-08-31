@@ -966,7 +966,7 @@ struct CanvasView: View {
         let prompt = canvasPrompt.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !prompt.isEmpty else { return }
 
-        let interpretation = CanvasPromptInterpreter.interpret(prompt)
+        let interpretation = CanvasAIRecon.shared.interpret(prompt)
         let canvasTitle = CanvasTitleInferer.title(for: prompt, interpretation: interpretation)
         board.name = canvasTitle
         let header = ensureCanvasHeader()

@@ -41,7 +41,7 @@ struct SidebarView: View {
                 Button("New Canvas", systemImage: "rectangle.badge.plus", action: addBoard)
                     .labelStyle(.iconOnly)
                     .help(Text("New Canvas"))
-                    .buttonStyle(NULToolbarButtonStyle())
+                    .buttonStyle(NULToolbarButtonStyle(accented: false))
                     .padding(.leading, 158)
             }
             .sharedBackgroundVisibility(.hidden)

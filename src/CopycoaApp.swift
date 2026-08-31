@@ -13,6 +13,7 @@ struct CopycoaApp: App {
         WindowGroup {
             ContentView()
                 .font(CopycoaTypography.body)
+                .nulWindowActivityAppearance()
         }
         .windowStyle(.hiddenTitleBar)
         .windowToolbarStyle(.unified)
@@ -27,12 +28,14 @@ struct CopycoaApp: App {
         Window("About Copycoa", id: CopycoaWindowID.about) {
             CopycoaAboutView()
                 .font(CopycoaTypography.body)
+                .nulWindowActivityAppearance()
         }
         .windowResizability(.contentSize)
 
         Window("Privacy Policy", id: CopycoaWindowID.privacyPolicy) {
             PrivacyPolicyView()
                 .font(CopycoaTypography.body)
+                .nulWindowActivityAppearance()
         }
         .defaultSize(width: 540, height: 540)
         .windowResizability(.contentSize)

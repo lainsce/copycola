@@ -4,7 +4,6 @@ import SwiftUI
 struct ContentView: View {
     @Query(sort: \Board.createdAt) private var boards: [Board]
     @Environment(\.modelContext) private var context
-    @Environment(\.scenePhase) private var scenePhase
     @Environment(\.colorScheme) private var colorScheme
     @State private var selection: UUID?
 
@@ -33,9 +32,6 @@ struct ContentView: View {
             .ignoresSafeArea(.all, edges: .top)
         }
         .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
-        // Keep both panes visually active while the app is active. Losing window
-        // focus may still dim the whole scene.
-        .environment(\.appearsActive, scenePhase == .active)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear(perform: ensureSelection)
         .onChange(of: boards.count) { _, _ in
