@@ -1,8 +1,0 @@
-{
-  "images" : [
-    { "filename" : "AddCardOptionTimeZone.png", "idiom" : "universal", "scale" : "1x" },
-    { "filename" : "AddCardOptionTimeZone@2x.png", "idiom" : "universal", "scale" : "2x" },
-    { "filename" : "AddCardOptionTimeZone@3x.png", "idiom" : "universal", "scale" : "3x" }
-  ],
-  "info" : { "author" : "xcode", "version" : 1 }
-}

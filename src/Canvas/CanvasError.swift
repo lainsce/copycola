@@ -8,7 +8,6 @@ nonisolated enum CanvasError: LocalizedError {
     case fileImportFailed(String)
     case imageAccessDenied
     case targetCardMissing
-    case weatherUpdateFailed(String)
 
     var errorDescription: String? {
         switch self {
@@ -20,8 +19,6 @@ nonisolated enum CanvasError: LocalizedError {
             String(localized: "Unable to Import Image")
         case .targetCardMissing:
             String(localized: "Card No Longer Available")
-        case .weatherUpdateFailed:
-            String(localized: "Unable to Update Weather")
         }
     }
 
@@ -39,8 +36,6 @@ nonisolated enum CanvasError: LocalizedError {
             String(localized: "Copycola could not access the selected file.")
         case .targetCardMissing:
             String(localized: "The card was deleted before the operation completed.")
-        case .weatherUpdateFailed(let details):
-            String(localized: "The weather could not be updated: \(details)")
         }
     }
 }

@@ -20,8 +20,6 @@ src/                         application source
     Shared/                  Card model, kind/sizing, chrome, CardView, shared editors
     Header/ StickyNote/      type-specific card implementations
     Image/ Link/ Map/
-    Calendar/ TimeZone/ Weather/
-    Progress/ Checklist/ Quote/ Palette/
   Sidebar/                   sidebar views, previews, and native material
   PrivacyPolicy/             privacy policy window views
   *.swift                    app shell, commands, shared color helpers
@@ -46,9 +44,9 @@ The Xcode project uses `PBXFileSystemSynchronizedRootGroup` for `src/` and `test
 
 ### Cards
 
-`CardKind` currently contains: `header`, `stickyNote`, `image`, `link`, `map`, `calendar`, `timeZone`, `weather`, `progress`, `checklist`, `quote`, and `palette`.
+`CardKind` currently contains: `header`, `stickyNote`, `image`, `link`, and `map`. Header is structural and generated automatically; the other four kinds are user-creatable.
 
-- `Card/Shared/Card.swift` is the SwiftData model. It keeps optional per-kind fields for lightweight migration; do not casually remove or rename persisted properties.
+- `Card/Shared/Card.swift` is the SwiftData model. It keeps only shared fields used by the supported kinds; changes to persisted properties still require deliberate migration review.
 - `Card/Shared/CardView.swift` is shared shell/routing/selection chrome. Keep type-specific layouts in their matching `Card/<Kind>/` folder.
 - `Card/Shared/CardChrome.swift` is the single source of truth for card and populated-preview treatment:
   - black outline opacity `0.06`
@@ -66,11 +64,10 @@ The Xcode project uses `PBXFileSystemSynchronizedRootGroup` for `src/` and `test
 - `src/Sidebar/` owns canvas list editing, thumbnails, previews, and sidebar background.
 - Privacy Policy is a separate macOS window/menu route, not an extra in-canvas UI surface.
 
-### Weather and networking
+### Networking
 
-- Weather uses the free MET Norway Locationforecast API through `Card/Weather/WeatherClient.swift`, not WeatherKit.
-- Preserve cached snapshots, `Last-Modified` revalidation, and the 15-minute fallback cache duration.
-- `WeatherSummaryGenerator` provides deterministic editorial copy and has focused tests.
+- Link cards may request page metadata and favicons from the entered URL.
+- Map cards use MapKit place search; no location permission is requested.
 
 ## UI and accessibility invariants
 

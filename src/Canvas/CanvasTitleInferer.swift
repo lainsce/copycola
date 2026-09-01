@@ -2,19 +2,21 @@ import Foundation
 
 enum CanvasTitleInferer {
     static func title(for prompt: String, interpretation: CanvasPromptInterpretation) -> String {
-        if interpretation.kind == .calendar {
-            if let location = interpretation.location, !location.isEmpty {
-                return "\(location) Schedule"
-            }
-            return "Upcoming Schedule"
-        }
-
         switch interpretation.kind {
-        case .checklist: return "Action Plan"
-        case .progress: return "Progress Tracker"
-        case .palette: return "Color Studies"
-        case .quote: return "Quotes & References"
-        default: break
+        case .map:
+            if let location = interpretation.location, !location.isEmpty {
+                return "\(location) Places"
+            }
+            return "Places & Context"
+        case .link:
+            if let host = URL(string: prompt.trimmingCharacters(in: .whitespacesAndNewlines))?.host,
+               !host.isEmpty {
+                return host.replacingOccurrences(of: "www.", with: "")
+            }
+        case .image:
+            return "Visual Notes"
+        case .header, .stickyNote:
+            break
         }
 
         let firstThought = prompt

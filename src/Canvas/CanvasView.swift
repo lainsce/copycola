@@ -10,31 +10,6 @@ private struct CanvasScrollOffsetKey: PreferenceKey {
     }
 }
 
-private struct CalendarSheetItem: Identifiable {
-    let card: Card
-
-    var id: UUID { card.id }
-}
-
-private struct TimeZoneSheetItem: Identifiable {
-    let card: Card
-
-    var id: UUID { card.id }
-}
-
-private struct WeatherSheetItem: Identifiable {
-    let card: Card
-
-    var id: UUID { card.id }
-}
-
-private struct DetailsSheetItem: Identifiable {
-    let card: Card
-    let kind: CardKind
-
-    var id: UUID { card.id }
-}
-
     /// The fixed-column card surface: draws a viewport-sized technical grid, positions cards, and
 /// handles vertical scrolling, card dragging with grid + magnetic snapping, and card creation.
 struct CanvasView: View {
@@ -62,18 +37,6 @@ struct CanvasView: View {
     @State private var imageTargetCardID: UUID?
     @State private var linkTargetCardID: UUID?
     @State private var mapTargetCardID: UUID?
-    @State private var calendarSheetItem: CalendarSheetItem?
-    @State private var calendarCreationPendingID: UUID?
-    @State private var calendarChangesSaved = false
-    @State private var timeZoneSheetItem: TimeZoneSheetItem?
-    @State private var timeZoneCreationPendingID: UUID?
-    @State private var timeZoneChangesSaved = false
-    @State private var weatherSheetItem: WeatherSheetItem?
-    @State private var weatherCreationPendingID: UUID?
-    @State private var weatherChangesSaved = false
-    @State private var detailsSheetItem: DetailsSheetItem?
-    @State private var detailsCreationPendingID: UUID?
-    @State private var detailsChangesSaved = false
     @State private var presentedError: CanvasError?
     @State private var cardToDeleteID: UUID?
     @State private var showingDeleteConfirmation = false
@@ -110,7 +73,6 @@ struct CanvasView: View {
             .focusedSceneValue(\.editCardAction, editSelectedCardAction)
             .focusedSceneValue(\.resizeCardAction, resizeSelectedCardAction)
             .focusedSceneValue(\.deleteCardAction, deleteSelectedCardAction)
-            .focusedSceneValue(\.refreshWeatherAction, refreshSelectedWeatherAction)
             .toolbar {
                 ToolbarSpacer(placement: .navigation)
                     .sharedBackgroundVisibility(.hidden)
@@ -145,25 +107,6 @@ struct CanvasView: View {
             }) {
                 mapEntrySheet
             }
-            .sheet(item: $calendarSheetItem, onDismiss: dismissCalendarSheet) { item in
-                CalendarEditorSheet(card: item.card) {
-                    calendarChangesSaved = true
-                }
-            }
-            .sheet(item: $timeZoneSheetItem, onDismiss: dismissTimeZoneSheet) { item in
-                TimeZoneEditorSheet(card: item.card) {
-                    timeZoneChangesSaved = true
-                }
-            }
-            .sheet(item: $weatherSheetItem, onDismiss: dismissWeatherSheet) { item in
-                WeatherEditorSheet(card: item.card) {
-                    weatherChangesSaved = true
-                    refreshWeather(item.card, resolvingLocation: true)
-                }
-            }
-            .sheet(item: $detailsSheetItem, onDismiss: dismissDetailsSheet) { item in
-                detailsEditorSheet(for: item)
-            }
     }
 
     private var canvasViewport: some View {
@@ -181,12 +124,6 @@ struct CanvasView: View {
                 maxHeight: .infinity
             )
             .onGeometryChange(for: CGSize.self) { $0.size } action: { viewportSize = $0 }
-            .overlay(alignment: .bottomLeading) {
-                if hasWeatherCard {
-                    WeatherAttributionLink()
-                        .padding(24)
-                }
-            }
             .overlay(alignment: .bottom) {
                 CanvasPromptComposer(
                     text: $canvasPrompt,
@@ -199,9 +136,6 @@ struct CanvasView: View {
             .onAppear {
                 ensureCanvasHeader()
                 normalizeBoardGeometry()
-            }
-            .task(id: board.id) {
-                await monitorWeatherCards()
             }
     }
 
@@ -245,39 +179,6 @@ struct CanvasView: View {
         ) { value in
             addMap(value)
         }
-    }
-
-    private func dismissCalendarSheet() {
-        if !calendarChangesSaved,
-           let pendingID = calendarCreationPendingID,
-           let pendingCard = targetCard(pendingID) {
-            context.delete(pendingCard)
-            if selectedCardID == pendingID { selectedCardID = nil }
-        }
-        calendarCreationPendingID = nil
-        calendarChangesSaved = false
-    }
-
-    private func dismissTimeZoneSheet() {
-        if !timeZoneChangesSaved,
-           let pendingID = timeZoneCreationPendingID,
-           let pendingCard = targetCard(pendingID) {
-            context.delete(pendingCard)
-            if selectedCardID == pendingID { selectedCardID = nil }
-        }
-        timeZoneCreationPendingID = nil
-        timeZoneChangesSaved = false
-    }
-
-    private func dismissWeatherSheet() {
-        if !weatherChangesSaved,
-           let pendingID = weatherCreationPendingID,
-           let pendingCard = targetCard(pendingID) {
-            context.delete(pendingCard)
-            if selectedCardID == pendingID { selectedCardID = nil }
-        }
-        weatherCreationPendingID = nil
-        weatherChangesSaved = false
     }
 
     private var canvasScrollView: some View {
@@ -333,41 +234,6 @@ struct CanvasView: View {
         }
     }
 
-    private func dismissDetailsSheet() {
-        if !detailsChangesSaved,
-           let pendingID = detailsCreationPendingID,
-           let pendingCard = targetCard(pendingID) {
-            context.delete(pendingCard)
-            if selectedCardID == pendingID { selectedCardID = nil }
-        }
-        detailsCreationPendingID = nil
-        detailsChangesSaved = false
-    }
-
-    @ViewBuilder
-    private func detailsEditorSheet(for item: DetailsSheetItem) -> some View {
-        switch item.kind {
-        case .progress:
-            ProgressEditorSheet(card: item.card) {
-                detailsChangesSaved = true
-            }
-        case .checklist:
-            ChecklistEditorSheet(card: item.card) {
-                detailsChangesSaved = true
-            }
-        case .quote:
-            QuoteEditorSheet(card: item.card) {
-                detailsChangesSaved = true
-            }
-        case .palette:
-            PaletteEditorSheet(card: item.card) {
-                detailsChangesSaved = true
-            }
-        default:
-            ContentUnavailableView("Unsupported Card", systemImage: "questionmark.square")
-        }
-    }
-
     private var canvasBackgroundColor: Color {
         CopycolaColors.workspaceBackground(for: colorScheme)
     }
@@ -376,10 +242,6 @@ struct CanvasView: View {
     /// establishes a deliberately tighter first content row through `headerContentSpacing`.
     private var cardGridOriginY: CGFloat {
         CGFloat(contentMinimumY(for: .stickyNote) ?? Double(CanvasMetrics.canvasMargin))
-    }
-
-    private var hasWeatherCard: Bool {
-        board.cards.contains { $0.kind == .weather }
     }
 
     // MARK: - Cards
@@ -398,13 +260,9 @@ struct CanvasView: View {
                 delete: requestDelete,
                 setSize: { card, size in setCardSize(size, for: card) },
                 chooseImage: chooseImage,
+                cropImageToSubject: cropImageToSubject,
                 editLink: editLink,
                 editLocation: editLocation,
-                editCalendar: editCalendar,
-                editTimeZone: editTimeZone,
-                editWeather: editWeather,
-                refreshWeather: { card in refreshWeather(card, resolvingLocation: false) },
-                editDetails: editDetails,
                 accessibilitySummary: { card in accessibilitySummary(for: card) },
                 nudge: { card, deltaX, deltaY in nudge(card, x: deltaX, y: deltaY) },
                 dragChanged: dragChanged,
@@ -488,22 +346,6 @@ struct CanvasView: View {
 
     private func beginEditing(_ card: Card) {
         // Header/sticky edit their text; image edits its caption.
-        if card.kind == .calendar {
-            editCalendar(card)
-            return
-        }
-        if card.kind == .timeZone {
-            editTimeZone(card)
-            return
-        }
-        if card.kind == .weather {
-            editWeather(card)
-            return
-        }
-        if [.progress, .checklist, .quote, .palette].contains(card.kind) {
-            editDetails(card)
-            return
-        }
         guard card.kind == .header || card.kind == .stickyNote || card.kind == .image else { return }
         selectedCardID = card.id
         editingCardID = card.id
@@ -514,6 +356,18 @@ struct CanvasView: View {
         showImageImporter = true
     }
 
+    private func cropImageToSubject(for card: Card) {
+        guard card.kind == .image, let data = card.imageData else { return }
+        Task { @MainActor in
+            let cropped = await Task.detached(priority: .userInitiated) {
+                ImageSubjectCropper.crop(data: data)
+            }.value
+            guard let cropped, !card.isDeleted else { return }
+            card.imageData = cropped
+            card.imageRevision = UUID()
+        }
+    }
+
     private func editLink(_ card: Card) {
         linkTargetCardID = card.id
         showLinkSheet = true
@@ -522,50 +376,6 @@ struct CanvasView: View {
     private func editLocation(_ card: Card) {
         mapTargetCardID = card.id
         showMapSheet = true
-    }
-
-    private func editCalendar(_ card: Card) {
-        select(card)
-        calendarCreationPendingID = nil
-        calendarChangesSaved = true
-        calendarSheetItem = CalendarSheetItem(card: card)
-    }
-
-    private func editTimeZone(_ card: Card) {
-        select(card)
-        timeZoneCreationPendingID = nil
-        timeZoneChangesSaved = true
-        timeZoneSheetItem = TimeZoneSheetItem(card: card)
-    }
-
-    private func editWeather(_ card: Card) {
-        select(card)
-        weatherCreationPendingID = nil
-        weatherChangesSaved = true
-        weatherSheetItem = WeatherSheetItem(card: card)
-    }
-
-    private func editDetails(_ card: Card) {
-        guard [.progress, .checklist, .quote, .palette].contains(card.kind) else { return }
-        select(card)
-        detailsCreationPendingID = nil
-        detailsChangesSaved = true
-        detailsSheetItem = DetailsSheetItem(card: card, kind: card.kind)
-    }
-
-    private func refreshWeather(_ card: Card, resolvingLocation: Bool) {
-        Task {
-            await updateWeather(
-                for: card,
-                resolvingLocation: resolvingLocation,
-                presentErrors: true
-            )
-        }
-    }
-
-    private var refreshSelectedWeatherAction: (() -> Void)? {
-        guard let card = targetCard(selectedCardID), card.kind == .weather else { return nil }
-        return { refreshWeather(card, resolvingLocation: false) }
     }
 
     private func edit(_ card: Card) {
@@ -579,14 +389,6 @@ struct CanvasView: View {
         case .map:
             mapTargetCardID = card.id
             showMapSheet = true
-        case .calendar:
-            editCalendar(card)
-        case .timeZone:
-            editTimeZone(card)
-        case .weather:
-            editWeather(card)
-        case .progress, .checklist, .quote, .palette:
-            editDetails(card)
         }
     }
 
@@ -633,148 +435,6 @@ struct CanvasView: View {
             return card.title ?? card.urlString ?? ""
         case .map:
             return card.title ?? ""
-        case .calendar:
-            let start = card.calendarStartDateValue.formatted(date: .long, time: .shortened)
-            switch card.calendarDateKind {
-            case .dateRange:
-                let end = card.calendarEndDateValue.formatted(date: .long, time: .shortened)
-                return "\(card.calendarEventTitleValue), \(start) to \(end)"
-            case .singleDate:
-                return "\(card.calendarEventTitleValue), \(start)"
-            case .recurring:
-                return "\(card.calendarEventTitleValue), \(card.calendarRecurrenceLabelValue), \(start)"
-            }
-        case .timeZone:
-            let preset = TimeZoneCardPreset.preset(for: card.timeZoneIdentifier)
-            let offset = TimeZoneCardLogic.offsetText(at: Date(), in: preset.timeZone)
-            return "\(preset.city), GMT \(offset)"
-        case .weather:
-            let location = card.weatherLocationValue.isEmpty ? "" : "\(card.weatherLocationValue), "
-            return "\(location)\(card.weatherSummaryValue), high \(card.weatherHighTemperatureValue)\(card.weatherTemperatureUnitLabel), low \(card.weatherLowTemperatureValue)\(card.weatherTemperatureUnitLabel)"
-        case .progress:
-            let calendar = Calendar.current
-            let total = ProgressCardLogic.totalDays(
-                start: card.progressStartDateValue,
-                goal: card.progressGoalDateValue,
-                calendar: calendar
-            )
-            let completed = ProgressCardLogic.completedDays(
-                start: card.progressStartDateValue,
-                goal: card.progressGoalDateValue,
-                calendar: calendar
-            )
-            return "\(card.progressTitleValue), \(completed) of \(total) days"
-        case .checklist:
-            let completed = card.checklistSlots.filter(\.isCompleted).count
-            return "\(card.checklistTitleValue), \(completed) of \(card.checklistSlots.count) complete"
-        case .quote:
-            let attribution = card.quoteAttributionValue.trimmingCharacters(in: .whitespacesAndNewlines)
-            return attribution.isEmpty ? card.quoteTextValue : "\(card.quoteTextValue), \(attribution)"
-        case .palette:
-            return "\(card.paletteTitleValue), \(card.paletteColorHexValues.count) colors"
-        }
-    }
-
-    private func refreshWeatherCardsIfNeeded() async {
-        let weatherCards = board.cards.filter { card in
-            card.kind == .weather
-                && card.latitude != nil
-                && card.longitude != nil
-                && WeatherClient.needsRefresh(expirationDate: card.weatherDataExpirationDate)
-        }
-
-        for card in weatherCards {
-            guard !Task.isCancelled else { return }
-            await updateWeather(for: card, resolvingLocation: false, presentErrors: false)
-        }
-    }
-
-    private func monitorWeatherCards() async {
-        while !Task.isCancelled {
-            await refreshWeatherCardsIfNeeded()
-            do {
-                try await Task.sleep(for: .seconds(900))
-            } catch {
-                return
-            }
-        }
-    }
-
-    private func updateWeather(
-        for card: Card,
-        resolvingLocation: Bool,
-        presentErrors: Bool
-    ) async {
-        let cardID = card.id
-        let requestedLocation = card.weatherLocationValue
-        let cachedLatitude = card.latitude
-        let cachedLongitude = card.longitude
-
-        do {
-            let coordinate: (latitude: Double, longitude: Double)
-            if resolvingLocation || card.latitude == nil || card.longitude == nil {
-                let found = try await searchLocation(requestedLocation)
-                guard let target = targetCard(cardID),
-                      target.weatherLocationValue == requestedLocation else { return }
-                let locationChanged = cachedLatitude != found.latitude
-                    || cachedLongitude != found.longitude
-                target.weatherLocationValue = found.name
-                target.latitude = found.latitude
-                target.longitude = found.longitude
-                if locationChanged {
-                    target.weatherDataExpirationDate = nil
-                    target.weatherLastModified = nil
-                }
-                coordinate = (found.latitude, found.longitude)
-            } else if let latitude = card.latitude, let longitude = card.longitude {
-                coordinate = (latitude, longitude)
-            } else {
-                throw LocationSearchError.noResults
-            }
-
-            guard let cachedCard = targetCard(cardID),
-                  cachedCard.latitude == coordinate.latitude,
-                  cachedCard.longitude == coordinate.longitude else { return }
-            guard WeatherClient.needsRefresh(
-                expirationDate: cachedCard.weatherDataExpirationDate
-            ) else { return }
-
-            let result = try await WeatherClient.fetch(
-                latitude: coordinate.latitude,
-                longitude: coordinate.longitude,
-                lastModified: cachedCard.weatherLastModified
-            )
-            guard let target = targetCard(cardID),
-                  target.latitude == coordinate.latitude,
-                  target.longitude == coordinate.longitude else { return }
-
-            switch result {
-            case .updated(let snapshot, let lastModified):
-                target.weatherHighTemperatureValue = snapshot.highTemperature
-                target.weatherLowTemperatureValue = snapshot.lowTemperature
-                target.weatherTemperatureUnitValue = snapshot.temperatureUnit
-                target.weatherCondition = snapshot.condition
-                target.weatherSymbolNameValue = snapshot.symbolName
-                target.weatherLastUpdated = snapshot.observedAt
-                target.weatherDataExpirationDate = snapshot.expirationDate
-                target.weatherLastModified = lastModified
-                if target.weatherUsesAutomaticSummaryValue {
-                    target.weatherSummaryValue = WeatherSummaryGenerator.summary(
-                        temperatureCelsius: snapshot.currentTemperatureCelsius,
-                        condition: snapshot.condition,
-                        isDaylight: snapshot.isDaylight
-                    )
-                }
-            case .notModified(let expirationDate, let lastModified):
-                target.weatherDataExpirationDate = expirationDate
-                target.weatherLastModified = lastModified
-            }
-        } catch LocationSearchError.noResults {
-            if presentErrors { presentedError = .locationNotFound }
-        } catch {
-            if presentErrors {
-                presentedError = .weatherUpdateFailed(error.localizedDescription)
-            }
         }
     }
 
@@ -967,31 +627,17 @@ struct CanvasView: View {
         guard !prompt.isEmpty else { return }
 
         let interpretation = CanvasAIRecon.shared.interpret(prompt)
+        let supportedKind = interpretation.kind.isCreatable ? interpretation.kind : .stickyNote
         let canvasTitle = CanvasTitleInferer.title(for: prompt, interpretation: interpretation)
         board.name = canvasTitle
         let header = ensureCanvasHeader()
-        header.text = interpretation.kind == .calendar ? interpretation.content : canvasTitle
+        header.text = canvasTitle
         normalizeBoardGeometry()
-        let card = newCard(interpretation.kind)
-        switch interpretation.kind {
+        let card = newCard(supportedKind)
+        switch supportedKind {
         case .header, .stickyNote, .image:
             card.text = interpretation.content
             editingCardID = card.id
-        case .quote:
-            card.quoteText = interpretation.content
-        case .checklist:
-            card.checklistTitle = interpretation.content
-        case .progress:
-            card.progressTitle = interpretation.content
-        case .palette:
-            card.paletteTitle = interpretation.content
-        case .calendar:
-            card.calendarEventTitle = interpretation.location.map { "\(interpretation.content) · \($0)" } ?? interpretation.content
-            if let date = interpretation.date {
-                card.calendarDateKind = .singleDate
-                card.calendarStartDate = date
-                card.calendarEndDate = date.addingTimeInterval(24 * 60 * 60)
-            }
         default:
             card.text = interpretation.content
         }
@@ -1012,29 +658,11 @@ struct CanvasView: View {
         map.title = found.name
         map.latitude = found.latitude
         map.longitude = found.longitude
-
-        let weather = newCard(.weather)
-        weather.weatherLocation = found.name
-        weather.latitude = found.latitude
-        weather.longitude = found.longitude
-        refreshWeather(weather, resolvingLocation: false)
-
-        if let preset = timeZonePreset(for: query) {
-            let timeZone = newCard(.timeZone)
-            timeZone.timeZoneIdentifier = preset.identifier
-        }
-    }
-
-    private func timeZonePreset(for location: String) -> TimeZoneCardPreset? {
-        let value = location.lowercased()
-        if value.contains("cupertino") || value.contains("california") || value.contains("los angeles") {
-            return TimeZoneCardPreset.all.first { $0.identifier == "America/Los_Angeles" }
-        }
-        return TimeZoneCardPreset.all.first { value.contains($0.city.lowercased()) }
     }
 
     private func requestNewCard(_ kind: CardKind) {
         showingCardOptions = false
+        guard kind.isCreatable else { return }
 
         switch kind {
         case .image:
@@ -1046,26 +674,6 @@ struct CanvasView: View {
         case .map:
             mapTargetCardID = nil
             showMapSheet = true
-        case .calendar:
-            let card = newCard(kind)
-            calendarCreationPendingID = card.id
-            calendarChangesSaved = false
-            calendarSheetItem = CalendarSheetItem(card: card)
-        case .timeZone:
-            let card = newCard(kind)
-            timeZoneCreationPendingID = card.id
-            timeZoneChangesSaved = false
-            timeZoneSheetItem = TimeZoneSheetItem(card: card)
-        case .weather:
-            let card = newCard(kind)
-            weatherCreationPendingID = card.id
-            weatherChangesSaved = false
-            weatherSheetItem = WeatherSheetItem(card: card)
-        case .progress, .checklist, .quote, .palette:
-            let card = newCard(kind)
-            detailsCreationPendingID = card.id
-            detailsChangesSaved = false
-            detailsSheetItem = DetailsSheetItem(card: card, kind: kind)
         default:
             addSimpleCard(kind)
         }

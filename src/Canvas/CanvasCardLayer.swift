@@ -37,13 +37,9 @@ struct CanvasCardLayer: View {
             onSetSize: { size in actions.setSize(card, size) },
             onBeginEdit: { actions.beginEditing(card) },
             onChooseImage: { actions.chooseImage(card) },
+            onCropImageToSubject: { actions.cropImageToSubject(card) },
             onEditLink: { actions.editLink(card) },
-            onEditLocation: { actions.editLocation(card) },
-            onEditCalendar: { actions.editCalendar(card) },
-            onEditTimeZone: { actions.editTimeZone(card) },
-            onEditWeather: { actions.editWeather(card) },
-            onRefreshWeather: { actions.refreshWeather(card) },
-            onEditDetails: { actions.editDetails(card) }
+            onEditLocation: { actions.editLocation(card) }
         )
         .frame(width: renderedSize.width, height: renderedSize.height)
         .position(
@@ -55,9 +51,7 @@ struct CanvasCardLayer: View {
         .onTapGesture { actions.select(card) }
         .highPriorityGesture(
             cardDrag(for: card),
-            including: card.kind == .checklist
-                ? .gesture
-                : (editingCardID == card.id ? .subviews : .all)
+            including: editingCardID == card.id ? .subviews : .all
         )
         .accessibilityElement(children: .contain)
         .accessibilityLabel(Text(card.kind.displayName))
@@ -104,13 +98,9 @@ struct CanvasCardActions {
     let delete: (Card) -> Void
     let setSize: (Card, CardSize) -> Void
     let chooseImage: (Card) -> Void
+    let cropImageToSubject: (Card) -> Void
     let editLink: (Card) -> Void
     let editLocation: (Card) -> Void
-    let editCalendar: (Card) -> Void
-    let editTimeZone: (Card) -> Void
-    let editWeather: (Card) -> Void
-    let refreshWeather: (Card) -> Void
-    let editDetails: (Card) -> Void
     let accessibilitySummary: (Card) -> String
     let nudge: (Card, Double, Double) -> Void
     let dragChanged: (Card, CGSize) -> Void

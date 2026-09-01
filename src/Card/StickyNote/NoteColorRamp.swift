@@ -1,8 +1,8 @@
 import SwiftUI
 
 /// Legacy note-color values kept for lightweight migration. New notes use the
-/// same restrained Item/mono palette as every other card.
-nonisolated enum StickyPalette {
+/// same restrained Item/mono ramp as every other card.
+nonisolated enum NoteColorRamp {
     static let accent = "AC7721"
     /// Source-compatible name for stores created before the Nuul treatment.
     static let yellow = accent

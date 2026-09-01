@@ -34,7 +34,9 @@ struct AddCardPickerView: View {
     }
 
     private var pickerRows: [[CardKind]] {
-        let kinds = Array(CardKind.allCases)
+        // Headers are generated and positioned automatically for each canvas;
+        // they are not an explicit user-created card type.
+        let kinds = CardKind.creatable
         return stride(from: 0, to: kinds.count, by: 4).map { start in
             Array(kinds[start..<min(start + 4, kinds.count)])
         }
@@ -100,30 +102,25 @@ private struct AddCardOptionIcon: View {
     let kind: CardKind
 
     var body: some View {
-        Image(assetName)
-            .resizable()
-            .interpolation(.high)
-            .scaledToFill()
-            .saturation(0)
-            .frame(width: 32, height: 32)
-            .clipShape(RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous))
-            .accessibilityHidden(true)
+        if let assetName {
+            Image(assetName)
+                .resizable()
+                .interpolation(.high)
+                .scaledToFill()
+                .saturation(0)
+                .frame(width: 32, height: 32)
+                .clipShape(RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous))
+                .accessibilityHidden(true)
+        }
     }
 
-    private var assetName: String {
+    private var assetName: String? {
         switch kind {
-        case .header: "AddCardOptionHeader"
         case .stickyNote: "AddCardOptionStickyNote"
         case .image: "AddCardOptionImage"
         case .link: "AddCardOptionLink"
         case .map: "AddCardOptionMap"
-        case .calendar: "AddCardOptionCalendar"
-        case .timeZone: "AddCardOptionTimeZone"
-        case .weather: "AddCardOptionWeather"
-        case .progress: "AddCardOptionProgress"
-        case .checklist: "AddCardOptionChecklist"
-        case .quote: "AddCardOptionQuote"
-        case .palette: "AddCardOptionPalette"
+        case .header: nil
         }
     }
 }

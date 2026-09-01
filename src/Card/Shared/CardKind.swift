@@ -7,13 +7,14 @@ nonisolated enum CardKind: String, Codable, CaseIterable, Identifiable {
     case image
     case link
     case map
-    case calendar
-    case timeZone
-    case weather
-    case progress
-    case checklist
-    case quote
-    case palette
 
     var id: String { rawValue }
+
+    /// The intentionally small set of card types users can create. Headers are structural
+    /// and are inserted automatically for every canvas.
+    static let creatable: [CardKind] = [.link, .image, .stickyNote, .map]
+
+    var isCreatable: Bool {
+        Self.creatable.contains(self)
+    }
 }

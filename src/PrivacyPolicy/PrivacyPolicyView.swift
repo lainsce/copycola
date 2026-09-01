@@ -30,7 +30,7 @@ struct PrivacyPolicyView: View {
                         PrivacyPolicySection(
                             title: "Network requests",
                             systemImage: "network",
-                            text: "Website cards may request page metadata and a favicon from the address you enter. Place searches are sent to Apple Maps. When a cached forecast expires, Weather cards send the selected coordinates to MET Norway. MET Norway receives the network address used for the request and may retain service logs, including coordinates, for up to 90 days. Forecasts and cache metadata are stored on this Mac."
+                            text: "Website cards may request page metadata and a favicon from the address you enter. Place searches are sent to Apple Maps."
                         )
                         PrivacyPolicySection(
                             title: "No tracking or ads",

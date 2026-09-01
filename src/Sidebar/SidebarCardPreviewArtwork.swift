@@ -16,20 +16,6 @@ struct SidebarCardPreviewArtwork: View {
             .sidebarPreviewLink
         case .map:
             .sidebarPreviewMap
-        case .calendar:
-            .sidebarPreviewCalendar
-        case .timeZone:
-            .sidebarPreviewTimeZone
-        case .weather:
-            .sidebarPreviewWeather
-        case .progress:
-            .sidebarPreviewProgress
-        case .checklist:
-            .sidebarPreviewChecklist
-        case .quote:
-            .sidebarPreviewQuote
-        case .palette:
-            .sidebarPreviewPalette
         }
     }
 

@@ -122,9 +122,7 @@ final class CanvasVoiceRecorder: ObservableObject {
         request.shouldReportPartialResults = true
         request.taskHint = .dictation
         request.contextualStrings = [
-            "canvas", "card", "calendar", "event", "reminder",
-            "weather", "temperature", "timezone", "time zone", "map", "location",
-            "checklist", "quote", "progress", "palette"
+            "canvas", "card", "note", "image", "link", "map", "location"
         ]
         let requestBox = SpeechRequestBox(request)
         recognitionRequest = request

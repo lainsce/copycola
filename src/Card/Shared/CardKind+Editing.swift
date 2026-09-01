@@ -7,14 +7,7 @@ extension CardKind {
         case .stickyNote: "Edit Note"
         case .image: "Edit Caption"
         case .link: "Edit Link"
-        case .map: "Edit Location"
-        case .calendar: "Edit Calendar"
-        case .timeZone: "Edit Time Zone"
-        case .weather: "Edit Weather"
-        case .progress: "Edit Progress"
-        case .checklist: "Edit Checklist"
-        case .quote: "Edit Quote"
-        case .palette: "Edit Palette"
+        case .map: "Edit Map Location"
         }
     }
 }

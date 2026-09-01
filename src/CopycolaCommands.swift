@@ -33,10 +33,6 @@ private struct RenameCanvasActionKey: FocusedValueKey {
     typealias Value = () -> Void
 }
 
-private struct RefreshWeatherActionKey: FocusedValueKey {
-    typealias Value = () -> Void
-}
-
 extension FocusedValues {
     var newCanvasAction: (() -> Void)? {
         get { self[NewCanvasActionKey.self] }
@@ -73,10 +69,6 @@ extension FocusedValues {
         set { self[RenameCanvasActionKey.self] = newValue }
     }
 
-    var refreshWeatherAction: (() -> Void)? {
-        get { self[RefreshWeatherActionKey.self] }
-        set { self[RefreshWeatherActionKey.self] = newValue }
-    }
 }
 
 struct CopycolaCommands: Commands {
@@ -87,7 +79,6 @@ struct CopycolaCommands: Commands {
     @FocusedValue(\.deleteCardAction) private var deleteCardAction
     @FocusedValue(\.deleteCanvasAction) private var deleteCanvasAction
     @FocusedValue(\.renameCanvasAction) private var renameCanvasAction
-    @FocusedValue(\.refreshWeatherAction) private var refreshWeatherAction
     @Environment(\.openWindow) private var openWindow
 
     var body: some Commands {
@@ -110,7 +101,7 @@ struct CopycolaCommands: Commands {
 
         CommandMenu("Canvas") {
             Menu("Add Card") {
-                ForEach(CardKind.allCases) { kind in
+                ForEach(CardKind.creatable) { kind in
                     Button(kind.displayName, systemImage: kind.systemImage) {
                         addCardAction?(kind)
                     }
@@ -129,11 +120,6 @@ struct CopycolaCommands: Commands {
                 editCardAction?()
             }
             .disabled(editCardAction == nil)
-
-            Button("Refresh Selected Weather", systemImage: "arrow.clockwise") {
-                refreshWeatherAction?()
-            }
-            .disabled(refreshWeatherAction == nil)
 
             Divider()
 

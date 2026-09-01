@@ -11,13 +11,9 @@ struct CardView: View {
     var onSetSize: (CardSize) -> Void
     var onBeginEdit: () -> Void
     var onChooseImage: () -> Void
+    var onCropImageToSubject: () -> Void
     var onEditLink: () -> Void
     var onEditLocation: () -> Void
-    var onEditCalendar: () -> Void
-    var onEditTimeZone: () -> Void
-    var onEditWeather: () -> Void
-    var onRefreshWeather: () -> Void
-    var onEditDetails: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.colorScheme) private var colorScheme
@@ -87,20 +83,6 @@ struct CardView: View {
             LinkCardSurface(card: card, cornerRadius: cornerRadius)
         case .map:
             MapCardSurface(card: card, cornerRadius: cornerRadius)
-        case .calendar:
-            CalendarCardContent(card: card)
-        case .timeZone:
-            TimeZoneCardContent(card: card)
-        case .weather:
-            WeatherCardContent(card: card)
-        case .progress:
-            ProgressCardContent(card: card)
-        case .checklist:
-            ChecklistCardContent(card: card)
-        case .quote:
-            QuoteCardContent(card: card)
-        case .palette:
-            PaletteCardContent(card: card)
         }
     }
 
@@ -118,8 +100,7 @@ struct CardView: View {
             .help(Text("Delete Card"))
     }
 
-    /// Dark bar under a selected card: size options, then the card's kind-specific actions
-    /// (edit text, change image, edit link/location/calendar) after a divider.
+    /// Dark bar under a selected card: size options, then the card's kind-specific actions.
     private var controlBar: some View {
         HStack(spacing: CopycolaColors.gridUnit) {
             ForEach(CardSize.selectable) { sizeButton($0) }
@@ -144,27 +125,13 @@ struct CardView: View {
             barButton("Edit Note", symbol: "pencil", action: onBeginEdit)
         case .image:
             barButton("Change Image", symbol: "photo", action: onChooseImage)
+            barButton("Crop to Subject", symbol: "person.crop.rectangle", action: onCropImageToSubject)
             barButton("Edit Caption", symbol: "text.bubble", action: onBeginEdit)
             barButton("Edit Link", symbol: "link", action: onEditLink)
         case .link:
             barButton("Edit Link", symbol: "pencil", action: onEditLink)
         case .map:
             barButton("Edit Location", symbol: "mappin.and.ellipse", action: onEditLocation)
-        case .calendar:
-            barButton("Edit Calendar", symbol: "calendar.badge.clock", action: onEditCalendar)
-        case .timeZone:
-            barButton("Edit Time Zone", symbol: "globe", action: onEditTimeZone)
-        case .weather:
-            barButton("Refresh Weather", symbol: "arrow.clockwise", action: onRefreshWeather)
-            barButton("Edit Weather", symbol: "cloud.sun.fill", action: onEditWeather)
-        case .progress:
-            barButton("Edit Progress", symbol: "chart.bar.xaxis", action: onEditDetails)
-        case .checklist:
-            barButton("Edit Checklist", symbol: "checklist", action: onEditDetails)
-        case .quote:
-            barButton("Edit Quote", symbol: "quote.bubble", action: onEditDetails)
-        case .palette:
-            barButton("Edit Palette", symbol: "paintpalette", action: onEditDetails)
         case .header:
             EmptyView()
         }

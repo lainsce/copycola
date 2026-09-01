@@ -10,6 +10,7 @@ struct CardImageContent: View {
             if let image {
                 Image(nsImage: image)
                     .resizable()
+                    .aspectRatio(contentMode: .fit)
             } else {
                 ZStack {
                     Color.secondary.opacity(0.12)

@@ -59,7 +59,7 @@ struct SidebarBoardButton: View {
             }
         }
         .accessibilityAddTraits(isSelected ? .isSelected : [])
-        .accessibilityValue(Text("\(board.cards.count) cards"))
+        .accessibilityValue(Text("\(visibleCards.count) cards"))
         .contextMenu {
             Button("Rename Canvas", systemImage: "pencil", action: beginEditing)
             Button("Delete Canvas", systemImage: "trash", role: .destructive, action: delete)
@@ -69,22 +69,16 @@ struct SidebarBoardButton: View {
     private var rowLabel: some View {
         HStack(spacing: CopycolaColors.controlGap) {
             SidebarCanvasThumbnail(
-                cards: board.cards,
+                cards: visibleCards,
                 isSelected: isSelected
             )
 
             VStack(alignment: .leading, spacing: CopycolaColors.gridUnit) {
-                Text(verbatim: board.name)
+                Text(verbatim: canvasTitle)
                     .font(CopycolaTypography.contentBlockTitle)
                     .lineLimit(1)
                     .foregroundStyle(.primary)
 
-                if let headerLabel = firstHeaderLabel {
-                    Text(verbatim: headerLabel)
-                        .font(CopycolaTypography.caption)
-                        .lineLimit(1)
-                        .foregroundStyle(.secondary)
-                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             Spacer(minLength: 0)
@@ -95,19 +89,21 @@ struct SidebarBoardButton: View {
         .contentShape(.rect)
     }
 
-    private var firstHeaderLabel: String? {
-        guard let header = board.cards.first(where: { $0.kind == .header }) else {
-            return nil
-        }
+    private var visibleCards: [Card] {
+        board.cards.filter { $0.kind != .header }
+    }
 
-        let text = header.text.trimmingCharacters(in: .whitespacesAndNewlines)
-        return text.isEmpty ? nil : text
+    private var canvasTitle: String {
+        let headerText = board.cards
+            .first(where: { $0.kind == .header })?.text
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return headerText.isEmpty ? board.name : headerText
     }
 
     private var nameEditor: some View {
         HStack(spacing: CopycolaColors.controlGap) {
             SidebarCanvasThumbnail(
-                cards: board.cards,
+                cards: visibleCards,
                 isSelected: true
             )
 

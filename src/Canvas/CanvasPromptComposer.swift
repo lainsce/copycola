@@ -51,9 +51,9 @@ struct CanvasPromptComposer: View {
                     .frame(width: 28, height: 28)
             }
             .buttonStyle(.plain)
-            .foregroundStyle(colorScheme == .dark ? Color.black : Color.white)
+            .foregroundStyle(.black)
             .background(
-                colorScheme == .dark ? Color(hex: "D39224") : Color(hex: "D9921E"),
+                colorScheme == .dark ? Color(hex: "D39224") : Color(hex: "A97000"),
                 in: Circle()
             )
             .accessibilityLabel(Text("Send transcription"))
@@ -103,8 +103,8 @@ struct CanvasPromptComposer: View {
                     .frame(width: 30, height: 30)
             }
             .buttonStyle(.plain)
-            .foregroundStyle(colorScheme == .dark ? Color.black : Color.white)
-            .background(colorScheme == .dark ? Color(hex: "D39224") : Color(hex: "D9921E"), in: Circle())
+            .foregroundStyle(.black)
+            .background(colorScheme == .dark ? Color(hex: "D39224") : Color(hex: "A97000"), in: Circle())
             .padding(.trailing, 4)
             .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             .accessibilityLabel(Text("Create card"))
@@ -138,7 +138,7 @@ struct CanvasPromptComposer: View {
         }
         .buttonStyle(.plain)
         .foregroundStyle(.black)
-        .background(colorScheme == .dark ? Color(hex: "D39224") : Color(hex: "D9921E"))
+        .background(colorScheme == .dark ? Color(hex: "D39224") : Color(hex: "A97000"))
         .accessibilityLabel(Text("Stop voice input"))
         .help(Text("Stop voice input"))
     }

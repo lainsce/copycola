@@ -3,7 +3,6 @@ import Foundation
 struct CanvasPromptInterpretation {
     let kind: CardKind
     let content: String
-    let date: Date?
     let location: String?
 }
 
@@ -13,47 +12,41 @@ enum CanvasPromptInterpreter {
         let lowercased = normalized.lowercased()
 
         let prefixes: [(String, CardKind)] = [
-            ("header:", .header), ("title:", .header), ("quote:", .quote),
-            ("checklist:", .checklist), ("progress:", .progress), ("palette:", .palette),
-            ("note:", .stickyNote)
+            ("note:", .stickyNote),
+            ("link:", .link),
+            ("map:", .map)
         ]
         for (prefix, kind) in prefixes where lowercased.hasPrefix(prefix) {
             return CanvasPromptInterpretation(
                 kind: kind,
                 content: String(normalized.dropFirst(prefix.count)).trimmingCharacters(in: .whitespacesAndNewlines),
-                date: nil,
                 location: nil
             )
         }
 
         if lowercased.contains("http://") || lowercased.contains("https://") || lowercased.contains("www.") {
-            return CanvasPromptInterpretation(kind: .link, content: normalized, date: nil, location: nil)
-        }
-        if lowercased.contains("weather") || lowercased.contains("forecast") || lowercased.contains("temperature") {
-            return CanvasPromptInterpretation(kind: .weather, content: normalized, date: nil, location: location(in: normalized, lowercased: lowercased))
-        }
-        if lowercased.contains("time zone") || lowercased.contains("timezone") || lowercased.contains("gmt") {
-            return CanvasPromptInterpretation(kind: .timeZone, content: normalized, date: nil, location: location(in: normalized, lowercased: lowercased))
+            return CanvasPromptInterpretation(kind: .link, content: normalized, location: nil)
         }
         if lowercased.contains("remind me") || lowercased.contains("event") || lowercased.contains("meeting") || lowercased.contains("appointment") || lowercased.contains("schedule") || lowercased.contains("deadline") {
-            return CanvasPromptInterpretation(kind: .calendar, content: eventTitle(in: normalized) ?? normalized, date: eventDate(in: normalized), location: location(in: normalized, lowercased: lowercased))
+            return CanvasPromptInterpretation(
+                kind: .stickyNote,
+                content: eventTitle(in: normalized) ?? conciseSubject(normalized),
+                location: location(in: normalized, lowercased: lowercased)
+            )
         }
         if lowercased.contains("map") || lowercased.contains("where is") || lowercased.contains("directions") || lowercased.contains("location") || lowercased.contains("place") {
-            return CanvasPromptInterpretation(kind: .map, content: normalized, date: nil, location: location(in: normalized, lowercased: lowercased))
+            return CanvasPromptInterpretation(kind: .map, content: normalized, location: location(in: normalized, lowercased: lowercased))
         }
-        if lowercased.contains("checklist") || lowercased.contains("to-do") || lowercased.contains("todo") || lowercased.contains("tasks") || lowercased.contains("steps") {
-            return CanvasPromptInterpretation(kind: .checklist, content: conciseSubject(normalized), date: nil, location: nil)
-        }
-        if lowercased.contains("quote") || lowercased.contains("saying") || lowercased.contains("citation") {
-            return CanvasPromptInterpretation(kind: .quote, content: conciseSubject(normalized), date: nil, location: nil)
-        }
-        if lowercased.contains("progress") || lowercased.contains("goal") || lowercased.contains("milestone") || lowercased.contains("track") {
-            return CanvasPromptInterpretation(kind: .progress, content: conciseSubject(normalized), date: nil, location: nil)
-        }
-        if lowercased.contains("palette") || lowercased.contains("colors") || lowercased.contains("colour") {
-            return CanvasPromptInterpretation(kind: .palette, content: conciseSubject(normalized), date: nil, location: nil)
-        }
-        return CanvasPromptInterpretation(kind: .stickyNote, content: normalized, date: nil, location: nil)
+
+        // Requests that used to create specialized cards remain useful as notes. Keeping
+        // the original wording avoids silently dropping information now that the card set is
+        // intentionally small.
+        let inferredLocation = location(in: normalized, lowercased: lowercased)
+        return CanvasPromptInterpretation(
+            kind: .stickyNote,
+            content: conciseSubject(normalized),
+            location: inferredLocation
+        )
     }
 
     private static func conciseSubject(_ prompt: String) -> String {
@@ -96,22 +89,4 @@ enum CanvasPromptInterpreter {
         return value.isEmpty ? nil : String(value)
     }
 
-    private static func eventDate(in prompt: String) -> Date? {
-        let pattern = "(?i)(?:at\\s+)?(\\d{1,2})(?::(\\d{2}))?\\s*(am|pm).*?(?:on\\s+)?(January|February|March|April|May|June|July|August|September|October|November|December)\\s+(\\d{1,2})(?:st|nd|rd|th)?"
-        guard let regex = try? NSRegularExpression(pattern: pattern),
-              let match = regex.firstMatch(in: prompt, range: NSRange(prompt.startIndex..., in: prompt)) else { return nil }
-
-        func capture(_ index: Int) -> String? {
-            guard let range = Range(match.range(at: index), in: prompt) else { return nil }
-            return String(prompt[range])
-        }
-        guard let hour = Int(capture(1) ?? ""), let meridiem = capture(3), let month = capture(4), let day = Int(capture(5) ?? "") else { return nil }
-        var components = DateComponents()
-        components.year = Calendar.current.component(.year, from: .now)
-        components.month = DateFormatter().monthSymbols.firstIndex { $0.caseInsensitiveCompare(month) == .orderedSame }.map { $0 + 1 }
-        components.day = day
-        components.hour = (hour % 12) + (meridiem.lowercased() == "pm" ? 12 : 0)
-        components.minute = Int(capture(2) ?? "0")
-        return Calendar.current.date(from: components)
-    }
 }
