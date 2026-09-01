@@ -87,16 +87,24 @@ private nonisolated func firstMetaContent(
     }
 
     let range = NSRange(html.startIndex..., in: html)
-    for match in regex.matches(in: html, range: range) {
-        guard let tagRange = Range(match.range, in: html) else { continue }
-        let tag = String(html[tagRange])
-        guard attributeValue(attribute, in: tag)?.caseInsensitiveCompare(value) == .orderedSame,
-              let content = attributeValue("content", in: tag) else {
-            continue
-        }
-        return content
+    return regex.matches(in: html, range: range)
+        .compactMap { metaContent(for: $0, in: html, attribute: attribute, value: value) }
+        .first
+}
+
+private nonisolated func metaContent(
+    for match: NSTextCheckingResult,
+    in html: String,
+    attribute: String,
+    value: String
+) -> String? {
+    guard let tagRange = Range(match.range, in: html) else { return nil }
+    let tag = String(html[tagRange])
+    guard attributeValue(attribute, in: tag)?.caseInsensitiveCompare(value) == .orderedSame,
+          let content = attributeValue("content", in: tag) else {
+        return nil
     }
-    return nil
+    return content
 }
 
 private nonisolated func attributeValue(_ attribute: String, in tag: String) -> String? {
@@ -129,21 +137,23 @@ private nonisolated func normalizedThemeColorHex(_ value: String?) -> String? {
     guard let value = cleanedMetadataValue(value)?.lowercased() else { return nil }
 
     if value.hasPrefix("#") {
-        let digits = String(value.dropFirst())
-        guard digits.allSatisfy(\.isHexDigit) else { return nil }
-        switch digits.count {
-        case 3:
-            return digits.map { "\($0)\($0)" }.joined().uppercased()
-        case 6:
-            return digits.uppercased()
-        case 8:
-            // Alpha is intentionally ignored; the card applies its own subtle opacity.
-            return String(digits.prefix(6)).uppercased()
-        default:
-            return nil
-        }
+        return normalizedHexColor(String(value.dropFirst()))
     }
 
+    return normalizedRGBColor(value)
+}
+
+private nonisolated func normalizedHexColor(_ digits: String) -> String? {
+    guard digits.allSatisfy(\.isHexDigit) else { return nil }
+    let expanded = digits.count == 3
+        ? digits.map { "\($0)\($0)" }.joined()
+        : digits
+    guard [6, 8].contains(expanded.count) else { return nil }
+    // Alpha is intentionally ignored; the card applies its own subtle opacity.
+    return String(expanded.prefix(6)).uppercased()
+}
+
+private nonisolated func normalizedRGBColor(_ value: String) -> String? {
     let rgbPattern = "^rgba?\\(\\s*(\\d{1,3})\\s*,\\s*(\\d{1,3})\\s*,\\s*(\\d{1,3})(?:\\s*,\\s*[0-9.]+)?\\s*\\)$"
     guard let regex = try? NSRegularExpression(pattern: rgbPattern),
           let match = regex.firstMatch(in: value, range: NSRange(value.startIndex..., in: value)) else {

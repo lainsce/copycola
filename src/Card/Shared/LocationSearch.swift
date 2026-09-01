@@ -24,16 +24,7 @@ nonisolated func locationDisplayName(
     let context = context?.trimmingCharacters(in: .whitespacesAndNewlines)
 
     if let context, !context.isEmpty {
-        if let place, !place.isEmpty,
-           context.localizedCaseInsensitiveContains(place) {
-            return context
-        }
-
-        if let place, !place.isEmpty {
-            return "\(place), \(context)"
-        }
-
-        return context
+        return contextualLocationName(place: place, context: context)
     }
 
     if let place, !place.isEmpty {
@@ -41,6 +32,12 @@ nonisolated func locationDisplayName(
     }
 
     return fallback
+}
+
+private nonisolated func contextualLocationName(place: String?, context: String) -> String {
+    guard let place, !place.isEmpty else { return context }
+    if context.localizedCaseInsensitiveContains(place) { return context }
+    return "\(place), \(context)"
 }
 
 /// Searches for a place by natural-language query and returns the first match.

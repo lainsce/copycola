@@ -97,21 +97,32 @@ final class CanvasVoiceRecorder: ObservableObject {
 
     func start() {
         guard !engine.isRunning else { return }
+        resetRecordingState()
+        guard SFSpeechRecognizer.authorizationStatus() == .authorized else {
+            requestSpeechAuthorization()
+            return
+        }
+
+        startAuthorizedCapture()
+    }
+
+    private func resetRecordingState() {
         acceptsTranscription = true
         samples.reset()
         transcript = ""
         finalTranscript = ""
+    }
 
-        guard SFSpeechRecognizer.authorizationStatus() == .authorized else {
-            SFSpeechRecognizer.requestAuthorization { [weak self] status in
-                guard status == .authorized else { return }
-                Task { @MainActor [weak self] in
-                    self?.start()
-                }
+    private func requestSpeechAuthorization() {
+        SFSpeechRecognizer.requestAuthorization { [weak self] status in
+            guard status == .authorized else { return }
+            Task { @MainActor [weak self] in
+                self?.start()
             }
-            return
         }
+    }
 
+    private func startAuthorizedCapture() {
         guard let speechRecognizer, speechRecognizer.isAvailable else { return }
 
         let input = engine.inputNode
@@ -127,6 +138,20 @@ final class CanvasVoiceRecorder: ObservableObject {
         let requestBox = SpeechRequestBox(request)
         recognitionRequest = request
         recognitionTask?.cancel()
+        installRecognitionTask(using: speechRecognizer, request: request)
+
+        do {
+            try installAudioTap(on: input, requestBox: requestBox, analysisState: analysisState)
+            try engine.start()
+        } catch {
+            stop()
+        }
+    }
+
+    private func installRecognitionTask(
+        using speechRecognizer: SFSpeechRecognizer,
+        request: SFSpeechAudioBufferRecognitionRequest
+    ) {
         recognitionTask = speechRecognizer.recognitionTask(with: request) { [weak self] result, _ in
             guard let result else { return }
             let transcript = result.bestTranscription.formattedString
@@ -141,25 +166,26 @@ final class CanvasVoiceRecorder: ObservableObject {
                 }
             }
         }
+    }
 
-        do {
-            // Let AVAudioEngine negotiate the hardware format. Supplying outputFormat here
-            // can trigger an AVFAudio assertion when the input route changes at launch.
-            try input.installAudioTap(onBus: 0, bufferSize: 512, format: nil) { [weak self] buffer, _ in
-                self?.samples.append(buffer)
-                if let speechBuffer = Self.mutableBuffer(copying: buffer) {
-                    requestBox.request.append(speechBuffer)
-                }
-                guard let values = analysisState.analyze(buffer) else { return }
-                Task { @MainActor [weak self] in
-                    self?.bass = max(0.12, values.0)
-                    self?.mid = max(0.12, values.1)
-                    self?.treble = max(0.12, values.2)
-                }
+    private func installAudioTap(
+        on input: AVAudioInputNode,
+        requestBox: SpeechRequestBox,
+        analysisState: VoiceAnalysisState
+    ) throws {
+        // Let AVAudioEngine negotiate the hardware format. Supplying outputFormat here
+        // can trigger an AVFAudio assertion when the input route changes at launch.
+        try input.installAudioTap(onBus: 0, bufferSize: 512, format: nil) { [weak self] buffer, _ in
+            self?.samples.append(buffer)
+            if let speechBuffer = Self.mutableBuffer(copying: buffer) {
+                requestBox.request.append(speechBuffer)
             }
-            try engine.start()
-        } catch {
-            stop()
+            guard let values = analysisState.analyze(buffer) else { return }
+            Task { @MainActor [weak self] in
+                self?.bass = max(0.12, values.0)
+                self?.mid = max(0.12, values.1)
+                self?.treble = max(0.12, values.2)
+            }
         }
     }
 

@@ -46,20 +46,36 @@ struct NULToolbarButtonStyle: ButtonStyle {
         configuration.label
             .font(.system(size: 16, weight: .regular))
             .symbolRenderingMode(.monochrome)
-            .foregroundStyle(accented ? .black : .primary)
+            .foregroundStyle(foregroundColor)
             .frame(width: 22, height: 22)
             .frame(minWidth: max(diameter, 38), minHeight: max(diameter, 38))
-            .background(
-                accented ? CopycolaColors.accent : CopycolaColors.itemSurface,
-                in: .rect(cornerRadius: CopycolaColors.controlRadius)
-            )
+            .background(backgroundColor, in: .rect(cornerRadius: CopycolaColors.controlRadius))
             .contentShape(Rectangle())
-            .opacity(isEnabled ? (configuration.isPressed ? 0.82 : 1) : 0.42)
-            .scaleEffect(configuration.isPressed && !reduceMotion ? 0.97 : 1)
-            .animation(
-                reduceMotion ? nil : CopycolaColors.controlMotion,
-                value: configuration.isPressed
-            )
+            .opacity(controlOpacity(isPressed: configuration.isPressed))
+            .scaleEffect(controlScale(isPressed: configuration.isPressed))
+            .animation(controlMotion, value: configuration.isPressed)
             .nulWindowActivityAppearance()
+    }
+
+    private var foregroundColor: Color {
+        accented ? .black : .primary
+    }
+
+    private var backgroundColor: Color {
+        accented ? CopycolaColors.accent : CopycolaColors.itemSurface
+    }
+
+    private func controlOpacity(isPressed: Bool) -> Double {
+        guard isEnabled else { return 0.42 }
+        return isPressed ? 0.82 : 1
+    }
+
+    private func controlScale(isPressed: Bool) -> Double {
+        guard isPressed, !reduceMotion else { return 1 }
+        return 0.97
+    }
+
+    private var controlMotion: Animation? {
+        reduceMotion ? nil : CopycolaColors.controlMotion
     }
 }

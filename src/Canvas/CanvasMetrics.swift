@@ -4,14 +4,8 @@ import CoreGraphics
 nonisolated enum CanvasMetrics {
     /// Structural gutter between adjacent cards, in points.
     static let gridUnit: CGFloat = 40
-    /// Fine positioning-dot spacing. It divides the card cell, gutter, and module pitches.
-    static let dotSpacing: CGFloat = 5
-    /// Diameter of a regular positioning dot.
-    static let dotDiameter: CGFloat = 2
     /// Diameter of an emphasized card-grid origin marker.
     static let majorDotDiameter: CGFloat = 3
-    /// Legacy interval retained for callers that used the original dot-grid rhythm.
-    static let majorDotInterval = 5
     /// Base size of a 1×1 card cell, in points.
     static let cell: CGFloat = 175
     /// Fixed footprint height for a header card.

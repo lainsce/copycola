@@ -24,7 +24,7 @@ struct LinkCardSurface: View {
                 .lineLimit(card.cardSize == .oneByOne ? 1 : 2)
             if let host = URL(string: card.urlString ?? "")?.host {
                 Text(verbatim: host)
-                    .font(CopycolaTypography.caption)
+                    .font(CopycolaTypography.technicalFont(.caption))
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
                     .padding(.top, CanvasMetrics.gridUnit / 10)

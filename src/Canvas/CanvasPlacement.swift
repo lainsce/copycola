@@ -19,21 +19,9 @@ nonisolated enum CanvasPlacement {
         let xPitch = Double(CanvasMetrics.module)
         let margin = Double(CanvasMetrics.canvasMargin)
         let yPitch = Double(CanvasMetrics.module)
-        let rowOrigin = max(margin, minimumY ?? margin)
+        let rowOrigin = rowOrigin(for: minimumY, margin: margin)
         let width = Double(pointSize.width)
         let height = Double(pointSize.height)
-
-        func isClear(_ x: Double, _ y: Double) -> Bool {
-            // Inflate by just under one dot so a candidate exactly one dot away still clears.
-            let inset = unit - 1
-            let candidate = CGRect(
-                x: x - inset,
-                y: y - inset,
-                width: width + 2 * inset,
-                height: height + 2 * inset
-            )
-            return !occupiedRects.contains(where: candidate.intersects)
-        }
 
         let availableWidth = canvasWidth - 2 * margin
         guard width <= availableWidth + 0.5 else {
@@ -44,62 +32,237 @@ nonisolated enum CanvasPlacement {
         let lastColumn = Int(floor((availableWidth - width + 0.5) / xPitch))
         let columns = Array(0...max(0, lastColumn))
 
-        func xPosition(for column: Int) -> Double {
-            margin + xPitch * Double(column)
-        }
-
-        func yPosition(for row: Int) -> Double {
-            rowOrigin + yPitch * Double(row)
-        }
-
         let requestedColumn = Int(((nearX - margin) / xPitch).rounded())
         let baseColumn = min(max(requestedColumn, 0), max(0, lastColumn))
         let requestedRow = Int(((nearY - rowOrigin) / yPitch).rounded())
         let baseRow = max(requestedRow, 0)
-        let columnsByDistance = columns.sorted {
-            let lhsDistance = abs(xPosition(for: $0) - nearX)
-            let rhsDistance = abs(xPosition(for: $1) - nearX)
-            if lhsDistance == rhsDistance { return abs($0 - baseColumn) < abs($1 - baseColumn) }
-            return lhsDistance < rhsDistance
-        }
 
-        // There are only four columns, so search rows outwards from the requested one. The
-        // finite set of occupied cards guarantees that the fallback below eventually succeeds.
+        let columnsByDistance = orderedColumns(
+            columns,
+            baseColumn: baseColumn,
+            nearX: nearX,
+            margin: margin,
+            pitch: xPitch
+        )
         let searchLimit = max(64, occupiedRects.count * 8 + 8)
-        for distance in 0...searchLimit {
-            let rows: [Int]
-            if distance == 0 {
-                rows = [baseRow]
-            } else {
-                rows = [baseRow - distance, baseRow + distance].filter { $0 >= 0 }
-            }
-
-            for row in rows {
-                for column in columnsByDistance {
-                    let candidateX = xPosition(for: column)
-                    let candidateY = yPosition(for: row)
-                    if isClear(candidateX, candidateY) {
-                        return CGPoint(x: candidateX, y: candidateY)
-                    }
-                }
-            }
+        if let position = searchNearest(
+            baseRow: baseRow,
+            searchLimit: searchLimit,
+            columns: columnsByDistance,
+            rowOrigin: rowOrigin,
+            yPitch: yPitch,
+            margin: margin,
+            xPitch: xPitch,
+            width: width,
+            height: height,
+            occupiedRects: occupiedRects,
+            unit: unit
+        ) {
+            return position
         }
 
         // Fall back to a row below all occupied content. Since y is intentionally unbounded,
         // this loop always finds a free slot for the finite board.
-        let rowBelowContent = occupiedRects.map {
+        let rowBelowContent = rowBelowContent(
+            occupiedRects,
+            rowOrigin: rowOrigin,
+            yPitch: yPitch,
+            unit: unit
+        )
+        return fallbackPosition(
+            startingRow: max(baseRow, rowBelowContent),
+            columns: columnsByDistance,
+            rowOrigin: rowOrigin,
+            yPitch: yPitch,
+            margin: margin,
+            xPitch: xPitch,
+            width: width,
+            height: height,
+            occupiedRects: occupiedRects,
+            unit: unit
+        )
+    }
+
+    private static func rowOrigin(for minimumY: Double?, margin: Double) -> Double {
+        max(margin, minimumY ?? margin)
+    }
+
+    private static func rowBelowContent(
+        _ occupiedRects: [CGRect],
+        rowOrigin: Double,
+        yPitch: Double,
+        unit: Double
+    ) -> Int {
+        occupiedRects.map {
             Int(ceil(($0.maxY + unit - 1 - rowOrigin) / yPitch))
         }.max() ?? 0
-        var fallbackRow = max(baseRow, rowBelowContent)
+    }
+
+    private static func orderedColumns(
+        _ columns: [Int],
+        baseColumn: Int,
+        nearX: Double,
+        margin: Double,
+        pitch: Double
+    ) -> [Int] {
+        columns.sorted { lhs, rhs in
+            let lhsDistance = abs((margin + pitch * Double(lhs)) - nearX)
+            let rhsDistance = abs((margin + pitch * Double(rhs)) - nearX)
+            if lhsDistance == rhsDistance {
+                return abs(lhs - baseColumn) < abs(rhs - baseColumn)
+            }
+            return lhsDistance < rhsDistance
+        }
+    }
+
+    private static func searchNearest(
+        baseRow: Int,
+        searchLimit: Int,
+        columns: [Int],
+        rowOrigin: Double,
+        yPitch: Double,
+        margin: Double,
+        xPitch: Double,
+        width: Double,
+        height: Double,
+        occupiedRects: [CGRect],
+        unit: Double
+    ) -> CGPoint? {
+        for distance in 0...searchLimit {
+            guard let position = searchRows(
+                around: baseRow,
+                distance: distance,
+                columns: columns,
+                rowOrigin: rowOrigin,
+                yPitch: yPitch,
+                margin: margin,
+                xPitch: xPitch,
+                width: width,
+                height: height,
+                occupiedRects: occupiedRects,
+                unit: unit
+            ) else {
+                continue
+            }
+            return position
+        }
+        return nil
+    }
+
+    private static func searchRows(
+        around baseRow: Int,
+        distance: Int,
+        columns: [Int],
+        rowOrigin: Double,
+        yPitch: Double,
+        margin: Double,
+        xPitch: Double,
+        width: Double,
+        height: Double,
+        occupiedRects: [CGRect],
+        unit: Double
+    ) -> CGPoint? {
+        for row in rows(around: baseRow, distance: distance) {
+            if let position = searchColumns(
+                row: row,
+                columns: columns,
+                rowOrigin: rowOrigin,
+                yPitch: yPitch,
+                margin: margin,
+                xPitch: xPitch,
+                width: width,
+                height: height,
+                occupiedRects: occupiedRects,
+                unit: unit
+            ) {
+                return position
+            }
+        }
+        return nil
+    }
+
+    private static func searchColumns(
+        row: Int,
+        columns: [Int],
+        rowOrigin: Double,
+        yPitch: Double,
+        margin: Double,
+        xPitch: Double,
+        width: Double,
+        height: Double,
+        occupiedRects: [CGRect],
+        unit: Double
+    ) -> CGPoint? {
+        for column in columns {
+            let candidateX = margin + xPitch * Double(column)
+            let candidateY = rowOrigin + yPitch * Double(row)
+            if isClear(
+                candidateX,
+                candidateY,
+                width: width,
+                height: height,
+                occupiedRects: occupiedRects,
+                unit: unit
+            ) {
+                return CGPoint(x: candidateX, y: candidateY)
+            }
+        }
+        return nil
+    }
+
+    private static func rows(around baseRow: Int, distance: Int) -> [Int] {
+        if distance == 0 { return [baseRow] }
+        return [baseRow - distance, baseRow + distance].filter { $0 >= 0 }
+    }
+
+    private static func fallbackPosition(
+        startingRow: Int,
+        columns: [Int],
+        rowOrigin: Double,
+        yPitch: Double,
+        margin: Double,
+        xPitch: Double,
+        width: Double,
+        height: Double,
+        occupiedRects: [CGRect],
+        unit: Double
+    ) -> CGPoint {
+        var row = startingRow
         while true {
-            for column in columnsByDistance {
-                let candidateX = xPosition(for: column)
-                let candidateY = yPosition(for: fallbackRow)
-                if isClear(candidateX, candidateY) {
+            for column in columns {
+                let candidateX = margin + xPitch * Double(column)
+                let candidateY = rowOrigin + yPitch * Double(row)
+                if isClear(
+                    candidateX,
+                    candidateY,
+                    width: width,
+                    height: height,
+                    occupiedRects: occupiedRects,
+                    unit: unit
+                ) {
                     return CGPoint(x: candidateX, y: candidateY)
                 }
             }
-            fallbackRow += 1
+            row += 1
         }
+    }
+
+    private static func isClear(
+        _ x: Double,
+        _ y: Double,
+        width: Double,
+        height: Double,
+        occupiedRects: [CGRect],
+        unit: Double
+    ) -> Bool {
+        // Inflate by just under one dot so a candidate exactly one dot away still clears.
+        let inset = unit - 1
+        let candidate = CGRect(
+            x: x - inset,
+            y: y - inset,
+            width: width + 2 * inset,
+            height: height + 2 * inset
+        )
+        return !occupiedRects.contains(where: candidate.intersects)
     }
 }

@@ -7,8 +7,6 @@ import SwiftUI
 struct DotGrid: View {
     let origin: CGPoint
 
-    @Environment(\.colorScheme) private var colorScheme
-
     var body: some View {
         Canvas { context, size in
             let module = CanvasMetrics.module

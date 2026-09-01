@@ -11,49 +11,60 @@ struct NULToggleStyle: ToggleStyle {
     @Environment(\.colorScheme) private var colorScheme
 
     func makeBody(configuration: Configuration) -> some View {
-        Button {
-            if reduceMotion {
-                configuration.isOn.toggle()
-            } else {
-                withAnimation(CopycolaColors.controlMotion) {
-                    configuration.isOn.toggle()
-                }
-            }
-        } label: {
-            HStack(spacing: 8) {
-                configuration.label
-
-                ZStack(alignment: configuration.isOn ? .trailing : .leading) {
-                    RoundedRectangle(cornerRadius: 999, style: .continuous)
-                        .fill(
-                            configuration.isOn
-                                ? Color("AccentColor")
-                                : Color.primary.opacity(0.05)
-                        )
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 999, style: .continuous)
-                                .strokeBorder(CopycolaColors.controlRule(for: colorScheme), lineWidth: 1)
-                        }
-
-                    RoundedRectangle(cornerRadius: 999, style: .continuous)
-                        .fill(.white)
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 999, style: .continuous)
-                                .strokeBorder(CopycolaColors.controlRule(for: colorScheme), lineWidth: 1)
-                        }
-                        .frame(width: 24, height: 24)
-                        .padding(4)
-                }
-                .frame(width: 48, height: 32)
-                .animation(
-                    reduceMotion ? nil : CopycolaColors.controlMotion,
-                    value: configuration.isOn
-                )
-            }
+        Button(action: { toggle(configuration) }) {
+            toggleLabel(configuration)
         }
         .buttonStyle(.plain)
-        .accessibilityValue(configuration.isOn ? "On" : "Off")
+        .accessibilityValue(toggleValue(isOn: configuration.isOn))
         .accessibilityRemoveTraits(.isButton)
         .accessibilityAddTraits(.isToggle)
+    }
+
+    private func toggle(_ configuration: Configuration) {
+        if reduceMotion {
+            configuration.isOn.toggle()
+        } else {
+            withAnimation(CopycolaColors.controlMotion) {
+                configuration.isOn.toggle()
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func toggleLabel(_ configuration: Configuration) -> some View {
+        HStack(spacing: 8) {
+            configuration.label
+            toggleTrack(isOn: configuration.isOn)
+        }
+    }
+
+    private func toggleTrack(isOn: Bool) -> some View {
+        ZStack(alignment: isOn ? .trailing : .leading) {
+            RoundedRectangle(cornerRadius: 999, style: .continuous)
+                .fill(isOn ? Color("AccentColor") : Color.primary.opacity(0.05))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 999, style: .continuous)
+                        .strokeBorder(CopycolaColors.controlRule(for: colorScheme), lineWidth: 1)
+                }
+
+            RoundedRectangle(cornerRadius: 999, style: .continuous)
+                .fill(.white)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 999, style: .continuous)
+                        .strokeBorder(CopycolaColors.controlRule(for: colorScheme), lineWidth: 1)
+                }
+                .frame(width: 24, height: 24)
+                .padding(4)
+        }
+        .frame(width: 48, height: 32)
+        .animation(controlMotion, value: isOn)
+    }
+
+    private var controlMotion: Animation? {
+        reduceMotion ? nil : CopycolaColors.controlMotion
+    }
+
+    private func toggleValue(isOn: Bool) -> String {
+        isOn ? "On" : "Off"
     }
 }

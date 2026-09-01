@@ -95,11 +95,12 @@ enum CopycolaColors {
         colorScheme == .dark ? Color.white.opacity(0.16) : Color.black.opacity(0.12)
     }
 
-    /// Copycola's sole chromatic UI token. The asset supplies the light/dark values.
+    /// Copycola's sole chromatic UI token. The asset supplies the shared
+    /// appearance value used by both light and dark buttons.
     static var accent: Color { .accent }
 
     static let itemSurfaceLightHex = "FDFDFD"
     static let itemSurfaceDarkHex = "111111"
-    static let accentLightHex = "A97000"
+    static let accentLightHex = "D39224"
     static let accentDarkHex = "D39224"
 }

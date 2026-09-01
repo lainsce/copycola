@@ -33,7 +33,7 @@ struct CopycolaAboutView: View {
 
             VStack(spacing: 4) {
                 Text("Version \(versionString)")
-                    .font(CopycolaTypography.caption)
+                    .font(CopycolaTypography.technicalFont(.caption))
                     .foregroundStyle(.secondary)
 
                 Text("Made with SwiftUI for Mac.")

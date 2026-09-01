@@ -7,11 +7,12 @@ import UIKit
 #endif
 
 /// Copycola's typographic voice: a compact Geist hierarchy with Old Standard TT
-/// reserved for view titles. Missing glyphs remain eligible for the platform's
-/// serif/Mincho fallback.
+/// reserved for view titles and Lekton reserved for technical data. Missing
+/// glyphs remain eligible for the platform's serif/Mincho fallback.
 enum CopycolaTypography {
     /// Copycola's canonical UI type scale. Every role is Dynamic Type aware;
-    /// Geist handles the interface roles while Old Standard TT handles titles.
+    /// Geist handles interface roles, Old Standard TT handles titles, and
+    /// Lekton handles technical readouts.
     enum Role: CaseIterable {
         case bigDisplay, display, viewTitle, viewSubtitle
         case contentBlockTitle, contentBlockSubtitle, body, caption, micro
@@ -60,6 +61,11 @@ enum CopycolaTypography {
     static let body = font(.body)
     static let caption = font(.caption)
     static let micro = font(.micro)
+    static func technicalFont(_ role: Role) -> Font {
+        Font.custom("Lekton", size: role.size, relativeTo: role.relativeTo)
+    }
+
+    static let technical = technicalFont(.body)
 
     /// Compatibility funnel for existing call sites. Legacy sizes are snapped
     /// to the nearest design-system role, so no old value can reintroduce drift.
@@ -72,17 +78,17 @@ enum CopycolaTypography {
     }
 
     private static func role(for size: CGFloat) -> Role {
-        switch size {
-        case 38...: return .bigDisplay
-        case 30..<38: return .display
-        case 26..<30: return .viewTitle
-        case 21..<26: return .viewSubtitle
-        case 17..<21: return .contentBlockTitle
-        case 15..<17: return .contentBlockSubtitle
-        case 13..<15: return .body
-        case 11..<13: return .caption
-        default: return .micro
-        }
+        let roles: [(ClosedRange<CGFloat>, Role)] = [
+            (38...CGFloat.greatestFiniteMagnitude, .bigDisplay),
+            (30...CGFloat(37.999), .display),
+            (26...CGFloat(29.999), .viewTitle),
+            (21...CGFloat(25.999), .viewSubtitle),
+            (17...CGFloat(20.999), .contentBlockTitle),
+            (15...CGFloat(16.999), .contentBlockSubtitle),
+            (13...CGFloat(14.999), .body),
+            (11...CGFloat(12.999), .caption)
+        ]
+        return roles.first(where: { $0.0.contains(size) })?.1 ?? .micro
     }
 
     private static func fontName(for role: Role) -> String {

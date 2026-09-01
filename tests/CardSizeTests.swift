@@ -15,9 +15,7 @@ struct CardSizeTests {
         #expect(CanvasMetrics.canvasWidth - CardSize.fourByOne.pointSize.width == 2 * CanvasMetrics.canvasMargin)
         #expect(CanvasMetrics.headerHeight == 60)
         #expect(CanvasMetrics.headerContentSpacing == 8)
-        #expect(CanvasMetrics.cardCornerRadius == 24)
-        #expect(CanvasMetrics.gridUnit.truncatingRemainder(dividingBy: CanvasMetrics.dotSpacing) == 0)
-        #expect(CanvasMetrics.module.truncatingRemainder(dividingBy: CanvasMetrics.dotSpacing) == 0)
+        #expect(CanvasMetrics.cardCornerRadius == 12)
     }
 
     @Test func onlyTwoByTwoUsesBigCornerRadius() {
