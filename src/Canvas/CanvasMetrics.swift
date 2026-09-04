@@ -16,7 +16,6 @@ nonisolated enum CanvasMetrics {
     static let headerContentSpacing: CGFloat = 8
     /// Industrial geometry: tight enough to feel structural without becoming sharp.
     static let cardCornerRadius: CGFloat = 12
-    static let bigCardCornerRadius: CGFloat = 12
     /// Shared design-pixel inset between card content and its card edge.
     static let cardContentInset: CGFloat = 16
     /// Maximum rotation applied to a card while it is being dragged.
@@ -25,6 +24,26 @@ nonisolated enum CanvasMetrics {
     static let cardDragTiltDistance: CGFloat = 80
     /// Placement pitch: one cell plus its trailing one-dot gutter.
     static let module: CGFloat = cell + gridUnit
+    /// Bloom keeps the same placement rhythm as the card lattice while its
+    /// visual guide uses a radial, center-out composition.
+    static let bloomPitch: CGFloat = module
+    static let bloomRowPitch: CGFloat = module * 0.8660254
+    /// The overlap clearance used by Bloom's compressed placement rows.
+    static let bloomCollisionInset: CGFloat = 4
+    /// Concentric guide spacing is half a card module so the rings stay aligned
+    /// with the center-out card sequence without becoming visually dense.
+    static let bloomRingSpacing: CGFloat = module / 2
+    /// Six slots keep the first visible ring open enough for full-size cards.
+    static let bloomRingSlotCount: Int = 6
+    /// The first outer ring is one module from the center card, matching the
+    /// card-center spacing of the regular canvas geometry.
+    static let bloomRingRadius: CGFloat = module
+    static let bloomRingStartAngle: CGFloat = 0
+    /// The first Bloom slot is the radial center; this is its card-center offset
+    /// from the body-card origin used by `BloomGrid`.
+    static let bloomRingCenterY: CGFloat = bloomRowPitch + cell / 2
+    static let bloomRingCenterMarkerDiameter: CGFloat = 6
+    static let bloomRingTickLength: CGFloat = 6
     /// Width occupied by a 4×1 card, including the three internal one-dot gutters.
     static let fourColumnWidth: CGFloat = 4 * cell + 3 * gridUnit
     /// The fixed inset around the canvas content.

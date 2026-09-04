@@ -8,6 +8,7 @@ struct NULButtonStyle: ButtonStyle {
     private let horizontalPadding: CGFloat?
     private let labelColor: Color?
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.isEnabled) private var isEnabled
 
     init(
@@ -34,7 +35,7 @@ struct NULButtonStyle: ButtonStyle {
                 in: RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous)
             )
             .overlay { pressedOverlay(isPressed: configuration.isPressed) }
-            .contentShape(Rectangle())
+            .contentShape(.rect(cornerRadius: CopycolaColors.controlRadius))
             .opacity(controlOpacity(isPressed: configuration.isPressed))
             .scaleEffect(controlScale(isPressed: configuration.isPressed))
             .animation(controlMotion, value: configuration.isPressed)
@@ -76,7 +77,7 @@ struct NULButtonStyle: ButtonStyle {
         case .primary:
             accentColor
         case .neutral, .quiet:
-            CopycolaColors.itemSurface
+            CopycolaColors.itemSurface(for: colorScheme)
         }
     }
 }

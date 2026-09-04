@@ -73,5 +73,6 @@ struct ImageCardSurface: View {
                     .fill(CopycolaColors.itemSurface.opacity(0.96))
                     .padding(1)
             }
+            .contentShape(.rect(cornerRadius: CopycolaColors.controlRadius))
     }
 }

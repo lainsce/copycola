@@ -25,6 +25,8 @@ struct NULSearchField: View {
                 .labelStyle(.iconOnly)
                 .buttonStyle(.borderless)
                 .foregroundStyle(.secondary)
+                .frame(width: CopycolaColors.fieldHeight, height: CopycolaColors.fieldHeight)
+                .contentShape(.rect(cornerRadius: CopycolaColors.controlRadius))
             }
         }
         .padding(.horizontal, CopycolaColors.fieldHorizontalPadding)
@@ -36,10 +38,11 @@ struct NULSearchField: View {
         .overlay {
             RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous)
                 .strokeBorder(
-                    isFocused ? Color.accent.opacity(0.72) : .clear,
+                    isFocused ? CopycolaColors.accent.opacity(0.72) : .clear,
                     lineWidth: 2
                 )
         }
+        .contentShape(.rect(cornerRadius: CopycolaColors.controlRadius))
         .onTapGesture { isFocused = true }
     }
 }

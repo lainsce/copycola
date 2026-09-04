@@ -5,7 +5,7 @@ This file is the short, reusable orientation for agents working on Copycola. Rea
 ## Project identity
 
 - Native macOS SwiftUI + SwiftData app named Copycola.
-- Swift 6, macOS deployment target 27.0, AppKit/MapKit integration.
+- Swift 6, macOS deployment target 27.0, AppKit integration.
 - The project is intentionally unsigned until Apple notarization/signing is available. Do not sign, notarize, submit, or change the team/signing policy unless explicitly asked.
 - Xcode project: `Copycola.xcodeproj/project.pbxproj`.
 
@@ -15,11 +15,10 @@ This checkout follows the project-wide layout convention:
 
 ```text
 src/                         application source
-  Canvas/                    canvas model, layout, gestures, grid, add-card fan
+  Canvas/                    canvas model, layout, gestures, grid, direct image creation
   Card/
     Shared/                  Card model, kind/sizing, chrome, CardView, shared editors
-    Header/ StickyNote/      type-specific card implementations
-    Image/ Link/ Map/
+    Header/ Image/            type-specific card implementations
   Sidebar/                   sidebar views, previews, and native material
   PrivacyPolicy/             privacy policy window views
   *.swift                    app shell, commands, shared color helpers
@@ -44,7 +43,7 @@ The Xcode project uses `PBXFileSystemSynchronizedRootGroup` for `src/` and `test
 
 ### Cards
 
-`CardKind` currently contains: `header`, `stickyNote`, `image`, `link`, and `map`. Header is structural and generated automatically; the other four kinds are user-creatable.
+`CardKind` currently contains `header` and `image`. Header is structural and generated automatically; Image is the only user-creatable kind. Image cards may carry optional outbound URL metadata.
 
 - `Card/Shared/Card.swift` is the SwiftData model. It keeps only shared fields used by the supported kinds; changes to persisted properties still require deliberate migration review.
 - `Card/Shared/CardView.swift` is shared shell/routing/selection chrome. Keep type-specific layouts in their matching `Card/<Kind>/` folder.
@@ -64,17 +63,12 @@ The Xcode project uses `PBXFileSystemSynchronizedRootGroup` for `src/` and `test
 - `src/Sidebar/` owns canvas list editing, thumbnails, previews, and sidebar background.
 - Privacy Policy is a separate macOS window/menu route, not an extra in-canvas UI surface.
 
-### Networking
-
-- Link cards may request page metadata and favicons from the entered URL.
-- Map cards use MapKit place search; no location permission is requested.
-
 ## UI and accessibility invariants
 
 - Use the bundled `.accent` color; do not introduce `.accentColor`.
 - Image-only buttons must remain image-only visually. Put the action name in `.help(...)` and an accessibility label, not visible button text.
-- Respect `accessibilityReduceMotion` for animations, including card drag tilt and the add-card fan.
-- The add-card anchor is a 56×56 circular plus button; its visible flyout choices are capsule buttons.
+- Respect `accessibilityReduceMotion` for animations, including card drag tilt and the image-cutout preview shimmer.
+- The add-image anchor is a direct toolbar plus button that opens the image importer.
 - While dragging a card, hide the delete control and card action bar.
 - Keep the native macOS menu/toolbar action hierarchy intact; route global actions through focused scene values/commands.
 

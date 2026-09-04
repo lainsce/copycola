@@ -4,17 +4,14 @@
 
 ![Copycola in English with sample canvases and cards](data/Copycola-English.png)
 
-Copycola is a native macOS app for arranging notes, references, images, links, places, and other useful fragments on canvases. Each canvas keeps a simple four-column rhythm, an optional dot grid, and an open vertical workspace so related ideas can stay visible together.
+Copycola is a native macOS app for arranging images and their captions on canvases. Each canvas keeps a simple four-column rhythm, an optional dot grid, and an open vertical workspace so related ideas can stay visible together.
 
 ## What you can make
 
-- **Note** cards for quick, editable thoughts
 - **Image** cards with captions and optional links
-- **Link** cards with page metadata, favicons, and theme-aware surfaces
-- **Map** cards backed by MapKit
 - **Header** cards generated automatically for naming and grouping each canvas
 
-Cards share a common visual treatment while keeping their own editing and display rules. Canvases are persisted locally with SwiftData, and the sidebar provides compact previews of each board.
+Headers are structural; images are the only user-creatable card. Canvases are persisted locally with SwiftData, and the sidebar provides compact previews of each board.
 
 ## Requirements
 

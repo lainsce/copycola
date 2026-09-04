@@ -29,14 +29,6 @@ struct CopycolaCoreTests {
         return output as Data
     }
 
-    @Test @MainActor
-    func canvasAIReconUsesThePromptInterpreterAndRejectsShortAudio() async {
-        let interpretation = CanvasAIRecon.shared.interpret("note: test prompt")
-        #expect(interpretation.kind == .stickyNote)
-        #expect(interpretation.content == "test prompt")
-        #expect(await CanvasAIRecon.shared.transcribe(samples: Array(repeating: 0, count: 10)) == nil)
-    }
-
     @Test
     func imageLoadingAndSubjectCropperRejectInvalidData() async {
         #expect(await decodeImage(from: nil) == nil)
@@ -60,71 +52,11 @@ struct CopycolaCoreTests {
         }
     }
 
-    @Test func interpretsExplicitAndNaturalLanguagePrompts() {
-        let note = CanvasPromptInterpreter.interpret("  note: Buy milk  ")
-        #expect(note.kind == .stickyNote)
-        #expect(note.content == "Buy milk")
-        #expect(note.location == nil)
-
-        let link = CanvasPromptInterpreter.interpret("https://example.com/docs")
-        #expect(link.kind == .link)
-        #expect(link.content == "https://example.com/docs")
-
-        let map = CanvasPromptInterpreter.interpret("Show a map near the museum")
-        #expect(map.kind == .map)
-        #expect(map.location == "the museum")
-
-        let event = CanvasPromptInterpreter.interpret("Remind me of the dentist at noon")
-        #expect(event.kind == .stickyNote)
-        #expect(event.content == "dentist")
-        #expect(event.location == "noon")
-
-        let inferred = CanvasPromptInterpreter.interpret("Create a thought in Lisbon, Portugal.")
-        #expect(inferred.kind == .stickyNote)
-        #expect(inferred.content == "thought in Lisbon, Portugal.")
-        #expect(inferred.location == "Lisbon")
-    }
-
-    @Test func interpretsEmptyAndPrefixOnlyPrompts() {
-        let empty = CanvasPromptInterpreter.interpret("   ")
-        #expect(empty.kind == .stickyNote)
-        #expect(empty.content.isEmpty)
-        #expect(empty.location == nil)
-
-        let prefixOnly = CanvasPromptInterpreter.interpret("map:")
-        #expect(prefixOnly.kind == .map)
-        #expect(prefixOnly.content.isEmpty)
-
-        let eventWithoutTitle = CanvasPromptInterpreter.interpret("Schedule of at 10")
-        #expect(eventWithoutTitle.kind == .stickyNote)
-        #expect(eventWithoutTitle.content == "at 10")
-    }
-
-    @Test func infersTitlesForAllCardKindsAndTruncatesLongThoughts() {
-        let map = CanvasPromptInterpretation(kind: .map, content: "", location: "Lisbon")
-        #expect(CanvasTitleInferer.title(for: "", interpretation: map) == "Lisbon Places")
-        #expect(CanvasTitleInferer.title(for: "", interpretation: CanvasPromptInterpretation(kind: .map, content: "", location: nil)) == "Places & Context")
-
-        let link = CanvasPromptInterpretation(kind: .link, content: "", location: nil)
-        #expect(CanvasTitleInferer.title(for: "https://www.example.com/path", interpretation: link) == "example.com")
-        #expect(CanvasTitleInferer.title(for: "not a url", interpretation: link) == "not a url")
-
-        let image = CanvasPromptInterpretation(kind: .image, content: "", location: nil)
-        #expect(CanvasTitleInferer.title(for: "ignored", interpretation: image) == "Visual Notes")
-
-        let sticky = CanvasPromptInterpretation(kind: .stickyNote, content: "", location: nil)
-        #expect(CanvasTitleInferer.title(for: "First thought. Second thought", interpretation: sticky) == "First thought")
-        #expect(CanvasTitleInferer.title(for: "", interpretation: sticky) == "Untitled Canvas")
-
-        let long = String(repeating: "a", count: 40)
-        #expect(CanvasTitleInferer.title(for: long, interpretation: sticky).count == 33)
-    }
-
     @Test func cardKindsExposeCompleteDesignMetadata() {
-        #expect(CardKind.allCases.map(\.id) == ["header", "stickyNote", "image", "link", "map"])
-        #expect(CardKind.creatable == [.link, .image, .stickyNote, .map])
+        #expect(CardKind.allCases.map(\.id) == ["header", "image"])
+        #expect(CardKind.creatable == [.image])
         #expect(!CardKind.header.isCreatable)
-        #expect(CardKind.stickyNote.isCreatable)
+        #expect(CardKind.image.isCreatable)
 
         for kind in CardKind.allCases {
             #expect(!String(localized: kind.displayName).isEmpty)
@@ -151,15 +83,13 @@ struct CopycolaCoreTests {
             #expect(size.pointSize.width > 0)
             #expect(size.pointSize.height > 0)
         }
-        #expect(CardSize.selectable == [.oneByOne, .twoByOne, .twoByTwo])
+        #expect(CardSize.allCases == [.oneByOne, .fourByOne])
         #expect(CanvasMetrics.cardDragTiltDegrees(for: 0) == 0)
     }
 
     @Test func canvasErrorsDescribeEveryFailure() {
         let errors: [CanvasError] = [
             .invalidLink,
-            .locationNotFound,
-            .locationSearchFailed("offline"),
             .fileImportFailed("bad image"),
             .imageAccessDenied,
             .targetCardMissing
@@ -168,20 +98,14 @@ struct CopycolaCoreTests {
             #expect(error.errorDescription?.isEmpty == false)
             #expect(error.failureReason?.isEmpty == false)
         }
-        #expect(CanvasError.locationSearchFailed("offline").failureReason?.contains("offline") == true)
         #expect(CanvasError.fileImportFailed("bad image").failureReason?.contains("bad image") == true)
     }
 
-    @Test func colorAndNoteTokensRoundTrip() {
+    @Test func colorTokensRoundTrip() {
         #expect(Color(hex: "#FF0000").hexValue == "FF0000")
         #expect(Color(hex: " 00ff7f ").hexValue == "00FF7F")
         #expect(Color(hex: "not-a-color").hexValue == "000000")
 
-        #expect(NoteColorRamp.yellow == NoteColorRamp.accent)
-        for color in NoteColorRamp.all {
-            #expect(!String(localized: NoteColorRamp.name(for: color)).isEmpty)
-        }
-        #expect(String(localized: NoteColorRamp.name(for: "unknown")) == "Note Color")
         _ = CardSurfaceStyle.item
         _ = CardSurfaceStyle.subtleGrayGradient
     }
@@ -196,6 +120,7 @@ struct CopycolaCoreTests {
             _ = CopycolaColors.itemText(for: scheme)
             _ = CopycolaColors.itemSecondaryText(for: scheme)
             _ = CopycolaColors.itemRule(for: scheme)
+            _ = CopycolaColors.itemSurface(for: scheme)
         }
         _ = CopycolaColors.itemSurface
         _ = CopycolaColors.accent
@@ -203,30 +128,23 @@ struct CopycolaCoreTests {
         #expect(CopycolaColors.itemSurfaceDarkHex == "111111")
     }
 
-    @Test func mapCoordinatesBridgeToCoreLocation() {
-        let coordinate = MapCoordinate(latitude: 38.7223, longitude: -9.1393)
-        #expect(coordinate.coordinate.latitude == 38.7223)
-        #expect(coordinate.coordinate.longitude == -9.1393)
-        #expect(coordinate == MapCoordinate(latitude: 38.7223, longitude: -9.1393))
-    }
-
     @Test func cardMutationsKeepStoredGeometryAndDefaults() throws {
-        let card = Card(kind: .stickyNote, size: .oneByOne, x: 3, y: 4, zIndex: 7)
-        #expect(card.kind == .stickyNote)
+        let card = Card(kind: .image, size: .oneByOne, x: 3, y: 4, zIndex: 7)
+        #expect(card.kind == .image)
+        #expect(card.isSupportedKind)
         #expect(card.cardSize == .oneByOne)
-        #expect(card.colorHex == NoteColorRamp.accent)
         #expect(card.text.isEmpty)
 
-        card.kind = .link
-        #expect(card.kind == .link)
-        card.cardSize = .twoByTwo
-        #expect(card.width == Double(CardSize.twoByTwo.pointSize.width))
-        #expect(card.height == Double(CardSize.twoByTwo.pointSize.height))
+        card.kind = .header
+        #expect(card.kind == .header)
+        card.cardSize = .fourByOne
+        #expect(card.width == Double(CardSize.fourByOne.pointSize.width))
+        #expect(card.height == Double(CardSize.fourByOne.pointSize.height))
         card.width = 1
         card.height = 1
         card.refreshStoredSize()
-        #expect(card.width == Double(CardSize.twoByTwo.pointSize.width))
-        #expect(card.height == Double(CardSize.twoByTwo.pointSize.height))
+        #expect(card.width == Double(CardSize.fourByOne.pointSize.width))
+        #expect(card.height == Double(CardSize.fourByOne.pointSize.height))
 
         let board = Board(name: "Board")
         #expect(board.name == "Board")

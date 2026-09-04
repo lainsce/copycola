@@ -8,12 +8,7 @@ struct CardView: View {
     var isDragging: Bool
     var dragTranslation: CGSize
     var onDelete: () -> Void
-    var onSetSize: (CardSize) -> Void
-    var onBeginEdit: () -> Void
-    var onChooseImage: () -> Void
-    var onCropImageToSubject: () -> Void
     var onEditLink: () -> Void
-    var onEditLocation: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.colorScheme) private var colorScheme
@@ -31,7 +26,7 @@ struct CardView: View {
         .overlay {
             if isSelected && card.kind != .header {
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .strokeBorder(Color.accent.opacity(0.82), lineWidth: 1)
+                    .strokeBorder(CopycolaColors.accent.opacity(0.82), lineWidth: 1)
             }
         }
         .overlay(alignment: .topLeading) {
@@ -75,14 +70,8 @@ struct CardView: View {
         switch card.kind {
         case .header:
             HeaderCardContent(card: card, isEditing: isEditing)
-        case .stickyNote:
-            StickyNoteCardContent(card: card, isEditing: isEditing, cornerRadius: cornerRadius)
         case .image:
             ImageCardSurface(card: card, isEditing: isEditing, cornerRadius: cornerRadius)
-        case .link:
-            LinkCardSurface(card: card, cornerRadius: cornerRadius)
-        case .map:
-            MapCardSurface(card: card, cornerRadius: cornerRadius)
         }
     }
 
@@ -97,19 +86,18 @@ struct CardView: View {
             .frame(width: 30, height: 30)
             .background(Circle().fill(CopycolaColors.itemSurface))
             .buttonStyle(.plain)
+            .contentShape(.circle)
             .help(Text("Delete Card"))
     }
 
-    /// Dark bar under a selected card: size options, then the card's kind-specific actions.
+    /// Dark bar under a selected image card for its image-specific actions.
+    /// Editing is intentionally omitted here because double-click and the Canvas menu already
+    /// provide the same route for every card kind.
     private var controlBar: some View {
         HStack(spacing: CopycolaColors.gridUnit) {
-            ForEach(CardSize.selectable) { sizeButton($0) }
-
-            Rectangle()
-                .fill(.white.opacity(0.22))
-                .frame(width: 1, height: 20)
-                .padding(.horizontal, CopycolaColors.gridUnit)
-            actionButtons
+            if card.kind == .image {
+                actionButtons
+            }
         }
         .padding(CopycolaColors.gridUnit)
         .background {
@@ -121,46 +109,11 @@ struct CardView: View {
     @ViewBuilder
     private var actionButtons: some View {
         switch card.kind {
-        case .stickyNote:
-            barButton("Edit Note", symbol: "pencil", action: onBeginEdit)
         case .image:
-            barButton("Change Image", symbol: "photo", action: onChooseImage)
-            barButton("Crop to Subject", symbol: "person.crop.rectangle", action: onCropImageToSubject)
-            barButton("Edit Caption", symbol: "text.bubble", action: onBeginEdit)
             barButton("Edit Link", symbol: "link", action: onEditLink)
-        case .link:
-            barButton("Edit Link", symbol: "pencil", action: onEditLink)
-        case .map:
-            barButton("Edit Location", symbol: "mappin.and.ellipse", action: onEditLocation)
-        case .header:
+        default:
             EmptyView()
         }
-    }
-
-    private func sizeButton(_ size: CardSize) -> some View {
-        let selected = card.cardSize == size
-        // Proportional glyph representing the footprint's cols × rows.
-        let unit: CGFloat = 7
-        return Button {
-            onSetSize(size)
-        } label: {
-            Label {
-                Text(size.accessibilityLabel)
-            } icon: {
-                ZStack {
-                    RoundedRectangle(cornerRadius: CopycolaColors.controlRadius)
-                        .fill(selected ? Color.white : .clear)
-                        .frame(width: 28, height: 28)
-                    RoundedRectangle(cornerRadius: 1)
-                        .fill(selected ? .black.opacity(0.85) : .white.opacity(0.6))
-                        .frame(width: unit * CGFloat(size.cols), height: unit * CGFloat(size.rows))
-                }
-            }
-            .labelStyle(.iconOnly)
-        }
-        .buttonStyle(.plain)
-        .accessibilityAddTraits(selected ? .isSelected : [])
-        .help(Text(size.accessibilityLabel))
     }
 
     private func barButton(
@@ -174,6 +127,7 @@ struct CardView: View {
             .foregroundStyle(.white)
             .frame(width: 26, height: 26)
             .buttonStyle(.plain)
+            .contentShape(.rect(cornerRadius: CopycolaColors.controlRadius))
             .help(Text(title))
     }
 }

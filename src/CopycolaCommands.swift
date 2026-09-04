@@ -17,10 +17,6 @@ private struct EditCardActionKey: FocusedValueKey {
     typealias Value = () -> Void
 }
 
-private struct ResizeCardActionKey: FocusedValueKey {
-    typealias Value = (CardSize) -> Void
-}
-
 private struct DeleteCardActionKey: FocusedValueKey {
     typealias Value = () -> Void
 }
@@ -30,6 +26,18 @@ private struct DeleteCanvasActionKey: FocusedValueKey {
 }
 
 private struct RenameCanvasActionKey: FocusedValueKey {
+    typealias Value = () -> Void
+}
+
+private struct ZoomInCanvasActionKey: FocusedValueKey {
+    typealias Value = () -> Void
+}
+
+private struct ZoomOutCanvasActionKey: FocusedValueKey {
+    typealias Value = () -> Void
+}
+
+private struct ResetCanvasZoomActionKey: FocusedValueKey {
     typealias Value = () -> Void
 }
 
@@ -49,11 +57,6 @@ extension FocusedValues {
         set { self[EditCardActionKey.self] = newValue }
     }
 
-    var resizeCardAction: ((CardSize) -> Void)? {
-        get { self[ResizeCardActionKey.self] }
-        set { self[ResizeCardActionKey.self] = newValue }
-    }
-
     var deleteCardAction: (() -> Void)? {
         get { self[DeleteCardActionKey.self] }
         set { self[DeleteCardActionKey.self] = newValue }
@@ -69,16 +72,33 @@ extension FocusedValues {
         set { self[RenameCanvasActionKey.self] = newValue }
     }
 
+    var zoomInCanvasAction: (() -> Void)? {
+        get { self[ZoomInCanvasActionKey.self] }
+        set { self[ZoomInCanvasActionKey.self] = newValue }
+    }
+
+    var zoomOutCanvasAction: (() -> Void)? {
+        get { self[ZoomOutCanvasActionKey.self] }
+        set { self[ZoomOutCanvasActionKey.self] = newValue }
+    }
+
+    var resetCanvasZoomAction: (() -> Void)? {
+        get { self[ResetCanvasZoomActionKey.self] }
+        set { self[ResetCanvasZoomActionKey.self] = newValue }
+    }
+
 }
 
 struct CopycolaCommands: Commands {
     @FocusedValue(\.newCanvasAction) private var newCanvasAction
     @FocusedValue(\.addCardAction) private var addCardAction
     @FocusedValue(\.editCardAction) private var editCardAction
-    @FocusedValue(\.resizeCardAction) private var resizeCardAction
     @FocusedValue(\.deleteCardAction) private var deleteCardAction
     @FocusedValue(\.deleteCanvasAction) private var deleteCanvasAction
     @FocusedValue(\.renameCanvasAction) private var renameCanvasAction
+    @FocusedValue(\.zoomInCanvasAction) private var zoomInCanvasAction
+    @FocusedValue(\.zoomOutCanvasAction) private var zoomOutCanvasAction
+    @FocusedValue(\.resetCanvasZoomAction) private var resetCanvasZoomAction
     @Environment(\.openWindow) private var openWindow
 
     var body: some Commands {
@@ -92,20 +112,17 @@ struct CopycolaCommands: Commands {
             EmptyView()
         }
 
-        CommandGroup(after: .newItem) {
+        CommandGroup(replacing: .newItem) {
             Button("New Canvas") {
                 newCanvasAction?()
             }
+            .keyboardShortcut("n", modifiers: .command)
             .disabled(newCanvasAction == nil)
         }
 
         CommandMenu("Canvas") {
-            Menu("Add Card") {
-                ForEach(CardKind.creatable) { kind in
-                    Button(kind.displayName, systemImage: kind.systemImage) {
-                        addCardAction?(kind)
-                    }
-                }
+            Button("Add Image", systemImage: "photo") {
+                addCardAction?(.image)
             }
             .disabled(addCardAction == nil)
 
@@ -132,6 +149,26 @@ struct CopycolaCommands: Commands {
                 deleteCanvasAction?()
             }
             .disabled(deleteCanvasAction == nil)
+
+            Divider()
+
+            Button("Zoom In") {
+                zoomInCanvasAction?()
+            }
+            .keyboardShortcut("+", modifiers: [.command])
+            .disabled(zoomInCanvasAction == nil)
+
+            Button("Zoom Out") {
+                zoomOutCanvasAction?()
+            }
+            .keyboardShortcut("-", modifiers: [.command])
+            .disabled(zoomOutCanvasAction == nil)
+
+            Button("Reset Bloom Zoom") {
+                resetCanvasZoomAction?()
+            }
+            .keyboardShortcut("0", modifiers: [.command])
+            .disabled(resetCanvasZoomAction == nil)
         }
 
         CommandGroup(after: .help) {

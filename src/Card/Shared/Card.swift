@@ -1,13 +1,15 @@
 import Foundation
 import SwiftData
 
-/// A single card on a board. Shared content fields stay optional where a card kind does not use them.
+/// A single card on a board. Image links remain optional metadata on image cards.
 @Model
 final class Card {
     var id: UUID
     private var kindRaw: String
     /// Default value lets SwiftData lightweight-migrate stores created before this attribute existed.
-    private var sizeRaw: String = CardSize.twoByTwo.rawValue
+    // Retained for lightweight migration from older stores that persisted resize options.
+    // New and normalized body cards always use `oneByOne`.
+    private var sizeRaw: String = CardSize.oneByOne.rawValue
 
     /// Top-left position in canvas (content) space, in points.
     var x: Double
@@ -18,60 +20,58 @@ final class Card {
     /// Stacking order; higher draws on top.
     var zIndex: Int
 
-    // Shared / per-kind content.
+    // Shared / image content.
     var text: String
-    var colorHex: String?
     @Attribute(.externalStorage) var imageData: Data?
     /// Changes whenever `imageData` is replaced so views can refresh decoded-image caches cheaply.
     var imageRevision: UUID?
     var urlString: String?
-    var title: String?
-    /// Optional description/summary shown on link cards. Optional, so it migrates cleanly.
-    var detail: String?
-    /// Normalized six-digit CSS theme color from the page's `theme-color` meta tag.
-    var themeColorHex: String?
-    @Attribute(.externalStorage) var faviconData: Data?
-    /// Changes whenever `faviconData` is replaced so views can refresh decoded-image caches cheaply.
-    var faviconRevision: UUID?
-    var latitude: Double?
-    var longitude: Double?
 
     var board: Board?
 
     init(kind: CardKind, size: CardSize, x: Double, y: Double, zIndex: Int) {
+        let canonicalSize: CardSize = kind == .header ? .fourByOne : .oneByOne
         self.id = UUID()
         self.kindRaw = kind.rawValue
-        self.sizeRaw = size.rawValue
+        self.sizeRaw = canonicalSize.rawValue
         self.x = x
         self.y = y
-        self.width = size.pointSize.width
-        self.height = size.pointSize.height
+        self.width = canonicalSize.pointSize.width
+        self.height = canonicalSize.pointSize.height
         self.zIndex = zIndex
         self.text = ""
-        self.colorHex = kind == .stickyNote ? NoteColorRamp.accent : nil
-        self.themeColorHex = nil
     }
 
     var kind: CardKind {
-        get { CardKind(rawValue: kindRaw) ?? .stickyNote }
+        // Unsupported kinds can still exist in a migrated store. They are filtered from the
+        // current UI through `isSupportedKind` instead of being misrepresented as an image.
+        get { CardKind(rawValue: kindRaw) ?? .image }
         set { kindRaw = newValue.rawValue }
     }
 
-    /// The card's footprint. Setting it keeps the top-left anchor and resizes width/height.
+    var isSupportedKind: Bool {
+        CardKind(rawValue: kindRaw) != nil
+    }
+
+    /// The card's canonical footprint. Body cards are always 1×1; the structural header spans 4×1.
     var cardSize: CardSize {
-        get { CardSize(rawValue: sizeRaw) ?? .twoByTwo }
+        get {
+            kind == .header ? .fourByOne : .oneByOne
+        }
         set {
-            sizeRaw = newValue.rawValue
-            width = newValue.pointSize.width
-            height = newValue.pointSize.height
+            let canonicalSize: CardSize = kind == .header ? .fourByOne : .oneByOne
+            sizeRaw = canonicalSize.rawValue
+            width = canonicalSize.pointSize.width
+            height = canonicalSize.pointSize.height
         }
     }
 
     /// Recomputes stored dimensions after the shared canvas metrics change.
     func refreshStoredSize() {
-        let size = cardSize.pointSize
-        width = Double(size.width)
-        height = Double(size.height)
+        let size: CardSize = kind == .header ? .fourByOne : .oneByOne
+        sizeRaw = size.rawValue
+        width = Double(size.pointSize.width)
+        height = Double(size.pointSize.height)
     }
 
 }

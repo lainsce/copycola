@@ -2,9 +2,10 @@ import SwiftUI
 
 /// Compact Metro switch used by visible settings controls.
 ///
-/// This mirrors Habito's toggle treatment: a clearly outlined track, a circular
-/// thumb, and a short spring when the value changes. The style keeps its
-/// intrinsic width so the containing form can decide the control's alignment.
+/// This mirrors Habito's toggle treatment: a layered track, a rounded-square
+/// thumb with a two-bar handle, and a short spring when the value changes.
+/// The style keeps its intrinsic width so the containing form can decide the
+/// control's alignment.
 /// Menu toggles intentionally keep their platform-provided menu presentation.
 struct NULToggleStyle: ToggleStyle {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -32,31 +33,34 @@ struct NULToggleStyle: ToggleStyle {
 
     @ViewBuilder
     private func toggleLabel(_ configuration: Configuration) -> some View {
-        HStack(spacing: 8) {
-            configuration.label
+        HStack(spacing: CopycolaColors.switchLabelSpacing) {
             toggleTrack(isOn: configuration.isOn)
+            configuration.label
         }
+        // The switch action owns the whole laid-out control, not just the
+        // track or its label glyph.
+        .contentShape(.rect(cornerRadius: CopycolaColors.switchCornerRadius))
     }
 
     private func toggleTrack(isOn: Bool) -> some View {
         ZStack(alignment: isOn ? .trailing : .leading) {
-            RoundedRectangle(cornerRadius: 999, style: .continuous)
-                .fill(isOn ? Color("AccentColor") : Color.primary.opacity(0.05))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 999, style: .continuous)
-                        .strokeBorder(CopycolaColors.controlRule(for: colorScheme), lineWidth: 1)
-                }
+            RoundedRectangle(cornerRadius: CopycolaColors.switchCornerRadius, style: .continuous)
+                .fill(isOn ? CopycolaColors.accent : CopycolaColors.controlRule(for: colorScheme))
 
-            RoundedRectangle(cornerRadius: 999, style: .continuous)
+            RoundedRectangle(cornerRadius: CopycolaColors.switchCornerRadius, style: .continuous)
                 .fill(.white)
                 .overlay {
-                    RoundedRectangle(cornerRadius: 999, style: .continuous)
-                        .strokeBorder(CopycolaColors.controlRule(for: colorScheme), lineWidth: 1)
+                    HStack(spacing: 4) {
+                        Rectangle().frame(width: 2, height: 12)
+                        Rectangle().frame(width: 2, height: 12)
+                    }
+                    .foregroundStyle(Color.black.opacity(0.2))
+                    .frame(width: 8, height: 12)
                 }
-                .frame(width: 24, height: 24)
-                .padding(4)
+                .frame(width: CopycolaColors.switchKnobSize, height: CopycolaColors.switchKnobSize)
+                .padding(CopycolaColors.switchInset)
         }
-        .frame(width: 48, height: 32)
+        .frame(width: CopycolaColors.switchWidth, height: CopycolaColors.switchHeight)
         .animation(controlMotion, value: isOn)
     }
 

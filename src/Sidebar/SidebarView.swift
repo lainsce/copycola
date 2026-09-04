@@ -9,6 +9,7 @@ struct SidebarView: View {
     @State private var boardToDeleteID: UUID?
     @State private var showingDeleteConfirmation = false
     @State private var editingBoardID: UUID?
+    @AppStorage("copycola.canvas.grid-style") private var canvasGridStyleRawValue = CanvasGridStyle.grid.rawValue
 
     var body: some View {
         VStack(alignment: .leading, spacing: CopycolaColors.controlGap) {
@@ -38,11 +39,21 @@ struct SidebarView: View {
         .background(NULSidebarSurface())
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button("New Canvas", systemImage: "rectangle.badge.plus", action: addBoard)
-                    .labelStyle(.iconOnly)
-                    .help(Text("New Canvas"))
-                    .buttonStyle(NULToolbarButtonStyle(accented: false))
-                    .padding(.leading, 158)
+                HStack(spacing: CopycolaColors.toolbarSidebarOffset) {
+                    Button("New Canvas", systemImage: "rectangle.badge.plus", action: addBoard)
+                        .labelStyle(.iconOnly)
+                        .help(Text("New Canvas"))
+                        .buttonStyle(NULToolbarButtonStyle(accented: false, showsSurface: true))
+                        // Keep the creation control anchored to the sidebar's
+                        // trailing toolbar lane; the view picker follows it
+                        // across the pane boundary below.
+                        .padding(.leading, 158)
+
+                    CanvasGridStylePicker(selection: $canvasGridStyleRawValue)
+                        // Leave a deliberate 8-point breathing room after
+                        // the sidebar boundary before the canvas view toggle.
+                        .padding(.leading, CopycolaColors.toolbarSidebarOffset)
+                }
             }
             .sharedBackgroundVisibility(.hidden)
         }

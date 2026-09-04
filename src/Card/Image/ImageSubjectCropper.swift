@@ -5,11 +5,13 @@ import Vision
 
 /// Produces a transparent, sticker-like cutout from an imported image.
 ///
-/// Vision supplies the subject pixels and alpha. The white rim is written into a separate
-/// bitmap as opaque pixels, rather than being passed through another alpha blend.
+/// Vision supplies the subject pixels and alpha. The white rim is built as a separate,
+/// distance-based matte so its thickness follows the detected contour and its outside edge
+/// can feather without softening the subject itself.
 enum ImageSubjectCropper {
     nonisolated private static let context = CIContext(options: [.useSoftwareRenderer: false])
     nonisolated private static let borderRadius = 16
+    nonisolated private static let outerFeather = 4
 
     nonisolated static func crop(data: Data) -> Data? {
         guard let image = sourceImage(from: data),
@@ -48,18 +50,18 @@ enum ImageSubjectCropper {
         let subjectMask = alphaMask(from: sourcePixels, width: width, height: height)
         let outputWidth = width + borderRadius * 2
         let outputHeight = height + borderRadius * 2
-        // Pad before dilation. Vision crops tightly to the subject, so dilating the unpadded
-        // mask would clip the rim anywhere the subject touches an original image edge.
+        // Pad before measuring distances. Vision crops tightly to the subject, so expanding the
+        // unpadded mask would clip the rim anywhere the subject touches an original image edge.
         var paddedMask = [UInt8](repeating: 0, count: outputWidth * outputHeight)
         for y in 0..<height {
             for x in 0..<width {
                 paddedMask[(y + borderRadius) * outputWidth + x + borderRadius] = subjectMask[y * width + x]
             }
         }
-        let expandedMask = dilate(paddedMask, width: outputWidth, height: outputHeight, radius: borderRadius)
+        let squaredDistances = distanceTransform(paddedMask, width: outputWidth, height: outputHeight)
         let outputPixels = composedPixels(
             source: sourcePixels,
-            expandedMask: expandedMask,
+            squaredDistances: squaredDistances,
             width: width,
             height: height,
             outputWidth: outputWidth,
@@ -91,7 +93,7 @@ enum ImageSubjectCropper {
 
     nonisolated private static func composedPixels(
         source: [UInt8],
-        expandedMask: [UInt8],
+        squaredDistances: [Int],
         width: Int,
         height: Int,
         outputWidth: Int,
@@ -102,7 +104,7 @@ enum ImageSubjectCropper {
             composePixel(
                 at: index,
                 source: source,
-                expandedMask: expandedMask,
+                squaredDistance: squaredDistances[index],
                 width: width,
                 height: height,
                 outputWidth: outputWidth,
@@ -115,27 +117,32 @@ enum ImageSubjectCropper {
     nonisolated private static func composePixel(
         at index: Int,
         source: [UInt8],
-        expandedMask: [UInt8],
+        squaredDistance: Int,
         width: Int,
         height: Int,
         outputWidth: Int,
         into output: inout [UInt8]
     ) {
         let outputOffset = index * 4
-        let hasStickerRim = expandedMask[index] != 0
-        writeRimIfNeeded(hasStickerRim, at: outputOffset, into: &output)
+        let rimAlpha = whiteRimAlpha(forSquaredDistance: squaredDistance)
 
         let outputX = index % outputWidth
         let outputY = index / outputWidth
         let sourceX = outputX - borderRadius
         let sourceY = outputY - borderRadius
-        guard sourceX >= 0, sourceX < width, sourceY >= 0, sourceY < height else { return }
+        guard sourceX >= 0, sourceX < width, sourceY >= 0, sourceY < height else {
+            writeWhiteRimIfNeeded(alpha: rimAlpha, at: outputOffset, into: &output)
+            return
+        }
         let sourceOffset = (sourceY * width + sourceX) * 4
         let sourceAlpha = source[sourceOffset + 3]
-        guard sourceAlpha != 0 else { return }
+        guard sourceAlpha != 0 else {
+            writeWhiteRimIfNeeded(alpha: rimAlpha, at: outputOffset, into: &output)
+            return
+        }
 
         writeSourcePixel(
-            hasStickerRim: hasStickerRim,
+            rimAlpha: rimAlpha,
             source: source,
             sourceOffset: sourceOffset,
             sourceAlpha: sourceAlpha,
@@ -144,27 +151,29 @@ enum ImageSubjectCropper {
         )
     }
 
-    nonisolated private static func writeRimIfNeeded(
-        _ hasStickerRim: Bool,
+    nonisolated private static func writeWhiteRimIfNeeded(
+        alpha: UInt8,
         at offset: Int,
         into output: inout [UInt8]
     ) {
-        if hasStickerRim { writeWhiteRim(at: offset, into: &output) }
+        guard alpha != 0 else { return }
+        writeWhiteRim(alpha: alpha, at: offset, into: &output)
     }
 
     nonisolated private static func writeSourcePixel(
-        hasStickerRim: Bool,
+        rimAlpha: UInt8,
         source: [UInt8],
         sourceOffset: Int,
         sourceAlpha: UInt8,
         outputOffset: Int,
         into output: inout [UInt8]
     ) {
-        if hasStickerRim {
+        if rimAlpha != 0 {
             blendPremultipliedPixel(
                 source: source,
                 sourceOffset: sourceOffset,
                 sourceAlpha: sourceAlpha,
+                rimAlpha: rimAlpha,
                 outputOffset: outputOffset,
                 into: &output
             )
@@ -179,25 +188,39 @@ enum ImageSubjectCropper {
         }
     }
 
-    nonisolated private static func writeWhiteRim(at offset: Int, into output: inout [UInt8]) {
-        output[offset] = 255
-        output[offset + 1] = 255
-        output[offset + 2] = 255
-        output[offset + 3] = 255
+    nonisolated private static func writeWhiteRim(
+        alpha: UInt8,
+        at offset: Int,
+        into output: inout [UInt8]
+    ) {
+        // The output bitmap is premultiplied-last, so a translucent white pixel stores the
+        // white channels multiplied by their alpha rather than leaving an RGB/alpha mismatch.
+        output[offset] = alpha
+        output[offset + 1] = alpha
+        output[offset + 2] = alpha
+        output[offset + 3] = alpha
     }
 
     nonisolated private static func blendPremultipliedPixel(
         source: [UInt8],
         sourceOffset: Int,
         sourceAlpha: UInt8,
+        rimAlpha: UInt8,
         outputOffset: Int,
         into output: inout [UInt8]
     ) {
-        let alpha = CGFloat(sourceAlpha) / 255
-        output[outputOffset] = UInt8(min(255, CGFloat(source[sourceOffset]) + 255 * (1 - alpha)))
-        output[outputOffset + 1] = UInt8(min(255, CGFloat(source[sourceOffset + 1]) + 255 * (1 - alpha)))
-        output[outputOffset + 2] = UInt8(min(255, CGFloat(source[sourceOffset + 2]) + 255 * (1 - alpha)))
-        output[outputOffset + 3] = 255
+        let sourceOpacity = CGFloat(sourceAlpha) / 255
+        let rimOpacity = CGFloat(rimAlpha) / 255
+        let compositeOpacity = sourceOpacity + rimOpacity * (1 - sourceOpacity)
+        let rimContribution = 255 * rimOpacity * (1 - sourceOpacity)
+        output[outputOffset] = clampedByte(CGFloat(source[sourceOffset]) + rimContribution)
+        output[outputOffset + 1] = clampedByte(CGFloat(source[sourceOffset + 1]) + rimContribution)
+        output[outputOffset + 2] = clampedByte(CGFloat(source[sourceOffset + 2]) + rimContribution)
+        output[outputOffset + 3] = clampedByte(compositeOpacity * 255)
+    }
+
+    nonisolated private static func clampedByte(_ value: CGFloat) -> UInt8 {
+        UInt8(min(255, max(0, value.rounded())))
     }
 
     nonisolated private static func copyPixel(
@@ -248,120 +271,104 @@ enum ImageSubjectCropper {
         return mask
     }
 
-    /// Binary dilation using separable sliding windows, avoiding repeated contour artifacts.
-    nonisolated private static func dilate(_ mask: [UInt8], width: Int, height: Int, radius: Int) -> [UInt8] {
-        verticalDilation(
-            horizontalDilation(mask, width: width, height: height, radius: radius),
-            width: width,
-            height: height,
-            radius: radius
-        )
-    }
-
-    nonisolated private static func horizontalDilation(
+    /// Returns the exact squared Euclidean distance to the nearest foreground pixel.
+    ///
+    /// A separable distance transform keeps the rim circular at corners and around narrow
+    /// contours without the square bias of a horizontal/vertical dilation kernel.
+    nonisolated private static func distanceTransform(
         _ mask: [UInt8],
         width: Int,
-        height: Int,
-        radius: Int
-    ) -> [UInt8] {
-        var horizontal = [UInt8](repeating: 0, count: mask.count)
+        height: Int
+    ) -> [Int] {
+        guard width > 0, height > 0 else { return [] }
+        let infinity = 1_000_000_000
+        var horizontal = [Int](repeating: infinity, count: width * height)
+
         for y in 0..<height {
-            let row = dilatedRow(mask, width: width, row: y, radius: radius)
-            horizontal.replaceSubrange((y * width)..<((y + 1) * width), with: row)
+            var row = [Int](repeating: infinity, count: width)
+            for x in 0..<width where mask[y * width + x] != 0 {
+                row[x] = 0
+            }
+            let transformed = squaredDistanceTransform1D(row)
+            horizontal.replaceSubrange((y * width)..<((y + 1) * width), with: transformed)
         }
-        return horizontal
-    }
 
-    nonisolated private static func dilatedRow(
-        _ mask: [UInt8],
-        width: Int,
-        row: Int,
-        radius: Int
-    ) -> [UInt8] {
-        var result = [UInt8](repeating: 0, count: width)
-        var count = initialDilationCount(
-            length: width,
-            radius: radius,
-            valueAt: { x in mask[row * width + x] }
-        )
+        var distances = [Int](repeating: infinity, count: width * height)
         for x in 0..<width {
-            count = updatedDilationCount(
-                count: count,
-                index: x,
-                limit: width,
-                radius: radius,
-                valueAt: { offset in mask[row * width + offset] }
-            )
-            result[x] = count > 0 ? 255 : 0
-        }
-        return result
-    }
-
-    nonisolated private static func verticalDilation(
-        _ horizontal: [UInt8],
-        width: Int,
-        height: Int,
-        radius: Int
-    ) -> [UInt8] {
-        var expanded = [UInt8](repeating: 0, count: horizontal.count)
-        for x in 0..<width {
-            let column = dilatedColumn(horizontal, width: width, height: height, column: x, radius: radius)
+            var column = [Int](repeating: infinity, count: height)
             for y in 0..<height {
-                expanded[y * width + x] = column[y]
+                column[y] = horizontal[y * width + x]
+            }
+            let transformed = squaredDistanceTransform1D(column)
+            for y in 0..<height {
+                distances[y * width + x] = transformed[y]
             }
         }
-        return expanded
+        return distances
     }
 
-    nonisolated private static func dilatedColumn(
-        _ horizontal: [UInt8],
-        width: Int,
-        height: Int,
-        column: Int,
-        radius: Int
-    ) -> [UInt8] {
-        var result = [UInt8](repeating: 0, count: height)
-        var count = initialDilationCount(
-            length: height,
-            radius: radius,
-            valueAt: { y in horizontal[y * width + column] }
-        )
-        for y in 0..<height {
-            count = updatedDilationCount(
-                count: count,
-                index: y,
-                limit: height,
-                radius: radius,
-                valueAt: { offset in horizontal[offset * width + column] }
+    nonisolated private static func squaredDistanceTransform1D(_ values: [Int]) -> [Int] {
+        guard !values.isEmpty else { return [] }
+
+        var envelope = [Int](repeating: 0, count: values.count)
+        var intersections = [Double](repeating: 0, count: values.count + 1)
+        var distances = [Int](repeating: 0, count: values.count)
+        var envelopeCount = 0
+        envelope[0] = 0
+        intersections[0] = -.infinity
+        intersections[1] = .infinity
+
+        for index in 1..<values.count {
+            var intersection = parabolaIntersection(
+                values,
+                left: envelope[envelopeCount],
+                right: index
             )
-            result[y] = count > 0 ? 255 : 0
+            while intersection <= intersections[envelopeCount] {
+                envelopeCount -= 1
+                intersection = parabolaIntersection(
+                    values,
+                    left: envelope[envelopeCount],
+                    right: index
+                )
+            }
+            envelopeCount += 1
+            envelope[envelopeCount] = index
+            intersections[envelopeCount] = intersection
+            intersections[envelopeCount + 1] = .infinity
         }
-        return result
+
+        envelopeCount = 0
+        for index in 0..<values.count {
+            while intersections[envelopeCount + 1] < Double(index) {
+                envelopeCount += 1
+            }
+            let distance = index - envelope[envelopeCount]
+            distances[index] = distance * distance + values[envelope[envelopeCount]]
+        }
+        return distances
     }
 
-    nonisolated private static func initialDilationCount(
-        length: Int,
-        radius: Int,
-        valueAt: (Int) -> UInt8
-    ) -> Int {
-        (0..<min(length, radius + 1)).reduce(into: 0) { count, index in
-            if valueAt(index) != 0 { count += 1 }
-        }
+    nonisolated private static func parabolaIntersection(
+        _ values: [Int],
+        left: Int,
+        right: Int
+    ) -> Double {
+        let leftValue = Double(values[left] + left * left)
+        let rightValue = Double(values[right] + right * right)
+        return (rightValue - leftValue) / Double(2 * (right - left))
     }
 
-    nonisolated private static func updatedDilationCount(
-        count: Int,
-        index: Int,
-        limit: Int,
-        radius: Int,
-        valueAt: (Int) -> UInt8
-    ) -> Int {
-        guard index > 0 else { return count }
-        var result = count
-        let added = index + radius
-        if added < limit, valueAt(added) != 0 { result += 1 }
-        let removed = index - radius - 1
-        if removed >= 0, valueAt(removed) != 0 { result -= 1 }
-        return result
+    nonisolated private static func whiteRimAlpha(forSquaredDistance squaredDistance: Int) -> UInt8 {
+        let distance = sqrt(CGFloat(squaredDistance))
+        let outerRadius = CGFloat(borderRadius)
+        guard distance < outerRadius else { return 0 }
+
+        let solidRadius = outerRadius - CGFloat(outerFeather)
+        guard distance > solidRadius else { return 255 }
+
+        let progress = (outerRadius - distance) / CGFloat(outerFeather)
+        let easedProgress = progress * progress * (3 - 2 * progress)
+        return clampedByte(easedProgress * 255)
     }
 }

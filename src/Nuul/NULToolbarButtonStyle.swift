@@ -16,7 +16,7 @@ struct NULIcon: View {
         icon
             .font(.system(size: 16, weight: .regular))
             .symbolRenderingMode(.monochrome)
-            .frame(width: 22, height: 22)
+            .frame(width: CopycolaColors.toolbarIconSize, height: CopycolaColors.toolbarIconSize)
             .accessibilityHidden(true)
     }
 
@@ -34,12 +34,14 @@ struct NULIcon: View {
 struct NULToolbarButtonStyle: ButtonStyle {
     private let diameter: CGFloat
     private let accented: Bool
+    private let showsSurface: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.isEnabled) private var isEnabled
 
-    init(diameter: CGFloat = 38, accented: Bool = false) {
+    init(diameter: CGFloat = CopycolaColors.controlHeight, accented: Bool = false, showsSurface: Bool = false) {
         self.diameter = diameter
         self.accented = accented
+        self.showsSurface = showsSurface
     }
 
     func makeBody(configuration: Configuration) -> some View {
@@ -47,10 +49,18 @@ struct NULToolbarButtonStyle: ButtonStyle {
             .font(.system(size: 16, weight: .regular))
             .symbolRenderingMode(.monochrome)
             .foregroundStyle(foregroundColor)
-            .frame(width: 22, height: 22)
-            .frame(minWidth: max(diameter, 38), minHeight: max(diameter, 38))
-            .background(backgroundColor, in: .rect(cornerRadius: CopycolaColors.controlRadius))
-            .contentShape(Rectangle())
+            .frame(width: CopycolaColors.toolbarIconSize, height: CopycolaColors.toolbarIconSize)
+            .frame(
+                minWidth: max(diameter, CopycolaColors.controlHeight),
+                minHeight: max(diameter, CopycolaColors.controlHeight)
+            )
+            .background {
+                if accented || showsSurface {
+                    RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous)
+                        .fill(accented ? CopycolaColors.accent : CopycolaColors.itemSurface)
+                }
+            }
+            .contentShape(.rect(cornerRadius: CopycolaColors.controlRadius))
             .opacity(controlOpacity(isPressed: configuration.isPressed))
             .scaleEffect(controlScale(isPressed: configuration.isPressed))
             .animation(controlMotion, value: configuration.isPressed)
@@ -59,10 +69,6 @@ struct NULToolbarButtonStyle: ButtonStyle {
 
     private var foregroundColor: Color {
         accented ? .black : .primary
-    }
-
-    private var backgroundColor: Color {
-        accented ? CopycolaColors.accent : CopycolaColors.itemSurface
     }
 
     private func controlOpacity(isPressed: Bool) -> Double {

@@ -99,27 +99,32 @@ struct CanvasPlacementTests {
         #expect(origin == CGPoint(x: margin, y: margin + CGFloat(firstClearRow) * CanvasMetrics.module))
     }
 
-    @Test func keepsAGutterAfterATwoByTwoCard() {
+    @Test func bloomPlacementUsesAFreeRadialSlot() {
         let margin = CanvasMetrics.canvasMargin
-        let unit = CanvasMetrics.gridUnit
-        let largeCardSize = CardSize.twoByTwo.pointSize
-        let largeCards = [
-            CGRect(origin: CGPoint(x: margin, y: margin), size: largeCardSize),
+        let minimumY = margin + CanvasMetrics.headerHeight + CanvasMetrics.headerContentSpacing
+        let size = CardSize.oneByOne.pointSize
+        let pitch = CanvasMetrics.bloomPitch
+        let rowOrigin = Double(minimumY)
+        let occupied = (0..<4).map { column in
             CGRect(
-                origin: CGPoint(x: margin + CanvasMetrics.module * 2, y: margin),
-                size: largeCardSize
+                x: margin + CGFloat(column) * pitch,
+                y: minimumY,
+                width: size.width,
+                height: size.height
             )
-        ]
+        }
 
         let origin = CanvasPlacement.nearestFreePosition(
-            for: CardSize.oneByOne.pointSize,
-            nearX: margin,
-            nearY: margin,
+            for: size,
+            nearX: Double(margin),
+            nearY: rowOrigin,
             canvasWidth: Double(CanvasMetrics.canvasWidth),
-            occupiedRects: largeCards
+            occupiedRects: occupied,
+            minimumY: rowOrigin,
+            style: .bloom
         )
 
-        #expect(origin == CGPoint(x: margin, y: margin + 2 * CanvasMetrics.module))
-        #expect(origin.y - largeCards[0].maxY == unit)
+        #expect(origin.x == margin + CanvasMetrics.bloomPitch / 2)
+        #expect(origin.y == minimumY + CanvasMetrics.bloomRowPitch)
     }
 }

@@ -1,6 +1,5 @@
 import SwiftUI
 import SwiftData
-import UniformTypeIdentifiers
 
 extension CanvasView {
     // MARK: - Selection
@@ -11,50 +10,23 @@ extension CanvasView {
     }
 
     func beginEditing(_ card: Card) {
-        // Header/sticky edit their text; image edits its caption.
-        guard card.kind == .header || card.kind == .stickyNote || card.kind == .image else { return }
+        // Headers edit their title; images edit their caption.
+        guard card.isSupportedKind else { return }
         selectedCardID = card.id
         editingCardID = card.id
     }
 
-    func chooseImage(for card: Card) {
-        imageTargetCardID = card.id
-        showImageImporter = true
-    }
-
-    func cropImageToSubject(for card: Card) {
-        guard card.kind == .image, let data = card.imageData else { return }
-        Task { @MainActor in
-            let cropped = await Task.detached(priority: .userInitiated) {
-                ImageSubjectCropper.crop(data: data)
-            }.value
-            guard let cropped, !card.isDeleted else { return }
-            card.imageData = cropped
-            card.imageRevision = UUID()
-        }
-    }
-
     func editLink(_ card: Card) {
+        guard card.isSupportedKind, card.kind == .image else { return }
         linkTargetCardID = card.id
         showLinkSheet = true
-    }
-
-    func editLocation(_ card: Card) {
-        mapTargetCardID = card.id
-        showMapSheet = true
     }
 
     func edit(_ card: Card) {
         select(card)
         switch card.kind {
-        case .header, .stickyNote, .image:
+        case .header, .image:
             beginEditing(card)
-        case .link:
-            linkTargetCardID = card.id
-            showLinkSheet = true
-        case .map:
-            mapTargetCardID = card.id
-            showMapSheet = true
         }
     }
 
@@ -68,21 +40,6 @@ extension CanvasView {
         edit(card)
     }
 
-    var resizeSelectedCardAction: ((CardSize) -> Void)? {
-        guard selectedCardID != nil else { return nil }
-        return { size in resizeSelectedCard(size) }
-    }
-
-    func resizeSelectedCard(_ size: CardSize) {
-        guard let card = targetCard(selectedCardID), card.kind != .header else { return }
-        setCardSize(size, for: card)
-    }
-
-    func setCardSize(_ size: CardSize, for card: Card) {
-        card.cardSize = size
-        constrainToCanvasWidth(card)
-    }
-
     var deleteSelectedCardAction: (() -> Void)? {
         guard selectedCardID != nil else { return nil }
         return { deleteSelectedCard() }
@@ -94,24 +51,16 @@ extension CanvasView {
     }
 
     func accessibilitySummary(for card: Card) -> String {
-        if card.kind == .link {
-            return linkAccessibilitySummary(for: card)
-        }
-        if card.kind == .map {
-            return card.title ?? ""
-        }
-        return card.text
-    }
-
-    private func linkAccessibilitySummary(for card: Card) -> String {
-        card.title ?? card.urlString ?? ""
+        card.kind == .image
+            ? (card.text.isEmpty ? (card.urlString ?? "") : card.text)
+            : card.text
     }
 
     func nudge(_ card: Card, x deltaX: Double, y deltaY: Double) {
         let requestedX = card.x + deltaX
         let requestedY = card.y + deltaY
         let origin = nearestFreePosition(
-            for: CGSize(width: card.width, height: card.height),
+            for: card.cardSize.pointSize,
             nearX: requestedX,
             nearY: requestedY,
             excluding: card.id,
@@ -127,7 +76,6 @@ extension CanvasView {
     func clearSelection() {
         selectedCardID = nil
         editingCardID = nil
-        showingCardOptions = false
     }
 
     func bringToFront(_ card: Card) {

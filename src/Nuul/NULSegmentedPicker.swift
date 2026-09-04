@@ -37,6 +37,7 @@ struct NULSegmentedPicker<Selection: Hashable, ItemLabel: View>: View {
                             RoundedRectangle(cornerRadius: CopycolaColors.gridUnit / 2, style: .continuous)
                                 .fill(option == selection ? Color.primary.opacity(0.12) : .clear)
                         }
+                        .contentShape(.rect(cornerRadius: CopycolaColors.gridUnit / 2))
                 }
                 .buttonStyle(.plain)
                 .accessibilityAddTraits(option == selection ? .isSelected : [])

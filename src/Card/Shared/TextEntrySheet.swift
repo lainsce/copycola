@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-/// A small modal sheet that collects one line of text for links and map searches.
+/// A small modal sheet that collects one line of text for an image link.
 struct TextEntrySheet: View {
     let title: LocalizedStringResource
     let fieldLabel: LocalizedStringResource

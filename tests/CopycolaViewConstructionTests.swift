@@ -34,7 +34,6 @@ struct CopycolaViewConstructionTests {
 
     @Test @MainActor
     func rendersNuulControlsThroughSwiftUI() {
-        var fanExpanded = false
         let board = Board(name: "Canvas")
         let header = Card(kind: .header, size: .fourByOne, x: 40, y: 56, zIndex: 1)
         header.text = "Canvas"
@@ -52,9 +51,52 @@ struct CopycolaViewConstructionTests {
         assertRenders(Toggle("Toggle", isOn: .constant(true)).toggleStyle(NULToggleStyle()))
         assertRenders(Toggle("Toggle", isOn: .constant(false)).toggleStyle(NULToggleStyle()))
         assertRenders(TextField("Field", text: .constant("Value")).textFieldStyle(NULTextFieldStyle()))
-        assertRenders(AddCardPickerView(addCard: { _ in }, animation: nil))
-        assertRenders(AddCardFanView(isExpanded: Binding(get: { fanExpanded }, set: { fanExpanded = $0 }), addCard: { _ in }))
+        for phase in [
+            ImageProcessingPhase.processing,
+            .settling,
+            .ready,
+            .unavailable
+        ] {
+            assertRenders(ImageProcessingPreview(
+                sourceData: .constant(nil),
+                cutoutData: .constant(nil),
+                phase: .constant(phase),
+                approve: {},
+                cancel: {}
+            ))
+        }
+        assertRenders(ImageProcessingGrid().frame(width: 320, height: 240))
+        assertRenders(ImageProcessingGrid(isMoving: true).frame(width: 320, height: 240))
+        assertRenders(BloomGrid(origin: CGPoint(x: 40, y: 124)).frame(width: 320, height: 240))
+        assertRenders(CanvasGridStylePicker(selection: .constant(CanvasGridStyle.grid.rawValue)))
         assertRenders(SidebarCanvasThumbnail(cards: [header], isSelected: true))
+    }
+
+    @Test
+    func canvasGridStylesKeepTheirVisualOptionsAndBloomRingGeometry() {
+        #expect(CanvasGridStyle.allCases == [.grid, .bloom])
+        #expect(CanvasGridStyle.grid.systemImage == "square.grid.2x2")
+        #expect(CanvasGridStyle.bloom.systemImage == "circle.circle")
+        #expect(CanvasMetrics.bloomRowPitch < CanvasMetrics.bloomPitch)
+        #expect(CanvasMetrics.bloomPitch == CanvasMetrics.module)
+        #expect(CanvasMetrics.bloomCollisionInset > 0)
+        #expect(CanvasMetrics.bloomRingSpacing > 0)
+        #expect(CanvasMetrics.bloomRingRadius == CanvasMetrics.bloomPitch)
+        #expect(CanvasMetrics.bloomRingSlotCount == 6)
+        #expect(CanvasMetrics.bloomRingCenterY > CanvasMetrics.bloomRowPitch)
+        #expect(CanvasMetrics.bloomRingCenterMarkerDiameter > 0)
+        #expect(CanvasMetrics.bloomRingTickLength > 0)
+        #expect(
+            CanvasGridStyle.bloom.bloomSlotOrder(count: 7) == [
+                CanvasBloomSlot(ring: 0, index: 0),
+                CanvasBloomSlot(ring: 1, index: 0),
+                CanvasBloomSlot(ring: 1, index: 1),
+                CanvasBloomSlot(ring: 1, index: 2),
+                CanvasBloomSlot(ring: 1, index: 3),
+                CanvasBloomSlot(ring: 1, index: 4),
+                CanvasBloomSlot(ring: 1, index: 5)
+            ]
+        )
     }
 
     @Test @MainActor
@@ -66,12 +108,6 @@ struct CopycolaViewConstructionTests {
         header.text = ""
         _ = HeaderCardContent(card: header, isEditing: false).body
 
-        let note = Card(kind: .stickyNote, size: .oneByOne, x: 0, y: 0, zIndex: 0)
-        _ = StickyNoteCardContent(card: note, isEditing: false, cornerRadius: 12).body
-        note.text = "A note"
-        _ = StickyNoteCardContent(card: note, isEditing: false, cornerRadius: 12).body
-        _ = StickyNoteCardContent(card: note, isEditing: true, cornerRadius: 12).body
-
         let image = Card(kind: .image, size: .oneByOne, x: 0, y: 0, zIndex: 0)
         _ = CardImageContent(card: image).body
         _ = ImageCardSurface(card: image, isEditing: false, cornerRadius: 12).body
@@ -80,23 +116,6 @@ struct CopycolaViewConstructionTests {
         image.urlString = "https://example.com/image"
         _ = ImageCardSurface(card: image, isEditing: false, cornerRadius: 12).body
 
-        let link = Card(kind: .link, size: .twoByOne, x: 0, y: 0, zIndex: 0)
-        link.urlString = "https://example.com"
-        link.title = "Example"
-        link.detail = "Description"
-        _ = LinkCardSurface(card: link, cornerRadius: 12).body
-        link.title = nil
-        link.detail = ""
-        _ = LinkCardSurface(card: link, cornerRadius: 12).body
-        _ = CardFaviconContent(card: link).body
-
-        let map = Card(kind: .map, size: .oneByOne, x: 0, y: 0, zIndex: 0)
-        _ = MapCardSurface(card: map, cornerRadius: 12).body
-        map.latitude = 38.7223
-        map.longitude = -9.1393
-        map.title = "Lisbon"
-        _ = MapCardSurface(card: map, cornerRadius: 12).body
-        _ = MapCardContent(coordinate: MapCoordinate(latitude: 38.7223, longitude: -9.1393)).body
         _ = CardCaptionPill(text: "Caption").body
     }
 
@@ -106,9 +125,6 @@ struct CopycolaViewConstructionTests {
             let card = Card(kind: kind, size: kind.defaultCardSize, x: 0, y: 0, zIndex: 0)
             card.text = "Content"
             card.urlString = "https://example.com"
-            card.title = "Place"
-            card.latitude = 38.7
-            card.longitude = -9.1
 
             _ = CardView(
                 card: card,
@@ -117,12 +133,7 @@ struct CopycolaViewConstructionTests {
                 isDragging: false,
                 dragTranslation: .zero,
                 onDelete: {},
-                onSetSize: { _ in },
-                onBeginEdit: {},
-                onChooseImage: {},
-                onCropImageToSubject: {},
-                onEditLink: {},
-                onEditLocation: {}
+                onEditLink: {}
             ).body
             _ = CardView(
                 card: card,
@@ -131,12 +142,7 @@ struct CopycolaViewConstructionTests {
                 isDragging: false,
                 dragTranslation: CGSize(width: 80, height: 0),
                 onDelete: {},
-                onSetSize: { _ in },
-                onBeginEdit: {},
-                onChooseImage: {},
-                onCropImageToSubject: {},
-                onEditLink: {},
-                onEditLocation: {}
+                onEditLink: {}
             ).body
             _ = CardView(
                 card: card,
@@ -145,21 +151,13 @@ struct CopycolaViewConstructionTests {
                 isDragging: true,
                 dragTranslation: CGSize(width: -80, height: 0),
                 onDelete: {},
-                onSetSize: { _ in },
-                onBeginEdit: {},
-                onChooseImage: {},
-                onCropImageToSubject: {},
-                onEditLink: {},
-                onEditLocation: {}
+                onEditLink: {}
             ).body
         }
     }
 
     @Test @MainActor
     func constructsCanvasAndSidebarViews() {
-        var expanded = false
-        _ = AddCardFanView(isExpanded: Binding(get: { expanded }, set: { expanded = $0 }), addCard: { _ in }).body
-        _ = AddCardPickerView(addCard: { _ in }, animation: nil).body
         _ = CopycolaAboutView().body
         _ = PrivacyPolicySection(
             title: "Local",
@@ -173,17 +171,13 @@ struct CopycolaViewConstructionTests {
         header.text = "Canvas"
         header.board = board
         board.cards.append(header)
-        let note = Card(kind: .stickyNote, size: .oneByOne, x: 40, y: 124, zIndex: 2)
-        note.text = "Note"
-        note.board = board
-        board.cards.append(note)
+        let image = Card(kind: .image, size: .oneByOne, x: 40, y: 124, zIndex: 2)
+        image.board = board
+        board.cards.append(image)
         _ = SidebarCanvasThumbnail(cards: [], isSelected: false).body
-        _ = SidebarCanvasThumbnail(cards: [header, note], isSelected: true).body
+        _ = SidebarCanvasThumbnail(cards: [header, image], isSelected: true).body
         _ = SidebarCardPreviewArtwork(kind: .header).body
-        _ = SidebarCardPreviewArtwork(kind: .stickyNote).body
         _ = SidebarCardPreviewArtwork(kind: .image).body
-        _ = SidebarCardPreviewArtwork(kind: .link).body
-        _ = SidebarCardPreviewArtwork(kind: .map).body
         _ = SidebarBoardButton(
             board: board,
             isSelected: true,
@@ -204,7 +198,7 @@ struct CopycolaViewConstructionTests {
         ).body
 
         _ = TextEntrySheet(
-            title: "Add Link",
+            title: "Edit Image Link",
             fieldLabel: "URL",
             prompt: "https://example.com",
             systemImage: "link",

@@ -19,6 +19,7 @@ struct NULTextFieldStyle: TextFieldStyle {
                 RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous)
                     .strokeBorder(CopycolaColors.controlRule(for: colorScheme), lineWidth: 2)
             }
+            .contentShape(.rect(cornerRadius: CopycolaColors.controlRadius))
             .opacity(isEnabled ? 1 : 0.42)
     }
 }

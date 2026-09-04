@@ -48,6 +48,7 @@ struct NULMenuPicker<Selection: Hashable, ItemLabel: View>: View {
             }
             .frame(minHeight: CopycolaColors.controlHeight, alignment: .leading)
             .padding(.horizontal, CopycolaColors.gridUnit * 2)
+            .contentShape(.rect(cornerRadius: CopycolaColors.controlRadius))
         }
         .menuStyle(.borderlessButton)
         .accessibilityLabel(Text(title))

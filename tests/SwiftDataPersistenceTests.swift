@@ -13,7 +13,7 @@ struct SwiftDataPersistenceTests {
         )
         let context = ModelContext(container)
         let board = Board(name: "Test")
-        let card = Card(kind: .stickyNote, size: .oneByOne, x: 0, y: 0, zIndex: 0)
+        let card = Card(kind: .image, size: .oneByOne, x: 0, y: 0, zIndex: 0)
 
         context.insert(board)
         context.insert(card)
@@ -25,26 +25,6 @@ struct SwiftDataPersistenceTests {
     }
 
     @Test @MainActor
-    func linkThemeColorPersistsWithTheCard() throws {
-        let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(
-            for: Board.self,
-            Card.self,
-            configurations: configuration
-        )
-        let context = ModelContext(container)
-        let card = Card(kind: .link, size: .twoByOne, x: 0, y: 0, zIndex: 0)
-        card.themeColorHex = "3A7BD5"
-        context.insert(card)
-        try context.save()
-
-        let fetched = try #require(
-            context.fetch(FetchDescriptor<Card>()).first(where: { $0.id == card.id })
-        )
-        #expect(fetched.themeColorHex == "3A7BD5")
-    }
-
-    @Test @MainActor
     func imageLinkPersistsWithTheCard() throws {
         let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(
@@ -53,7 +33,7 @@ struct SwiftDataPersistenceTests {
             configurations: configuration
         )
         let context = ModelContext(container)
-        let card = Card(kind: .image, size: .twoByTwo, x: 0, y: 0, zIndex: 0)
+        let card = Card(kind: .image, size: .oneByOne, x: 0, y: 0, zIndex: 0)
         card.urlString = "https://example.com/image"
         context.insert(card)
         try context.save()
@@ -64,4 +44,3 @@ struct SwiftDataPersistenceTests {
         #expect(fetched.urlString == "https://example.com/image")
     }
 }
-

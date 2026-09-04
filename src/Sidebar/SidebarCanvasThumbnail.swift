@@ -17,7 +17,7 @@ struct SidebarCanvasThumbnail: View {
     private var previewCards: [Card] {
         Array(
             cards
-                .filter { $0.kind != .header }
+                .filter { $0.isSupportedKind && $0.kind != .header }
                 .prefix(3)
         )
     }
@@ -84,7 +84,7 @@ struct SidebarCanvasThumbnail: View {
                         cornerRadius: Metrics.cardCornerRadius,
                         style: .continuous
                     )
-                    .strokeBorder(Color.accent.opacity(0.40), lineWidth: 0.75)
+                    .strokeBorder(CopycolaColors.accent.opacity(0.40), lineWidth: 0.75)
                 }
             }
     }

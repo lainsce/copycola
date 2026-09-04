@@ -10,6 +10,7 @@ struct CanvasCardLayer: View {
     let editingCardID: UUID?
     let draggingCardID: UUID?
     let dragTranslation: CGSize
+    let nudgeStep: CGSize
     let actions: CanvasCardActions
 
     var body: some View {
@@ -22,10 +23,7 @@ struct CanvasCardLayer: View {
         let dragging = draggingCardID == card.id
         let selected = selectedCardID == card.id
         let extra = dragging ? dragTranslation : .zero
-        let renderedSize = CGSize(
-            width: max(card.width, card.cardSize.pointSize.width),
-            height: max(card.height, card.cardSize.pointSize.height)
-        )
+        let renderedSize = card.cardSize.pointSize
 
         return CardView(
             card: card,
@@ -34,12 +32,7 @@ struct CanvasCardLayer: View {
             isDragging: dragging,
             dragTranslation: extra,
             onDelete: { actions.delete(card) },
-            onSetSize: { size in actions.setSize(card, size) },
-            onBeginEdit: { actions.beginEditing(card) },
-            onChooseImage: { actions.chooseImage(card) },
-            onCropImageToSubject: { actions.cropImageToSubject(card) },
-            onEditLink: { actions.editLink(card) },
-            onEditLocation: { actions.editLocation(card) }
+            onEditLink: { actions.editLink(card) }
         )
         .frame(width: renderedSize.width, height: renderedSize.height)
         .position(
@@ -47,7 +40,9 @@ struct CanvasCardLayer: View {
             y: card.y + renderedSize.height / 2 + extra.height
         )
         .zIndex(cardZIndex(for: card, dragging: dragging, selected: selected))
-        .onTapGesture(count: 2) { actions.beginEditing(card) }
+        // A double-click is the single pointer route into the card editor. Routing through
+        // `edit` keeps header and image editing in one interaction path.
+        .onTapGesture(count: 2) { actions.edit(card) }
         .onTapGesture { actions.select(card) }
         .highPriorityGesture(
             cardDrag(for: card),
@@ -62,16 +57,16 @@ struct CanvasCardLayer: View {
             actions.edit(card)
         }
         .accessibilityAction(named: Text("Move Left")) {
-            actions.nudge(card, -Double(CanvasMetrics.module), 0)
+            actions.nudge(card, -Double(nudgeStep.width), 0)
         }
         .accessibilityAction(named: Text("Move Right")) {
-            actions.nudge(card, Double(CanvasMetrics.module), 0)
+            actions.nudge(card, Double(nudgeStep.width), 0)
         }
         .accessibilityAction(named: Text("Move Up")) {
-            actions.nudge(card, 0, -Double(CanvasMetrics.module))
+            actions.nudge(card, 0, -Double(nudgeStep.height))
         }
         .accessibilityAction(named: Text("Move Down")) {
-            actions.nudge(card, 0, Double(CanvasMetrics.module))
+            actions.nudge(card, 0, Double(nudgeStep.height))
         }
     }
 
@@ -94,13 +89,8 @@ struct CanvasCardLayer: View {
 struct CanvasCardActions {
     let select: (Card) -> Void
     let edit: (Card) -> Void
-    let beginEditing: (Card) -> Void
     let delete: (Card) -> Void
-    let setSize: (Card, CardSize) -> Void
-    let chooseImage: (Card) -> Void
-    let cropImageToSubject: (Card) -> Void
     let editLink: (Card) -> Void
-    let editLocation: (Card) -> Void
     let accessibilitySummary: (Card) -> String
     let nudge: (Card, Double, Double) -> Void
     let dragChanged: (Card, CGSize) -> Void

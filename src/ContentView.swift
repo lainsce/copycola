@@ -6,6 +6,7 @@ struct ContentView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.colorScheme) private var colorScheme
     @State private var selection: UUID?
+    @AppStorage("copycola.has-completed-first-run") private var hasCompletedFirstRun = false
 
     private let sidebarWidth: CGFloat = 300
 
@@ -39,6 +40,9 @@ struct ContentView: View {
         }
         .focusedSceneValue(\.newCanvasAction) {
             addBoard()
+        }
+        .sheet(isPresented: firstRunBinding) {
+            CopycolaFirstRunView(onContinue: finishFirstRun)
         }
     }
 
@@ -77,5 +81,20 @@ struct ContentView: View {
             localized: "Canvas #\(number)",
             comment: "Default canvas name. The variable is the canvas number."
         )
+    }
+
+    private var firstRunBinding: Binding<Bool> {
+        Binding(
+            get: { !hasCompletedFirstRun },
+            set: { isPresented in
+                if !isPresented {
+                    finishFirstRun()
+                }
+            }
+        )
+    }
+
+    private func finishFirstRun() {
+        hasCompletedFirstRun = true
     }
 }

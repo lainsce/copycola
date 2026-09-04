@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Shared geometric caption treatment used by image and map cards.
+/// Shared geometric caption treatment used by image cards.
 struct CardCaptionPill: View {
     let text: String
     @Environment(\.colorScheme) private var colorScheme

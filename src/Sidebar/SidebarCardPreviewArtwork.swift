@@ -8,14 +8,8 @@ struct SidebarCardPreviewArtwork: View {
         switch kind {
         case .header:
             nil
-        case .stickyNote:
-            .sidebarPreviewStickyNote
         case .image:
             .sidebarPreview
-        case .link:
-            .sidebarPreviewLink
-        case .map:
-            .sidebarPreviewMap
         }
     }
 

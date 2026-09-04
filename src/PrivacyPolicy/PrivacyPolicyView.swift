@@ -28,11 +28,6 @@ struct PrivacyPolicyView: View {
                             text: "When you import an image, Copycola reads the file you select and stores it in the local canvas data. Copycola does not upload that image."
                         )
                         PrivacyPolicySection(
-                            title: "Network requests",
-                            systemImage: "network",
-                            text: "Website cards may request page metadata and a favicon from the address you enter. Place searches are sent to Apple Maps."
-                        )
-                        PrivacyPolicySection(
                             title: "No tracking or ads",
                             systemImage: "eye.slash",
                             text: "Copycola does not use advertising, analytics, tracking, or third-party account services."

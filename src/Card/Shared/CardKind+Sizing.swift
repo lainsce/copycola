@@ -5,10 +5,7 @@ extension CardKind {
     var defaultCardSize: CardSize {
         switch self {
         case .header: .fourByOne
-        case .stickyNote: .oneByOne
         case .image: .oneByOne
-        case .link: .oneByOne
-        case .map: .oneByOne
         }
     }
 }

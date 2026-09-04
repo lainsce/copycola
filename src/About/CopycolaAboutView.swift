@@ -8,30 +8,31 @@ struct CopycolaAboutView: View {
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: CopycolaColors.formRowSpacing) {
             Image(nsImage: NSApp.applicationIconImage)
                 .resizable()
                 .interpolation(.high)
                 .scaledToFit()
                 .frame(width: 128, height: 128)
 
-            VStack(spacing: 8) {
+            VStack(spacing: CopycolaColors.controlGap) {
                 Text("Copycola")
-                    .font(CopycolaTypography.display)
+                    .font(CopycolaTypography.viewTitle)
+                    .tracking(-0.4)
 
                 Text("A calm, spatial canvas for ideas.")
                     .font(CopycolaTypography.viewSubtitle)
                     .foregroundStyle(.secondary)
             }
 
-            Text("Keep notes, references, dates, places, and useful fragments together on a canvas you can return to.")
+            Text("Keep images and useful references together on a canvas you can return to.")
                 .font(CopycolaTypography.body)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .lineLimit(2...2)
                 .frame(width: 310)
 
-            VStack(spacing: 4) {
+            VStack(spacing: CopycolaColors.gridUnit) {
                 Text("Version \(versionString)")
                     .font(CopycolaTypography.technicalFont(.caption))
                     .foregroundStyle(.secondary)
@@ -46,12 +47,14 @@ struct CopycolaAboutView: View {
             }
             .buttonStyle(NULButtonStyle(kind: .quiet))
         }
-        .padding(32)
-        .background(
-            CopycolaColors.itemSurface,
-            in: RoundedRectangle(cornerRadius: CopycolaColors.largeSurfaceRadius, style: .continuous)
-        )
+        .padding(CopycolaColors.gridUnit * 8)
         .frame(width: 400)
+        .background(CopycolaColors.itemSurface)
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(CopycolaColors.accent)
+                .frame(height: 3)
+        }
     }
 
     private var versionString: String {

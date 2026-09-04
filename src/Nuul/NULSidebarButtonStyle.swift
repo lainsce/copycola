@@ -15,7 +15,7 @@ extension EnvironmentValues {
 struct NULSidebarButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .contentShape(Rectangle())
+            .contentShape(.rect(cornerRadius: CopycolaColors.controlRadius))
             .environment(\.copycolaSidebarRowIsPressed, configuration.isPressed)
     }
 }
@@ -41,7 +41,7 @@ struct CopycolaSidebarRowPressSurface<Content: View>: View {
         content
             .background {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(Color.accent.opacity(isPressed ? CopycolaColors.sidebarPressedFillOpacity : 0))
+                    .fill(CopycolaColors.accent.opacity(isPressed ? CopycolaColors.sidebarPressedFillOpacity : 0))
             }
     }
 }

@@ -67,7 +67,7 @@ struct SidebarBoardButton: View {
     }
 
     private var rowLabel: some View {
-        HStack(spacing: CopycolaColors.controlGap) {
+        HStack(spacing: CopycolaColors.controlGap * 2) {
             SidebarCanvasThumbnail(
                 cards: visibleCards,
                 isSelected: isSelected
@@ -79,18 +79,21 @@ struct SidebarBoardButton: View {
                     .lineLimit(1)
                     .foregroundStyle(.primary)
 
+                Text(verbatim: "\(visibleCards.count) Items")
+                    .font(CopycolaTypography.technicalFont(.caption))
+                    .foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             Spacer(minLength: 0)
         }
-        .padding(.horizontal, CopycolaColors.gridUnit * 2)
         .padding(.vertical, CopycolaColors.controlGap)
+        .padding(.horizontal, CopycolaColors.controlGap)
         .background(rowBackground)
         .contentShape(.rect)
     }
 
     private var visibleCards: [Card] {
-        board.cards.filter { $0.kind != .header }
+        board.cards.filter { $0.isSupportedKind && $0.kind != .header }
     }
 
     private var canvasTitle: String {
@@ -116,7 +119,6 @@ struct SidebarBoardButton: View {
                 .onExitCommand(perform: cancelName)
         }
         .font(CopycolaTypography.contentBlockTitle)
-        .padding(.horizontal, CopycolaColors.gridUnit * 2)
         .padding(.vertical, CopycolaColors.controlGap)
         .background(rowBackground)
         .contentShape(.rect)
@@ -127,7 +129,7 @@ struct SidebarBoardButton: View {
             RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous)
             .fill(
                 isSelected
-                    ? Color.accent.opacity(CopycolaColors.sidebarSelectedFillOpacity)
+                    ? CopycolaColors.accent.opacity(CopycolaColors.sidebarSelectedFillOpacity)
                     : (isHovered
                         ? Color.primary.opacity(CopycolaColors.sidebarHoverFillOpacity)
                         : .clear)
@@ -135,7 +137,7 @@ struct SidebarBoardButton: View {
             .overlay {
                 RoundedRectangle(cornerRadius: CopycolaColors.controlRadius, style: .continuous)
                     .strokeBorder(
-                        Color.accent.opacity(
+                        CopycolaColors.accent.opacity(
                             isSelected && isHovered
                                 ? CopycolaColors.sidebarSelectedBorderOpacity
                                 : 0

@@ -14,16 +14,34 @@ enum CopycolaColors {
     // keeps its own card grid, while settings, toolbars, and sheets share
     // these UI measurements.
     static let gridUnit: CGFloat = 4
+    /// Minimum clearance for content that can approach a rounded window
+    /// corner. This is a Nuul design-pixel value, not a module gap.
+    static let windowCornerInset: CGFloat = 24
     static let controlGap: CGFloat = gridUnit * 2
     static let formRowSpacing: CGFloat = gridUnit * 4
     static let formLabelWidth: CGFloat = gridUnit * 32
     static let controlHeight: CGFloat = 38
+    static let toolbarIconSize: CGFloat = 22
+    /// Keeps the canvas view picker visibly clear of the sidebar's toolbar lane.
+    static let toolbarSidebarOffset: CGFloat = gridUnit * 2
+    static let toolbarViewOptionsWidth: CGFloat = 72
     static let fieldHeight: CGFloat = gridUnit * 9
     static let fieldHorizontalPadding: CGFloat = gridUnit * 3
     static let controlRadius: CGFloat = gridUnit
+    static let switchWidth: CGFloat = gridUnit * 16
+    static let switchHeight: CGFloat = gridUnit * 8
+    static let switchKnobSize: CGFloat = gridUnit * 6
+    static let switchInset: CGFloat = gridUnit
+    static let switchCornerRadius: CGFloat = controlRadius
+    static let switchLabelSpacing: CGFloat = gridUnit * 3
     static let largeSurfaceRadius: CGFloat = gridUnit * 3
     static let controlMotion = Animation.spring(response: 0.24, dampingFraction: 0.88)
     static let navigationMotion = Animation.spring(response: 0.34, dampingFraction: 0.84)
+    static let imageProcessingGridMotion = Animation.easeInOut(duration: 2.2).repeatForever(autoreverses: true)
+    static let imageProcessingGridSettle = Animation.easeOut(duration: 0.28)
+    static let imageProcessingGlowMotion = Animation.easeInOut(duration: 1.15).repeatForever(autoreverses: true)
+    static let imageProcessingFindingNanoseconds: UInt64 = 700_000_000
+    static let imageProcessingSettlingNanoseconds: UInt64 = 280_000_000
 
     static func workspaceBackground(for colorScheme: ColorScheme) -> Color {
         colorScheme == .dark
@@ -80,6 +98,14 @@ enum CopycolaColors {
 #endif
     }
 
+    /// A deterministic Item surface for views that intentionally override the
+    /// surrounding appearance (for example, the media cutout review flyout).
+    static func itemSurface(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark
+            ? Color(red: 17 / 255, green: 17 / 255, blue: 17 / 255)
+            : Color(red: 253 / 255, green: 253 / 255, blue: 253 / 255)
+    }
+
     /// The opaque foreground token used inside an Item surface.
     static func itemText(for colorScheme: ColorScheme) -> Color {
         colorScheme == .dark ? .white : .black
@@ -97,7 +123,7 @@ enum CopycolaColors {
 
     /// Copycola's sole chromatic UI token. The asset supplies the shared
     /// appearance value used by both light and dark buttons.
-    static var accent: Color { .accent }
+    static let accent = Color("AccentColor")
 
     static let itemSurfaceLightHex = "FDFDFD"
     static let itemSurfaceDarkHex = "111111"
