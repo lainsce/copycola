@@ -35,8 +35,14 @@ struct ContentView: View {
         .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear(perform: ensureSelection)
+        .task {
+            CopycolaWidgetDataStore.save(boards: boards)
+        }
         .onChange(of: boards.count) { _, _ in
             ensureSelection()
+        }
+        .onChange(of: widgetRevision) { _, _ in
+            CopycolaWidgetDataStore.save(boards: boards)
         }
         .focusedSceneValue(\.newCanvasAction) {
             addBoard()
@@ -96,5 +102,17 @@ struct ContentView: View {
 
     private func finishFirstRun() {
         hasCompletedFirstRun = true
+    }
+
+    /// Reads the persisted fields that affect the widget so card inserts, deletes, and image
+    /// replacements refresh the shared snapshot even though the top-level board query itself
+    /// does not change count.
+    private var widgetRevision: String {
+        boards.map { board in
+            let cardRevision = board.cards.map { card in
+                "\(card.id.uuidString):\(card.kind.rawValue):\(card.zIndex):\(card.imageRevision?.uuidString ?? "none")"
+            }.joined(separator: ",")
+            return "\(board.id.uuidString):\(board.name):\(cardRevision)"
+        }.joined(separator: "|")
     }
 }
